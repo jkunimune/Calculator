@@ -1,6 +1,6 @@
 /**
  * This package contains all classes pertaining to user interface, including
- * all JavaFM components, plots, and GUIs.
+ * all JavaFM Nodes, plots, and GUIs.
  */
 /**
  * @author jkunimune
