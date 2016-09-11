@@ -13,6 +13,7 @@ _Math-Assist_ comes equipped with any and all capabilities you could ever want (
   - plotting in up to 3 dimensions
   - solving systems of equations
   - finding derivatives
+  - unit conversions
   - and much more!
 
 ## Premise
