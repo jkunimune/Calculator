@@ -23,12 +23,15 @@
  */
 package gui;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitMenuButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 
 /**
@@ -52,11 +55,28 @@ public class OperationBar {
 	};
 	
 	
+	private CommandLine cmd;
 	private ToolBar container;
 	
 	
 	
-	public OperationBar() {
+	public OperationBar(CommandLine c) {
+		cmd = c;
+		
+		final EventHandler<ActionEvent> handler =
+				new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				if (event.getSource() instanceof MenuItem) {
+					final MenuItem source = (MenuItem) event.getSource();
+					buttonRespond(source.getText());
+				}
+				else if (event.getSource() instanceof SplitMenuButton) {
+					final SplitMenuButton source =
+							(SplitMenuButton) event.getSource();
+					buttonRespond(source.getText());
+				}
+			}
+		};
 		
 		container = new ToolBar();
 		container.setOrientation(Orientation.VERTICAL);
@@ -68,8 +88,12 @@ public class OperationBar {
 			}
 			final SplitMenuButton smb = new SplitMenuButton();
 			smb.setText(item[0]);
-			for (String cmd: item)
-				smb.getItems().add(new MenuItem(cmd));
+			for (String cmd: item) {
+				MenuItem mi = new MenuItem(cmd);
+				mi.setOnAction(handler);
+				smb.getItems().add(mi);
+			}
+			smb.setOnAction(handler);
 			smb.setAlignment(Pos.CENTER);
 			smb.setPrefWidth(75);
 			container.getItems().add(smb);
@@ -80,6 +104,11 @@ public class OperationBar {
 	
 	public Node getNode() {	// get all components in JavaFX format
 		return container;
+	}
+	
+	
+	private void buttonRespond(String button) {
+		cmd.typeText(button);
 	}
 
 }

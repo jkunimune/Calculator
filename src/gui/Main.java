@@ -56,11 +56,12 @@ public class Main extends Application {
 		HBox layout = new HBox();
 		root.getChildren().add(layout);
 		
-		toolbar = new OperationBar();
-		layout.getChildren().add(toolbar.getNode());
-		
 		cmdLine = new CommandLine();
+		toolbar = new OperationBar(cmdLine);
+		layout.getChildren().add(toolbar.getNode());
 		layout.getChildren().add(cmdLine.getNode());
+		
+		cmdLine.requestFocus();
 		
 		primaryStage.setTitle("Math-Assist");
 		primaryStage.setScene(scene);
