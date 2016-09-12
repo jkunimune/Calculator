@@ -21,10 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-/**
- * This package contains all classes pertaining to user interface, including
- * all JavaFM Nodes, plots, and GUIs.
- *
- * @author jkunimune
- */
-package gui;
+package maths;
+
+public enum Operator {
+
+	ADD, SUBTRACT, MULTIPLY, DIVIDE, POWER, ROOT, LOGBASE, CROSS, DOT,
+	ABS_VALUE, TRANSVERSE, INVERSE, SIN, COS, TAN, CSC, SEC, COT, ASIN, ACOS,
+	ATAN, ACSC, ASEC, ACOT, SINH, COSH, TANH, CSCH, SECH, COTH, ASINH, ACOSH,
+	ATANH, ACSCH, ASECH, ACOTH, FUNC, PARENTHESES, NULL;
+
+}
