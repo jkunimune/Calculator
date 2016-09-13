@@ -3,6 +3,7 @@
  */
 package maths;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,6 +13,22 @@ import java.util.List;
  */
 public class Matrix extends Expression {
 
-	List<Vector> columns;
+	private List<Vector> columns;
+	
+	
+	
+	public Matrix(List<Vector> e) {
+		super(Operator.VECTOR, convert(e));
+		columns = e;
+	}
+	
+	
+	
+	public static final List<Expression> convert(List<Vector> lv) {
+		List<Expression> output = new ArrayList<Expression>();
+		for (Vector v: lv)
+			output.add((Expression) v);
+		return output;
+	}
 
 }

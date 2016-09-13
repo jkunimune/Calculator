@@ -31,5 +31,19 @@ package maths;
 public class Variable extends Expression {
 
 	String name;
+	
+	
+	
+	public Variable(String s) {
+		super(Operator.NULL);
+		name = s;
+	}
+	
+	
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 
 }

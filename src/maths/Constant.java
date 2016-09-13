@@ -39,5 +39,22 @@ public class Constant extends Expression {
 	private HashMap<Dimension, Integer> dimensions;
 	
 	private int base;
+	
+	
+	
+	public Constant(double r, double i) {
+		super(Operator.NULL, null);
+		real = r;
+		imag = i;
+		dimensions = new HashMap<Dimension, Integer>();
+		base = 10;
+	}
+	
+	
+	
+	@Override
+	public String toString() {
+		return real+" + "+imag+"i";
+	}
 
 }

@@ -23,7 +23,10 @@
  */
 package maths;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javafx.scene.image.Image;
 
 /**
  * A combination of mathematical symbols and notation that can evaluate to some
@@ -34,8 +37,29 @@ import java.util.List;
  */
 public class Expression {
 
+	public static final Expression parseExpression(String input) {	// create an expression from a String
+		ArrayList<Expression> temp = new ArrayList<Expression>();
+		temp.add(new Variable("four"));
+		temp.add(new Variable("two"));
+		return new Expression(Operator.ADD, temp);
+	}
+	
+	
+	
 	private Operator opr;
 	private List<Expression> args;
+	
+	
+	
+	protected Expression(Operator o) {
+		this(o, new ArrayList<Expression>());
+	}
+	
+	
+	protected Expression(Operator o, List<Expression> r) {
+		opr = o;
+		args = r;
+	}
 	
 	
 	
@@ -46,8 +70,11 @@ public class Expression {
 	
 	
 	public String toString() {
-		// TODO
-		return null;
+		String output = opr.toString();
+		output += "(";
+		for (Expression arg: args)
+			output += arg.toString()+",";
+		return output+")";
 	}
 	
 	
@@ -60,6 +87,12 @@ public class Expression {
 	public int getOutputDimensions() {
 		// TODO
 		return 0;
+	}
+
+
+	public Image formatted() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

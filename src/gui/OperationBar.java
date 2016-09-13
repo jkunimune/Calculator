@@ -31,7 +31,6 @@ import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitMenuButton;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 
 /**
@@ -66,15 +65,7 @@ public class OperationBar {
 		final EventHandler<ActionEvent> handler =
 				new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				if (event.getSource() instanceof MenuItem) {
-					final MenuItem source = (MenuItem) event.getSource();
-					buttonRespond(source.getText());
-				}
-				else if (event.getSource() instanceof SplitMenuButton) {
-					final SplitMenuButton source =
-							(SplitMenuButton) event.getSource();
-					buttonRespond(source.getText());
-				}
+				handleAction(event);
 			}
 		};
 		
@@ -109,6 +100,19 @@ public class OperationBar {
 	
 	private void buttonRespond(String button) {
 		cmd.typeText(button);
+	}
+	
+	
+	private void handleAction(ActionEvent event) {
+		if (event.getSource() instanceof MenuItem) {
+			final MenuItem source = (MenuItem) event.getSource();
+			buttonRespond(source.getText());
+		}
+		else if (event.getSource() instanceof SplitMenuButton) {
+			final SplitMenuButton source =
+					(SplitMenuButton) event.getSource();
+			buttonRespond(source.getText());
+		}
 	}
 
 }

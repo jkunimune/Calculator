@@ -33,6 +33,8 @@ import java.util.List;
  */
 public class Vector extends Expression {
 
-	List<Expression> components;
+	public Vector(List<Expression> e) {
+		super(Operator.VECTOR, e);
+	}
 
 }

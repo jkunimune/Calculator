@@ -33,6 +33,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import maths.Expression;
 
 /**
  * The set of Nodes that manages basic user input and memory.
@@ -47,6 +48,8 @@ public class CommandLine {
 	
 	private VBox container;
 	
+	private Expression currentMath;
+	
 	
 	
 	public CommandLine() {
@@ -59,12 +62,12 @@ public class CommandLine {
 		cmdLine = new TextField();
 		cmdLine.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				evaluate(((TextField) event.getSource()).getText());
+				evaluate();
 			}
 		});
 		cmdLine.textProperty().addListener(new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				display(newValue);
+				update(newValue);
 			}
 		});
 		container.getChildren().add(cmdLine);
@@ -90,17 +93,20 @@ public class CommandLine {
 	}
 	
 	
-	private void evaluate(String input) {
-		history.appendText("\n"+input);
-		history.appendText("\n\t= 42");
-		cmdLine.clear();
+	private void evaluate() {	// called when enter is pressed
+		history.appendText("\n"+cmdLine.getText());	// write the current line to history
+		final Expression ans = currentMath.simplified();	// evaluate the expression
+		history.appendText("\n\t= "+ans.toString());	// write the answer
+		cmdLine.clear();	// empty the command line
 	}
 	
 	
-	private void display(String input) {
+	private void update(String input) {	// called when something is typed
+		currentMath = Expression.parseExpression(input);
+		
 		final GraphicsContext g = displaySpace.getGraphicsContext2D();
 		g.clearRect(0, 0, displaySpace.getWidth(), displaySpace.getHeight());
-		g.fillText(Double.toString(Math.random()), 15, 15);
+		g.drawImage(currentMath.formatted(), 0, 0);
 	}
 
 }
