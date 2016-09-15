@@ -34,6 +34,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import maths.Expression;
+import maths.Notation;
 
 /**
  * The set of Nodes that manages basic user input and memory.
@@ -74,6 +75,8 @@ public class CommandLine {
 		
 		displaySpace = new Canvas(500, 50);
 		container.getChildren().add(displaySpace);
+		
+		currentMath = Expression.NULL;
 	}
 	
 	
@@ -102,7 +105,7 @@ public class CommandLine {
 	
 	
 	private void update(String input) {	// called when something is typed
-		currentMath = Expression.parseExpression(input);
+		currentMath = Notation.parseExpression(input);
 		
 		final GraphicsContext g = displaySpace.getGraphicsContext2D();
 		g.clearRect(0, 0, displaySpace.getWidth(), displaySpace.getHeight());
