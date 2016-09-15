@@ -42,8 +42,13 @@ public class Constant extends Expression {
 	
 	
 	
+	public Constant(double r) {
+		this(r, 0);
+	}
+	
+	
 	public Constant(double r, double i) {
-		super(Operator.NULL, null);
+		super(Operator.NULL);
 		real = r;
 		imag = i;
 		dimensions = new HashMap<Dimension, Integer>();
