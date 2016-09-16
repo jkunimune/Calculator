@@ -66,8 +66,25 @@ public class Expression {
 	
 	
 	public Expression simplified() {
-		// TODO
-		return this;
+		List<Expression> simplArgs = new ArrayList<Expression>(args.size());
+		boolean allConstant = true;
+		for (Expression e: args) {	// look at each argument
+			final Expression simple = e.simplified();	// simplify it
+			simplArgs.add(simple);		// and store the simpler value
+			if (!(simple instanceof Constant))	// if it still contains unknowns
+				allConstant = false;	// we lose our ability to evaluate
+		}
+		
+		if (allConstant)	// if possible,
+			return evaluate(opr, simplArgs);	// evaluate this expression
+		else
+			return new Expression(opr, simplArgs);
+	}
+	
+	
+	public Image formatted() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	
@@ -80,21 +97,104 @@ public class Expression {
 	}
 	
 	
-	public int getNumInputs() {
-		// TODO
-		return 0;
-	}
 	
-	
-	public int getNumOutputs() {
-		// TODO
-		return 0;
-	}
-	
-	
-	public Image formatted() {
-		// TODO Auto-generated method stub
-		return null;
+	private static Constant evaluate(Operator opr, List<Expression> expLst) {
+		Constant[] args = new Constant[expLst.size()];	// start by converting
+		for (int i = 0; i < expLst.size(); i ++)		// the arguments to
+			args[i] = (Constant) expLst.get(i);			// constants
+		
+		switch (opr) {	// then call the appropriate method
+		case NULL:
+			return null;
+		case ERROR:
+			return new Constant(Double.NaN);
+		case ADD:
+			return args[0].plus(args[1]);
+		case SUBTRACT:
+			return args[0].plus(args[1].negative());
+		case NEGATE:
+			return args[0].negative();
+		case MULTIPLY:
+			return args[0].times(args[1]);
+		case DIVIDE:
+			return args[0].times(args[1].recip());
+		case MODULO:
+			return args[0].mod(args[1]);
+		case POWER:
+			return args[0].ln().times(args[1]).exp();
+		case ROOT:
+			return args[0].ln().times(args[1].recip()).exp();
+		case LN:
+			return args[0].ln();
+		case LOGBASE:
+			return args[1].ln().times(args[0].ln().recip());
+		case SIN:
+			return args[0].sin();
+		case COS:
+			return args[0].cos();
+		case TAN:
+			return args[0].sin();
+		case CSC:
+			return args[0].sin().recip();
+		case SEC:
+			return args[0].sin().recip();
+		case COT:
+			return args[0].tan().recip();
+		case ASIN:
+			return args[0].asin();
+		case ACOS:
+			return args[0].acos();
+		case ATAN:
+			return args[0].atan();
+		case ACSC:
+			return args[0].recip().asin();
+		case ASEC:
+			return args[0].recip().acos();
+		case ACOT:
+			return args[0].recip().atan();
+		case SINH:
+			return args[0].sinh();
+		case COSH:
+			return args[0].cosh();
+		case TANH:
+			return args[0].tanh();
+		case CSCH:
+			return args[0].sinh().recip();
+		case SECH:
+			return args[0].cosh().recip();
+		case COTH:
+			return args[0].tanh().recip();
+		case ASINH:
+			return args[0].asinh();
+		case ACOSH:
+			return args[0].acosh();
+		case ATANH:
+			return args[0].atanh();
+		case ACSCH:
+			return args[0].recip().asinh();
+		case ASECH:
+			return args[0].recip().acosh();
+		case ACOTH:
+			return args[0].recip().atanh();
+		case CROSS:
+			throw new RuntimeException("not implemented");
+		case DOT:
+			throw new RuntimeException("not implemented");
+		case ABSOLUTE:
+			return args[0].abs();
+		case TRANSVERSE:
+			throw new RuntimeException("not implemented");
+		case INVERSE:
+			throw new RuntimeException("not implemented");
+		case DETERMINANT:
+			throw new RuntimeException("not implemented");
+		case FUNC:
+			throw new RuntimeException("not implemented");
+		case PARENTHESES:
+			return args[0];
+		default:
+			return null;
+		}
 	}
 
 }

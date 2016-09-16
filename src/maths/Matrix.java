@@ -13,18 +13,30 @@ import java.util.List;
  */
 public class Matrix extends Expression {
 
-	private List<Vector> columns;
+	private List<Vector> rows;
 	
 	
 	
 	public Matrix(List<Vector> e) {
-		super(Operator.VECTOR, convert(e));
-		columns = e;
+		super(Operator.NULL, convert(e));
+		rows = e;
 	}
 	
 	
 	
-	public static final List<Expression> convert(List<Vector> lv) {
+	@Override
+	public String toString() {
+		String output = "[";
+		for (Vector row: rows) {
+			output += row.toString();
+			output += "\n";
+		}
+		return output;
+	}
+	
+	
+	
+	public static final List<Expression> convert(List<Vector> lv) {	// casts List<Vector> to List<Expression>
 		List<Expression> output = new ArrayList<Expression>();
 		for (Vector v: lv)
 			output.add((Expression) v);

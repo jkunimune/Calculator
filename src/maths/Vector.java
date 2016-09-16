@@ -34,7 +34,7 @@ import java.util.List;
 public class Vector extends Expression {
 
 	public Vector(List<Expression> e) {
-		super(Operator.VECTOR, e);
+		super(Operator.NULL, e);
 	}
 
 }
