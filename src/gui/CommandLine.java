@@ -49,11 +49,12 @@ public class CommandLine {
 	
 	private VBox container;
 	
+	private Workspace workspace;
 	private Expression currentMath;
 	
 	
 	
-	public CommandLine() {
+	public CommandLine(Workspace ws) {
 		container = new VBox();
 		
 		history = new TextArea();
@@ -67,7 +68,8 @@ public class CommandLine {
 			}
 		});
 		cmdLine.textProperty().addListener(new ChangeListener<String>() {
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+			public void changed(ObservableValue<? extends String> observable,
+					String oldValue, String newValue) {
 				update(newValue);
 			}
 		});
@@ -76,7 +78,10 @@ public class CommandLine {
 		displaySpace = new Canvas(500, 50);
 		container.getChildren().add(displaySpace);
 		
+		workspace = ws;
 		currentMath = Expression.NULL;
+		
+		workspace.put("z", Notation.parseExpression("x+y"));
 	}
 	
 	
@@ -98,7 +103,7 @@ public class CommandLine {
 	
 	private void evaluate() {	// called when enter is pressed
 		history.appendText("\n"+cmdLine.getText());	// write the current line to history
-		final Expression ans = currentMath.simplified();	// evaluate the expression
+		final Expression ans = currentMath.simplified(workspace.getHash());	// evaluate the expression
 		history.appendText("\n\t= "+ans.toString());	// write the answer
 		cmdLine.clear();	// empty the command line
 	}

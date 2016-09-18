@@ -74,7 +74,7 @@ public class Constant extends Expression {
 	
 	
 	@Override
-	public Expression simplified() {
+	public Expression simplified(HashMap<String, Expression> h) {
 		return this;	// Constants are already simplified
 	}
 	

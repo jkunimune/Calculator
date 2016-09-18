@@ -25,6 +25,7 @@ package maths;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javafx.scene.image.Image;
@@ -65,11 +66,11 @@ public class Expression {
 	
 	
 	
-	public Expression simplified() {
+	public Expression simplified(HashMap<String, Expression> heap) {
 		List<Expression> simplArgs = new ArrayList<Expression>(args.size());
 		boolean allConstant = true;
 		for (Expression e: args) {	// look at each argument
-			final Expression simple = e.simplified();	// simplify it
+			final Expression simple = e.simplified(heap);	// simplify it
 			simplArgs.add(simple);		// and store the simpler value
 			if (!(simple instanceof Constant))	// if it still contains unknowns
 				allConstant = false;	// we lose our ability to evaluate
@@ -105,7 +106,7 @@ public class Expression {
 		
 		switch (opr) {	// then call the appropriate method
 		case NULL:
-			return null;
+			throw new IllegalArgumentException("Please override evaluate");
 		case ERROR:
 			return new Constant(Double.NaN);
 		case ADD:
@@ -193,7 +194,7 @@ public class Expression {
 		case PARENTHESES:
 			return args[0];
 		default:
-			return null;
+			throw new IllegalArgumentException(opr.toString());
 		}
 	}
 

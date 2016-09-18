@@ -23,6 +23,8 @@
  */
 package maths;
 
+import java.util.HashMap;
+
 /**
  * An expression whose value is unknown, but may be found in the heap.
  *
@@ -39,6 +41,15 @@ public class Variable extends Expression {
 		name = s;
 	}
 	
+	
+	
+	@Override
+	public Expression simplified(HashMap<String, Expression> heap) {
+		if (heap.containsKey(name))
+			return heap.get(name).simplified(heap);
+		else
+			return this;
+	}
 	
 	
 	@Override

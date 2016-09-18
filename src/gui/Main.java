@@ -45,6 +45,7 @@ public class Main extends Application {
 	
 	private OperationBar toolbar;
 	private CommandLine cmdLine;
+	private Workspace workspace;
 	
 	
 	
@@ -56,7 +57,8 @@ public class Main extends Application {
 		HBox layout = new HBox();
 		root.getChildren().add(layout);
 		
-		cmdLine = new CommandLine();
+		workspace = new Workspace();
+		cmdLine = new CommandLine(workspace);
 		toolbar = new OperationBar(cmdLine);
 		layout.getChildren().add(toolbar.getNode());
 		layout.getChildren().add(cmdLine.getNode());
