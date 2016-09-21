@@ -35,6 +35,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import maths.Expression;
 import maths.Notation;
+import maths.Variable;
 
 /**
  * The set of Nodes that manages basic user input and memory.
@@ -43,6 +44,8 @@ import maths.Notation;
  */
 public class CommandLine {
 
+	public static final int PREF_WIDTH = 400;
+	public static final int IMG_HEIGHT = 50;
 	private TextArea history;
 	private TextField cmdLine;
 	private Canvas displaySpace;
@@ -56,6 +59,7 @@ public class CommandLine {
 	
 	public CommandLine(Workspace ws) {
 		container = new VBox();
+		container.setPrefWidth(PREF_WIDTH);
 		
 		history = new TextArea();
 		history.setEditable(false);
@@ -75,13 +79,11 @@ public class CommandLine {
 		});
 		container.getChildren().add(cmdLine);
 		
-		displaySpace = new Canvas(500, 50);
+		displaySpace = new Canvas(PREF_WIDTH, IMG_HEIGHT);
 		container.getChildren().add(displaySpace);
 		
 		workspace = ws;
 		currentMath = Expression.NULL;
-		
-		workspace.put("z", Notation.parseExpression("x+y"));
 	}
 	
 	
@@ -98,11 +100,25 @@ public class CommandLine {
 	
 	public void requestFocus() {
 		cmdLine.requestFocus();
+		cmdLine.positionCaret(cmdLine.getLength());
 	}
 	
 	
 	private void evaluate() {	// called when enter is pressed
-		history.appendText("\n"+cmdLine.getText());	// write the current line to history
+		final String text = cmdLine.getText();
+		history.appendText("\n"+text);	// write the current line to history
+		
+		int i;
+		if ((i = text.indexOf("=")) >= 0) {	// if there is an = operator
+			currentMath = Notation.parseExpression(text.substring(i+1));	// assign a new variable
+			Expression left = Notation.parseExpression(text.substring(0,i));
+			if (left instanceof Variable)
+				workspace.put(left.toString(), currentMath);
+			else {
+				history.appendText("\nERR: Left side of = must be a variable!");	// unless error
+			}	// TODO: this should eventually do boolean stuff
+		}
+		
 		final Expression ans = currentMath.simplified(workspace.getHash());	// evaluate the expression
 		history.appendText("\n\t= "+ans.toString());	// write the answer
 		cmdLine.clear();	// empty the command line
@@ -110,7 +126,9 @@ public class CommandLine {
 	
 	
 	private void update(String input) {	// called when something is typed
-		currentMath = Notation.parseExpression(input);
+		try {
+			currentMath = Notation.parseExpression(input);
+		} catch (IllegalArgumentException e) {}
 		
 		final GraphicsContext g = displaySpace.getGraphicsContext2D();
 		g.clearRect(0, 0, displaySpace.getWidth(), displaySpace.getHeight());

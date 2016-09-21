@@ -113,6 +113,7 @@ public class OperationBar {
 					(SplitMenuButton) event.getSource();
 			buttonRespond(source.getText());
 		}
+		cmd.requestFocus();
 	}
 
 }

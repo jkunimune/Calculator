@@ -62,6 +62,7 @@ public class Main extends Application {
 		toolbar = new OperationBar(cmdLine);
 		layout.getChildren().add(toolbar.getNode());
 		layout.getChildren().add(cmdLine.getNode());
+		layout.getChildren().add(workspace.getNode());
 		
 		cmdLine.requestFocus();
 		

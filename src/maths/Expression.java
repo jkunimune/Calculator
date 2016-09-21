@@ -43,8 +43,8 @@ public class Expression {
 	public static final Expression ERROR = new Expression(Operator.ERROR);	// used when an expression cannot be read
 	
 	
-	private Operator opr;
-	private List<Expression> args;
+	private final Operator opr;
+	private final List<Expression> args;
 	
 	
 	

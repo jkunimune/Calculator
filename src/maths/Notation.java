@@ -144,7 +144,7 @@ public class Notation {
 						parse(tokens.subList(1, n-1)));
 		}
 		
-		return Expression.ERROR;
+		throw new IllegalArgumentException(tokens.toString());
 	}
 	
 	
