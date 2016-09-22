@@ -95,8 +95,9 @@ public class Workspace {
 	
 	
 	public void put(String s, Expression e) {
+		if (!heap.containsKey(s))
+			varNames.add(s);
 		heap.put(s, e);
-		varNames.add(s);
 	}
 	
 	

@@ -106,29 +106,34 @@ public class CommandLine {
 	
 	private void evaluate() {	// called when enter is pressed
 		final String text = cmdLine.getText();
+		Expression math = currentMath;
+		cmdLine.clear();
 		history.appendText("\n"+text);	// write the current line to history
+		
+		if (text.isEmpty())	return;
 		
 		int i;
 		if ((i = text.indexOf("=")) >= 0) {	// if there is an = operator
-			currentMath = Notation.parseExpression(text.substring(i+1));	// assign a new variable
+			math = Notation.parseExpression(text.substring(i+1));	// assign a new variable
 			Expression left = Notation.parseExpression(text.substring(0,i));
 			if (left instanceof Variable)
-				workspace.put(left.toString(), currentMath);
-			else {
-				history.appendText("\nERR: Left side of = must be a variable!");	// unless error
-			}	// TODO: this should eventually do boolean stuff
+				workspace.put(left.toString(), math);
+			else
+				history.appendText("\nERR: Left side of = must be a variable!");	// unless error TODO: this should eventually do boolean stuff
+			return;
 		}
 		
-		final Expression ans = currentMath.simplified(workspace.getHash());	// evaluate the expression
+		final Expression ans = math.simplified(workspace.getHash());	// evaluate the expression
 		history.appendText("\n\t= "+ans.toString());	// write the answer
-		cmdLine.clear();	// empty the command line
 	}
 	
 	
 	private void update(String input) {	// called when something is typed
 		try {
 			currentMath = Notation.parseExpression(input);
-		} catch (IllegalArgumentException e) {}
+		} catch (IllegalArgumentException e) {
+			System.err.println("Could not parse "+input);
+		}
 		
 		final GraphicsContext g = displaySpace.getGraphicsContext2D();
 		g.clearRect(0, 0, displaySpace.getWidth(), displaySpace.getHeight());

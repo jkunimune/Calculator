@@ -1,0 +1,21 @@
+toString()
+formatted()
+Functions
+Comparison
+Vectors
+Matrices
+2-D plots
+N-D plots
+Auto-D plots
+Adjustable plots
+Units
+Unit conversions
+Radices
+Degree/Radian options
+Derivatives
+Intersections
+Zeros
+Integral approximations
+History manipulation (up key)
+Taylor polynomial
+Combinatorics

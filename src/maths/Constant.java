@@ -41,6 +41,7 @@ public class Constant extends Expression {
 	public static final Constant ONE = new Constant(1);
 	public static final Constant NEG_ONE = new Constant(-1);
 	public static final Constant I = new Constant(0,1);
+	public static final Constant TEN = new Constant(10);
 	
 	
 	
@@ -59,7 +60,7 @@ public class Constant extends Expression {
 	
 	
 	public Constant(double r, double i) {
-		super(Operator.NULL);
+		super(Operator.ADD);
 		real = r;
 		imag = i;
 		dimensions = new HashMap<Dimension, Integer>();
@@ -81,10 +82,23 @@ public class Constant extends Expression {
 	
 	@Override
 	public String toString() {
-		if (radix == 10)
-			return real+" + "+imag+"i";
+		final double roundReal = Math.round(real*1000000000)/1000000000.0;	// cut the precision to one billionth
+		final double roundImag = Math.round(imag*1000000000)/1000000000.0;
+		
+		if (roundImag == 0)	// real numbers need no i component
+			return format(roundReal, radix);
+		else if (roundReal == 0)	// imaginary numbers need no real component
+				return format(roundImag, radix)+"i";	// integers need no decimals
 		else
-			return "blah blah blah, base not 10 stuff";
+			return format(roundReal, radix)+"+"+format(roundImag, radix)+"i";
+	}
+	
+	
+	private String format(double d, int r) {
+		if ((int) d == d)
+			return Integer.toString((int) d);
+		else
+			return Double.toString(d);
 	}
 	
 	

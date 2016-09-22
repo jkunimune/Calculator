@@ -47,6 +47,7 @@ public class OperationBar {
 			{"cos","sec","arccos","arcsec","cosh","sech","arccosh","arcsech"},
 			{"tan","cot","arctan","arccot","tanh","coth","arctanh","arccoth"},
 			{"ln","log","log2","e^","10^","2^"},
+			{"\u00d7"},
 			{"\u03b4/\u03b4","\u222B","Tn"},
 			{},
 			{"\u2192","^","\u2022","\u2022\u2022"},
