@@ -90,7 +90,7 @@ public class Expression {
 	
 	
 	public String toString() {
-		switch (opr) {
+		/*switch (opr) {
 		case NULL:
 			return "\u2205";
 		case ERROR:
@@ -130,7 +130,10 @@ public class Expression {
 		case INVERSE:
 			return args.get(0)+"^(-1)";
 		case ROOT:
-			return args.get(1)+"\u221A("+args.get(1)+")";
+			if (args.get(1).equals(Constant.TWO))
+				return "\u221A("+args.get(0)+")";
+			else
+				return args.get(1)+"\u221A("+args.get(0)+")";
 		case LN:
 			return "ln("+args.get(0)+")";
 		case LOGBASE:
@@ -143,13 +146,13 @@ public class Expression {
 		case COS:
 			return "cos("+args.get(0)+")";
 		case TAN:
-			return "tan"+args.get(0)+")";
+			return "tan("+args.get(0)+")";
 		case CSC:
 			return "csc("+args.get(0)+")";
 		case SEC:
 			return "sec("+args.get(0)+")";
 		case COT:
-			return "cot"+args.get(0)+")";
+			return "cot("+args.get(0)+")";
 		case ASIN:
 			return "arcsin("+args.get(0)+")";
 		case ACOS:
@@ -187,12 +190,18 @@ public class Expression {
 		case ACOTH:
 			return "arccoth("+args.get(0)+")";
 		case ABSOLUTE:
-			return "|("+args.get(0)+")|";
-		case FUNC:
+			return "|"+args.get(0)+"|";
+		case ARGUMENT:
+			return "arg("+args.get(0)+")";
+		case FUNCTION:
 			return args.get(0)+"("+args.get(1)+")";
 		default:
 			throw new IllegalArgumentException(opr.toString());
-		}
+		}*/
+		String out = opr+"(";
+		for (Expression arg: args)
+			out += arg+",";
+		return out+")";
 	}
 	
 	
@@ -224,6 +233,11 @@ public class Expression {
 		case ROOT:
 			return args[0].ln().times(args[1].recip()).exp();
 		case LN:
+			System.out.println(args[0]);
+			System.out.println(args[0].getClass());
+			System.out.println(args[0].real+" "+args[0].imag);
+			System.out.println(args[0].ln());
+			System.out.println();
 			return args[0].ln();
 		case LOGBASE:
 			return args[1].ln().times(args[0].ln().recip());
@@ -232,7 +246,7 @@ public class Expression {
 		case COS:
 			return args[0].cos();
 		case TAN:
-			return args[0].sin();
+			return args[0].tan();
 		case CSC:
 			return args[0].sin().recip();
 		case SEC:
@@ -279,11 +293,13 @@ public class Expression {
 			throw new RuntimeException("not implemented");
 		case ABSOLUTE:
 			return args[0].abs();
+		case ARGUMENT:
+			return args[0].arg();
 		case TRANSVERSE:
 			throw new RuntimeException("not implemented");
 		case INVERSE:
 			throw new RuntimeException("not implemented");
-		case FUNC:
+		case FUNCTION:
 			throw new RuntimeException("not implemented");
 		case PARENTHESES:
 			return args[0];

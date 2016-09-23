@@ -30,25 +30,13 @@ package maths;
  */
 public enum Operator {
 
-	NULL(0), ERROR(0), PARENTHESES(0),
-	ADD(1), SUBTRACT(1),
-	NEGATE(2), MULTIPLY(2), DIVIDE(2), MODULO(2), CROSS(2),
-	POWER(3), TRANSVERSE(3), INVERSE(3),
-	ROOT(5), LN(5), LOGBASE(5),SIN(5), COS(5), TAN(5), CSC(5), SEC(5),
-	COT(5), ASIN(5), ACOS(5), ATAN(5), ACSC(5), ASEC(5), ACOT(5), SINH(5),
-	COSH(5), TANH(5), CSCH(5), SECH(5), COTH(5), ASINH(5), ACOSH(5), ATANH(5),
-	ACSCH(5), ASECH(5), ACOTH(5), ABSOLUTE(5), FUNC(5);
-	
-	
-	
-	private byte rank;
-	
-	private Operator(int r) {
-		rank = (byte)r;
-	}
-	
-	public byte getRank() {
-		return rank;
-	}
+	NULL, ERROR, PARENTHESES,
+	ADD, SUBTRACT,
+	NEGATE, MULTIPLY, DIVIDE, MODULO, CROSS,
+	POWER, TRANSVERSE, INVERSE,
+	ROOT, LN, LOGBASE, SIN, COS, TAN, CSC, SEC,
+	COT, ASIN, ACOS, ATAN, ACSC, ASEC, ACOT, SINH,
+	COSH, TANH, CSCH, SECH, COTH, ASINH, ACOSH, ATANH,
+	ACSCH, ASECH, ACOTH, ABSOLUTE, ARGUMENT, FUNCTION;
 
 }

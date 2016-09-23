@@ -1,4 +1,3 @@
-toString()
 formatted()
 Functions
 Comparison
@@ -19,3 +18,4 @@ Integral approximations
 History manipulation (up key)
 Taylor polynomial
 Combinatorics
+Help button

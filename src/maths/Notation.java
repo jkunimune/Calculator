@@ -50,11 +50,11 @@ public class Notation {
 		List<String> tokens = new ArrayList<String>();
 		
 		for (int i = 0; i < input.length(); i ++) {
-			if (input.charAt(i) == ' ')
+			if (input.charAt(i) == ' ')	// spaces are ignored
 				continue;
-			else if (isSymbol(input.charAt(i)) && input.charAt(i) != ' ')
+			else if (isSymbol(input.charAt(i)))	// symbols are taken one at a time
 				tokens.add(input.substring(i,i+1));
-			else if (isDigit(input.charAt(i))) {
+			else if (isDigit(input.charAt(i))) {	// digits string together into numbers
 				int j = i+1;
 				while (j < input.length() && isDigit(input.charAt(j)))
 					j ++;
@@ -62,14 +62,15 @@ public class Notation {
 				i = j-1;
 			}
 			else {
-				int j = i+1;
-				while (j < input.length() && !isSymbol(input.charAt(j)))
+				int j = i+1;	// a letter followed by letters, digits, or open parentheses
+				while (j < input.length() && !isSymbol(input.charAt(j)))	// make variables
+					j ++;
+				if (j < input.length() && isOpenP(input.charAt(j)))
 					j ++;
 				tokens.add(input.substring(i,j));
 				i = j-1;
 			}
 		}
-		
 		return parse(tokens);
 	}
 	
@@ -96,9 +97,9 @@ public class Notation {
 				
 				if (i > 0 && level == 0)
 					inParentheses = false;
-				if (isOpenP(s.charAt(0)))
+				if (isOpenP(s.charAt(s.length()-1)))
 					level ++;
-				if (isCloseP(s.charAt(0)))
+				if (isCloseP(s.charAt(s.length()-1)))
 					level --;
 				
 				if (level == 0) {
@@ -108,9 +109,10 @@ public class Notation {
 									parse(tokens.subList(0, i)),
 									parse(tokens.subList(i+1,n)));
 						else if (s.equals("-"))
-							return new Expression(Operator.SUBTRACT,
-									parse(tokens.subList(0, i)),
-									parse(tokens.subList(i+1,n)));
+							if (i > 0 && !isOperator(tokens.get(i-1).charAt(0)))	// beware of negation pretending to be subtraction
+								return new Expression(Operator.SUBTRACT,
+										parse(tokens.subList(0, i)),
+										parse(tokens.subList(i+1,n)));
 					}
 					if (rank == 1) {	// geometric
 						if (s.equals("*"))
@@ -139,9 +141,90 @@ public class Notation {
 				}
 			}
 			
-			if (inParentheses)	// brackets
-				return new Expression(Operator.PARENTHESES,
-						parse(tokens.subList(1, n-1)));
+			if (rank == 1 && tokens.get(0).equals("-"))	// the special negation operator
+				return new Expression(Operator.NEGATE,
+						parse(tokens.subList(1, tokens.size())));
+			
+			if (inParentheses) {	// brackets
+				final String funcString = tokens.get(0).substring(0,
+						tokens.get(0).length()-1);
+				final Expression interior = parse(tokens.subList(1, n-1));
+				
+				if (funcString.isEmpty())
+					return new Expression(Operator.PARENTHESES, interior);
+				else if (funcString.equals("ln"))
+					return new Expression(Operator.LN, interior);
+				else if (funcString.equals("sin"))
+					return new Expression(Operator.SIN, interior);
+				else if (funcString.equals("cos"))
+					return new Expression(Operator.COS, interior);
+				else if (funcString.equals("tan"))
+					return new Expression(Operator.TAN, interior);
+				else if (funcString.equals("csc"))
+					return new Expression(Operator.CSC, interior);
+				else if (funcString.equals("sec"))
+					return new Expression(Operator.SEC, interior);
+				else if (funcString.equals("cot"))
+					return new Expression(Operator.COT, interior);
+				else if (funcString.equals("asin") ||
+						funcString.equals("arcsin"))
+					return new Expression(Operator.ASIN, interior);
+				else if (funcString.equals("acos") ||
+						funcString.equals("arccos"))
+					return new Expression(Operator.ACOS, interior);
+				else if (funcString.equals("atan") ||
+						funcString.equals("arctan"))
+					return new Expression(Operator.ATAN, interior);
+				else if (funcString.equals("acsc") ||
+						funcString.equals("arccsc"))
+					return new Expression(Operator.ACSC, interior);
+				else if (funcString.equals("asec") ||
+						funcString.equals("arcsec"))
+					return new Expression(Operator.ASEC, interior);
+				else if (funcString.equals("acot") ||
+						funcString.equals("arccot"))
+					return new Expression(Operator.ACOT, interior);
+				else if (funcString.equals("sinh"))
+					return new Expression(Operator.SINH, interior);
+				else if (funcString.equals("cosh"))
+					return new Expression(Operator.COSH, interior);
+				else if (funcString.equals("tanh"))
+					return new Expression(Operator.TANH, interior);
+				else if (funcString.equals("csch"))
+					return new Expression(Operator.CSCH, interior);
+				else if (funcString.equals("sech"))
+					return new Expression(Operator.SECH, interior);
+				else if (funcString.equals("coth"))
+					return new Expression(Operator.COTH, interior);
+				else if (funcString.equals("asinh") ||
+						funcString.equals("arcsinh"))
+					return new Expression(Operator.ASINH, interior);
+				else if (funcString.equals("acosh") ||
+						funcString.equals("arccosh"))
+					return new Expression(Operator.ACOSH, interior);
+				else if (funcString.equals("atanh") ||
+						funcString.equals("arctanh"))
+					return new Expression(Operator.ATANH, interior);
+				else if (funcString.equals("acsch") ||
+						funcString.equals("arccsch"))
+					return new Expression(Operator.ACSCH, interior);
+				else if (funcString.equals("asech") ||
+						funcString.equals("arcsech"))
+					return new Expression(Operator.ASECH, interior);
+				else if (funcString.equals("acoth") ||
+						funcString.equals("arccoth"))
+					return new Expression(Operator.ACOTH, interior);
+				else if (funcString.equals("abs") || funcString.equals("norm"))
+					return new Expression(Operator.ABSOLUTE, interior);
+				else if (funcString.equals("arg"))
+					return new Expression(Operator.ARGUMENT, interior);
+				else if (funcString.equals("sqrt"))
+					return new Expression(Operator.ROOT,
+							interior, Constant.TWO);
+				else
+					return new Expression(Operator.FUNCTION,
+							new Variable(funcString), interior);
+			}
 		}
 		
 		throw new IllegalArgumentException(tokens.toString());

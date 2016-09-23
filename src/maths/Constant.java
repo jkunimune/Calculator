@@ -41,12 +41,13 @@ public class Constant extends Expression {
 	public static final Constant ONE = new Constant(1);
 	public static final Constant NEG_ONE = new Constant(-1);
 	public static final Constant I = new Constant(0,1);
+	public static final Constant TWO = new Constant(2);
 	public static final Constant TEN = new Constant(10);
 	
 	
 	
-	private double real;
-	private double imag;
+	double real;
+	double imag;
 	
 	private HashMap<Dimension, Integer> dimensions;
 	
@@ -131,7 +132,7 @@ public class Constant extends Expression {
 	}
 	
 	public Constant sqrt() {
-		return this.times(new Constant(0.5).ln()).exp();
+		return this.ln().times(Constant.TWO.recip()).exp();
 	}
 	
 	public Constant exp() {
@@ -141,11 +142,11 @@ public class Constant extends Expression {
 	
 	public Constant ln() {
 		return new Constant(Math.log(Math.hypot(real, imag)),
-				Math.atan2(imag, real));
+				atan2(imag, real));
 	}
 	
 	public Constant sin() {	// yeah, I'm defining sin in terms of sinh!
-		return this.rot90(1).sinh();	// what of it?!
+		return this.rot90(1).sinh().rot90(-1);	// what of it?!
 	}
 	
 	public Constant cos() {
@@ -153,11 +154,11 @@ public class Constant extends Expression {
 	}
 	
 	public Constant tan() {
-		return this.rot90(1).tanh();
+		return this.rot90(1).tanh().rot90(-1);
 	}
 	
 	public Constant asin() {
-		return this.asinh().rot90(-1);
+		return this.rot90(1).asinh().rot90(-1);
 	}
 	
 	public Constant acos() {
@@ -165,7 +166,7 @@ public class Constant extends Expression {
 	}
 	
 	public Constant atan() {
-		return this.atanh().rot90(-1);
+		return this.rot90(1).atanh().rot90(-1);
 	}
 	
 	public Constant sinh() {
@@ -183,17 +184,16 @@ public class Constant extends Expression {
 	}
 	
 	public Constant asinh() {
-		return (this.plus(this.times(this).plus(ONE).sqrt())).ln();
+		return this.times(this).plus(ONE).sqrt().plus(this).ln();
 	}
 	
 	public Constant acosh() {
-		return (this.plus(this.times(this).plus(NEG_ONE).sqrt())).ln();
+		return this.times(this).plus(NEG_ONE).sqrt().plus(this).ln();
 	}
 	
 	public Constant atanh() {
-		final Constant half = new Constant(0.5);
-		return ((this.plus(ONE).ln()).plus(this.plus(NEG_ONE).ln().negative()))
-				.times(half);
+		return ONE.plus(this).times(ONE.plus(this.negative()).recip())
+				.sqrt().ln();
 	}
 	
 	public Constant abs() {
@@ -201,7 +201,7 @@ public class Constant extends Expression {
 	}
 	
 	public Constant arg() {
-		return new Constant(Math.atan2(imag, real));
+		return new Constant(atan2(imag, real));
 	}
 	
 	
@@ -218,6 +218,17 @@ public class Constant extends Expression {
 		default:
 			return null;
 		}
+	}
+	
+	
+	
+	private static double atan2(double y, double x) {	// I had to manually implement this because of issues with negative zero
+		if (x >= 0)
+			return Math.tan(y/x);
+		else if (y >= 0)
+			return Math.tan(y/x) + Math.PI;
+		else
+			return Math.tan(y/x) - Math.PI;
 	}
 
 }

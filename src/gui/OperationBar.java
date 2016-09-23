@@ -43,11 +43,11 @@ public class OperationBar {
 
 	private static final String[][] ITEMS = {
 			{"\u03C0","\u03C4","e","\u03C6"},
-			{"sin","csc","arcsin","arccsc","sinh","csch","arcsinh","arccsch"},
-			{"cos","sec","arccos","arcsec","cosh","sech","arccosh","arcsech"},
-			{"tan","cot","arctan","arccot","tanh","coth","arctanh","arccoth"},
+			{"sin(","csc(","asin(","acsc(","sinh(","csch(","asinh(","acsch("},
+			{"cos(","sec(","acos(","asec(","cosh(","sech(","acosh(","asech("},
+			{"tan(","cot(","atan(","acot(","tanh(","coth(","atanh(","acoth("},
 			{"ln","log","log2","e^","10^","2^"},
-			{"\u00d7"},
+			{"\u221A", "\u00d7"},
 			{"\u03b4/\u03b4","\u222B","Tn"},
 			{},
 			{"\u2192","^","\u2022","\u2022\u2022"},
@@ -87,7 +87,7 @@ public class OperationBar {
 			}
 			smb.setOnAction(handler);
 			smb.setAlignment(Pos.CENTER);
-			smb.setPrefWidth(75);
+			smb.setPrefWidth(80);
 			container.getItems().add(smb);
 		}
 	}
