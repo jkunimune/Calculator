@@ -28,10 +28,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import maths.Expression;
 import maths.Notation;
@@ -45,10 +45,10 @@ import maths.Variable;
 public class CommandLine {
 
 	public static final int PREF_WIDTH = 400;
-	public static final int IMG_HEIGHT = 50;
+	
 	private TextArea history;
 	private TextField cmdLine;
-	private Canvas displaySpace;
+	private ImageView displaySpace;
 	
 	private VBox container;
 	
@@ -79,7 +79,9 @@ public class CommandLine {
 		});
 		container.getChildren().add(cmdLine);
 		
-		displaySpace = new Canvas(PREF_WIDTH, IMG_HEIGHT);
+		container.getChildren().add(new Separator());
+		
+		displaySpace = new ImageView();
 		container.getChildren().add(displaySpace);
 		
 		workspace = ws;
@@ -125,6 +127,7 @@ public class CommandLine {
 		
 		final Expression ans = math.simplified(workspace.getHash());	// evaluate the expression
 		history.appendText("\n\t= "+ans.toString());	// write the answer
+		displaySpace.setImage(ans.toImage());
 	}
 	
 	
@@ -135,9 +138,7 @@ public class CommandLine {
 			System.err.println("Could not parse "+input);
 		}
 		
-		final GraphicsContext g = displaySpace.getGraphicsContext2D();
-		g.clearRect(0, 0, displaySpace.getWidth(), displaySpace.getHeight());
-		g.drawImage(currentMath.formatted(), 0, 0);
+		displaySpace.setImage(currentMath.toImage());
 	}
 
 }

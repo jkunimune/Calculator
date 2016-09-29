@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javafx.scene.image.Image;
+import util.ImgUtils;
 
 /**
  * A combination of mathematical symbols and notation that can evaluate to some
@@ -83,14 +84,132 @@ public class Expression {
 	}
 	
 	
-	public Image formatted() {
-		// TODO Auto-generated method stub
-		return null;
+	public Image toImage() {
+		switch (opr) {
+		case NULL:
+			return ImgUtils.NULL;
+		case ERROR:
+			return ImgUtils.drawString("ERROR");
+		case PARENTHESES:
+			return ImgUtils.wrap("(", args.get(0).toImage(), ")");
+		case ADD:
+			final List<Image> argImgs = new ArrayList<Image>();
+			for (Expression arg: args)
+				argImgs.add(arg.toImage());
+			return ImgUtils.link(argImgs, " + ");
+		case SUBTRACT:
+			return ImgUtils.horzCat(args.get(0).toImage(),
+					ImgUtils.drawString(" - "), args.get(1).toImage());
+		case NEGATE:
+			return ImgUtils.horzCat(ImgUtils.drawString("-"),
+					args.get(0).toImage());
+		case MULTIPLY:
+			Image out1 = args.get(0).toImage();
+			for (int i = 1; i < args.size(); i ++) {
+				if (args.get(i) instanceof Constant &&	// if there are two consecutive constants
+						args.get(i-1) instanceof Constant)
+					out1 = ImgUtils.horzCat(out1, ImgUtils.drawString("*"));	// use asterisk
+				else									// for everything else
+					out1 = ImgUtils.horzCat(out1, ImgUtils.drawString(" "));	// use space
+				out1 = ImgUtils.horzCat(out1, args.get(i).toImage());
+			}
+			return out1;
+		case DIVIDE:
+			return ImgUtils.split(args.get(0).toImage(), args.get(1).toImage());
+		case MODULO:
+			return ImgUtils.horzCat(args.get(0).toImage(),
+					ImgUtils.drawString("%"), args.get(1).toImage());
+		case CROSS:
+			return ImgUtils.horzCat(args.get(0).toImage(),
+					ImgUtils.drawString("\u00d7"), args.get(1).toImage());
+		case POWER:
+			return ImgUtils.horzCat(args.get(0).toImage(),
+					ImgUtils.superS(args.get(1).toImage()));
+		case TRANSVERSE:
+			return ImgUtils.horzCat(args.get(0).toImage(),
+					ImgUtils.superS(ImgUtils.drawString("T")));
+		case INVERSE:
+			return ImgUtils.horzCat(args.get(0).toImage(),
+					ImgUtils.superS(ImgUtils.drawString("-1")));
+		case ROOT:
+			Image out2 = ImgUtils.horzCat(ImgUtils.drawString("\u221A"),
+					ImgUtils.overline(args.get(0).toImage()));
+			if (!args.get(1).equals(Constant.TWO))
+				out2 = ImgUtils.horzCat(ImgUtils.superS(args.get(1).toImage()), out2);
+			return out2;
+		case LN:
+			return ImgUtils.call("ln", args.get(0).toImage());
+		case LOGBASE:
+			if (args.get(0).equals(Constant.TEN))
+				return ImgUtils.call("log", args.get(1).toImage());
+			else
+				return ImgUtils.horzCat(ImgUtils.drawString("log"),
+						ImgUtils.subS(args.get(0).toImage()),
+						ImgUtils.wrap("(", args.get(0).toImage(), ")"));
+		case SIN:
+			return ImgUtils.call("sin", args.get(0).toImage());
+		case COS:
+			return ImgUtils.call("cos", args.get(0).toImage());
+		case TAN:
+			return ImgUtils.call("tan", args.get(0).toImage());
+		case CSC:
+			return ImgUtils.call("csc", args.get(0).toImage());
+		case SEC:
+			return ImgUtils.call("sec", args.get(0).toImage());
+		case COT:
+			return ImgUtils.call("cot", args.get(0).toImage());
+		case ASIN:
+			return ImgUtils.callInv("sin", args.get(0).toImage());
+		case ACOS:
+			return ImgUtils.callInv("cos", args.get(0).toImage());
+		case ATAN:
+			return ImgUtils.callInv("tan", args.get(0).toImage());
+		case ACSC:
+			return ImgUtils.callInv("csc", args.get(0).toImage());
+		case ASEC:
+			return ImgUtils.callInv("sec", args.get(0).toImage());
+		case ACOT:
+			return ImgUtils.callInv("cot", args.get(0).toImage());
+		case SINH:
+			return ImgUtils.call("sinh", args.get(0).toImage());
+		case COSH:
+			return ImgUtils.call("cosh", args.get(0).toImage());
+		case TANH:
+			return ImgUtils.call("tanh", args.get(0).toImage());
+		case CSCH:
+			return ImgUtils.call("csch", args.get(0).toImage());
+		case SECH:
+			return ImgUtils.call("sech", args.get(0).toImage());
+		case COTH:
+			return ImgUtils.call("coth", args.get(0).toImage());
+		case ASINH:
+			return ImgUtils.callInv("sinh", args.get(0).toImage());
+		case ACOSH:
+			return ImgUtils.callInv("cosh", args.get(0).toImage());
+		case ATANH:
+			return ImgUtils.callInv("tanh", args.get(0).toImage());
+		case ACSCH:
+			return ImgUtils.callInv("csch", args.get(0).toImage());
+		case ASECH:
+			return ImgUtils.callInv("sech", args.get(0).toImage());
+		case ACOTH:
+			return ImgUtils.callInv("coth", args.get(0).toImage());
+		case ABSOLUTE:
+			return ImgUtils.wrap("|", args.get(0).toImage(), "|");
+		case ARGUMENT:
+			return ImgUtils.call("arg", args.get(0).toImage());
+		case FUNCTION:
+			return ImgUtils.horzCat(args.get(0).toImage(),
+					ImgUtils.wrap("(", args.get(1).toImage(), ")"));
+		default:
+			break;
+		}
+		return ImgUtils.NULL;
 	}
 	
 	
 	public String toString() {
-		/*switch (opr) {
+		switch (opr) {
 		case NULL:
 			return "\u2205";
 		case ERROR:
@@ -197,11 +316,7 @@ public class Expression {
 			return args.get(0)+"("+args.get(1)+")";
 		default:
 			throw new IllegalArgumentException(opr.toString());
-		}*/
-		String out = opr+"(";
-		for (Expression arg: args)
-			out += arg+",";
-		return out+")";
+		}
 	}
 	
 	
@@ -233,11 +348,6 @@ public class Expression {
 		case ROOT:
 			return args[0].ln().times(args[1].recip()).exp();
 		case LN:
-			System.out.println(args[0]);
-			System.out.println(args[0].getClass());
-			System.out.println(args[0].real+" "+args[0].imag);
-			System.out.println(args[0].ln());
-			System.out.println();
 			return args[0].ln();
 		case LOGBASE:
 			return args[1].ln().times(args[0].ln().recip());

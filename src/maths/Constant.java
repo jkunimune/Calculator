@@ -25,6 +25,9 @@ package maths;
 
 import java.util.HashMap;
 
+import javafx.scene.image.Image;
+import util.ImgUtils;
+
 /**
  * An actual value, with no operators or variables attached. Represented as a
  * complex number with units.
@@ -82,6 +85,12 @@ public class Constant extends Expression {
 	
 	
 	@Override
+	public Image toImage() {
+		return ImgUtils.drawString(this.toString());
+	}
+	
+	
+	@Override
 	public String toString() {
 		final double roundReal = Math.round(real*1000000000)/1000000000.0;	// cut the precision to one billionth
 		final double roundImag = Math.round(imag*1000000000)/1000000000.0;
@@ -91,7 +100,8 @@ public class Constant extends Expression {
 		else if (roundReal == 0)	// imaginary numbers need no real component
 				return format(roundImag, radix)+"i";	// integers need no decimals
 		else
-			return format(roundReal, radix)+"+"+format(roundImag, radix)+"i";
+			return "("+format(roundReal, radix)+"+"+
+					format(roundImag, radix)+"i)";
 	}
 	
 	

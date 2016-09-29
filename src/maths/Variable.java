@@ -25,6 +25,9 @@ package maths;
 
 import java.util.HashMap;
 
+import javafx.scene.image.Image;
+import util.ImgUtils;
+
 /**
  * An expression whose value is unknown, but may be found in the heap.
  *
@@ -49,6 +52,13 @@ public class Variable extends Expression {
 			return heap.get(name).simplified(heap);
 		else
 			return this;
+	}
+	
+	
+	@Override
+	public Image toImage() {
+		return ImgUtils.horzCat(ImgUtils.drawString(name.substring(0, 1), true),
+				ImgUtils.subS(ImgUtils.drawString(name.substring(1))));
 	}
 	
 	
