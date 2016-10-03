@@ -315,7 +315,7 @@ public class Expression {
 		case FUNCTION:
 			return args.get(0)+"("+args.get(1)+")";
 		default:
-			throw new IllegalArgumentException(opr.toString());
+			throw new IllegalArgumentException("Undefined operator: "+opr.toString());
 		}
 	}
 	
@@ -328,7 +328,7 @@ public class Expression {
 		
 		switch (opr) {	// then call the appropriate method
 		case NULL:
-			throw new IllegalArgumentException(expLst.toString());
+			throw new IllegalArgumentException("Null operator: "+expLst);
 		case ERROR:
 			return new Constant(Double.NaN);
 		case ADD:
@@ -414,7 +414,7 @@ public class Expression {
 		case PARENTHESES:
 			return args[0];
 		default:
-			throw new IllegalArgumentException(opr.toString());
+			throw new IllegalArgumentException("Undefined operator: "+opr);
 		}
 	}
 

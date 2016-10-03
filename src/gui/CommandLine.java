@@ -135,7 +135,7 @@ public class CommandLine {
 		try {
 			currentMath = Notation.parseExpression(input);
 		} catch (IllegalArgumentException e) {
-			System.err.println("Could not parse "+input);
+			System.err.println("Could not parse '"+input+"': "+e);
 		}
 		
 		displaySpace.setImage(currentMath.toImage());

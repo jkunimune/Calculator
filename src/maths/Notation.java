@@ -92,15 +92,15 @@ public class Notation {
 		for (byte rank = 0; rank < 3; rank ++) {	// in order of operations
 			int level = 0;
 			boolean inParentheses = true;
-			for (int i = 0; i < n; i ++) {
+			for (int i = n-1; i >= 0; i --) {
 				final String s = tokens.get(i);
 				
-				if (i > 0 && level == 0)
+				if (i < n-1 && level == 0)
 					inParentheses = false;
-				if (isOpenP(s.charAt(s.length()-1)))
-					level ++;
 				if (isCloseP(s.charAt(s.length()-1)))
 					level --;
+				if (isOpenP(s.charAt(s.length()-1)))
+					level ++;
 				
 				if (level == 0) {
 					if (rank == 0) {	// arithmetic
@@ -227,7 +227,7 @@ public class Notation {
 			}
 		}
 		
-		throw new IllegalArgumentException(tokens.toString());
+		throw new IllegalArgumentException("No operators detected in "+tokens);
 	}
 	
 	

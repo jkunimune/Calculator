@@ -49,7 +49,8 @@ public class Variable extends Expression {
 	@Override
 	public Expression simplified(HashMap<String, Expression> heap) {
 		if (heap.containsKey(name))
-			return heap.get(name).simplified(heap);
+			return new Expression(Operator.PARENTHESES,
+					heap.get(name).simplified(heap));
 		else
 			return this;
 	}

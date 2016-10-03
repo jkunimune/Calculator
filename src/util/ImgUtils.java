@@ -40,10 +40,13 @@ import javafx.scene.text.Text;
  */
 public class ImgUtils {
 
+	private static final double DEF_FONT_SIZE = 24;
+	
 	public static final Image NULL = new WritableImage(1,1);
 	
-	private static final Font PLAIN = Font.font("System",24);
-	private static final Font SKEW = Font.font("System",FontPosture.ITALIC,24);
+	private static final Font PLAIN = Font.font("System", DEF_FONT_SIZE);
+	private static final Font ITALIC = Font.font("System", FontPosture.ITALIC,
+			DEF_FONT_SIZE);
 	
 	private static final double LINE_WIDTH = 2;
 	private static final double SPACING = 3;
@@ -55,15 +58,51 @@ public class ImgUtils {
 	
 	
 	public static Image drawString(String s, boolean italics) {
+		return drawString(s, italics, DEF_FONT_SIZE);
+	}
+	
+	
+	public static Image drawString(String s, boolean italics, double size) {
 		final Text txt = new Text(s);
-		if (italics)	txt.setFont(SKEW);
-		else			txt.setFont(PLAIN);
+		if (size == DEF_FONT_SIZE) {
+			if (italics)	txt.setFont(ITALIC);
+			else			txt.setFont(PLAIN);
+		}
+		else {
+			if (italics)	txt.setFont(Font.font("System", FontPosture.ITALIC, size));
+			else			txt.setFont(Font.font("System", FontPosture.REGULAR, size));
+		}
+		
 		final Canvas canvas = new Canvas(			// make a canvas of the
 				txt.getLayoutBounds().getWidth(),	// appropriate size
 				txt.getLayoutBounds().getHeight());
 		final GraphicsContext g = getGraphics(canvas);
 		g.setFont(txt.getFont());
 		g.fillText(s, 0, txt.getBaselineOffset());	// and draw the string
+		return canvas.snapshot(null, null);
+	}
+	
+	
+	public static Image stretchX(Image img, double s) {	// resizes widht
+		final Canvas canvas = new Canvas(s, img.getHeight());
+		final GraphicsContext g = getGraphics(canvas);
+		g.drawImage(img, 0, 0, canvas.getWidth(), canvas.getHeight());
+		return canvas.snapshot(null, null);
+	}
+	
+	
+	public static Image stretchY(Image img, double s) {	// resizes height
+		final Canvas canvas = new Canvas(img.getWidth(), s);
+		final GraphicsContext g = getGraphics(canvas);
+		g.drawImage(img, 0, 0, canvas.getWidth(), canvas.getHeight());
+		return canvas.snapshot(null, null);
+	}
+	
+	
+	public static Image cropTop(Image img, double s) {	// more of a canvas size
+		final Canvas canvas = new Canvas(img.getWidth(), s);
+		final GraphicsContext g = getGraphics(canvas);
+		g.drawImage(img, 0, canvas.getHeight()-img.getHeight());
 		return canvas.snapshot(null, null);
 	}
 	
@@ -81,8 +120,8 @@ public class ImgUtils {
 		final GraphicsContext g = getGraphics(canvas);
 		double curX = 0;
 		for (Image img: images) {
-			g.drawImage(img, curX, 0);	// and add each image
-			curX += img.getWidth();
+			g.drawImage(img, curX, (maxH-img.getHeight())/2);
+			curX += img.getWidth();						// and add each image
 		}
 		
 		return canvas.snapshot(null, null);
@@ -98,12 +137,12 @@ public class ImgUtils {
 				maxW = img.getWidth();
 		}
 		
-		final Canvas canvas = new Canvas(maxW, totH);
+		final Canvas canvas = new Canvas(maxW, totH);	// make a canvas
 		final GraphicsContext g = getGraphics(canvas);
 		double curY = 0;
 		for (Image img: images) {
-			g.drawImage(img, 0, curY);
-			curY += img.getHeight();
+			g.drawImage(img, (maxW-img.getWidth())/2, curY);
+			curY += img.getHeight();					// and add each image
 		}
 		
 		return canvas.snapshot(null, null);
@@ -125,31 +164,45 @@ public class ImgUtils {
 				Math.max(i1.getWidth(), i2.getWidth()) + 2*SPACING,
 				i1.getHeight()+i2.getHeight() + LINE_WIDTH);
 		final GraphicsContext g = getGraphics(canvas);
-		g.drawImage(i1, SPACING, 0);
+		g.drawImage(i1, (canvas.getWidth()-i1.getWidth())/2, 0);
 		g.fillRect(0, i1.getHeight(), canvas.getWidth(), LINE_WIDTH);
-		g.drawImage(i2, SPACING, i1.getHeight() + LINE_WIDTH);
+		g.drawImage(i2,  (canvas.getWidth()-i2.getWidth())/2,
+				i1.getHeight()+LINE_WIDTH);
 		return canvas.snapshot(null, null);
 	}
 	
 	
 	public static Image wrap(String s1, Image img, String s2) {
-		return horzCat(drawString(s1), img, drawString(s2));
+		double size = Math.max(img.getHeight(), DEF_FONT_SIZE);
+		
+		return horzCat(cropTop(stretchY(drawString(s1), 1.3*size), 1.1*size),
+				img, cropTop(stretchY(drawString(s2), 1.3*size), 1.1*size));
 	}
 	
 	
 	public static Image superS(Image img) {	// raise the baseline
-		return img;
+		final Canvas canvas = new Canvas(img.getWidth()*0.7,
+				img.getHeight()*1.4);
+		final GraphicsContext g = canvas.getGraphicsContext2D();
+		g.drawImage(img, 0, 0,
+				canvas.getWidth(), canvas.getHeight()/2);
+		return canvas.snapshot(null, null);
 	}
 	
 	
 	public static Image subS(Image img) {	// lower the baseline
-		return img;
+		final Canvas canvas = new Canvas(img.getWidth()*0.7,
+				img.getHeight()*1.4);
+		final GraphicsContext g = canvas.getGraphicsContext2D();
+		g.drawImage(img, 0, canvas.getHeight()/2,
+				canvas.getWidth(), canvas.getHeight()/2);
+		return canvas.snapshot(null, null);
 	}
 
 
 	public static Image overline(Image img) {	// put a line over it
 		final Canvas canvas = new Canvas(
-				img.getWidth(), img.getHeight() + SPACING+LINE_WIDTH);
+				img.getWidth(), img.getHeight() + 2*(SPACING+LINE_WIDTH));
 		final GraphicsContext g = getGraphics(canvas);
 		g.drawImage(img, 0, SPACING+LINE_WIDTH);
 		g.fillRect(0, SPACING, canvas.getWidth(), LINE_WIDTH);
@@ -171,7 +224,7 @@ public class ImgUtils {
 	
 	private static GraphicsContext getGraphics(Canvas c) {
 		final GraphicsContext g = c.getGraphicsContext2D();
-		g.clearRect(0, 0, c.getWidth(), c.getHeight());
+		//g.clearRect(0, 0, c.getWidth(), c.getHeight());XXX
 		return g;
 	}
 
