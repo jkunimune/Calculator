@@ -49,7 +49,7 @@ public class ImgUtils {
 			DEF_FONT_SIZE);
 	
 	private static final double LINE_WIDTH = 2;
-	private static final double SPACING = 3;
+	private static final double SPACING = 4;
 	
 	
 	public static Image drawString(String s) {	// cast a String to an Image
@@ -175,14 +175,14 @@ public class ImgUtils {
 	public static Image wrap(String s1, Image img, String s2) {
 		double size = Math.max(img.getHeight(), DEF_FONT_SIZE);
 		
-		return horzCat(cropTop(stretchY(drawString(s1), 1.3*size), 1.1*size),
-				img, cropTop(stretchY(drawString(s2), 1.3*size), 1.1*size));
+		return horzCat(cropTop(stretchY(drawString(s1), 1.25*size), 1.05*size),
+				img, cropTop(stretchY(drawString(s2), 1.25*size), 1.05*size));
 	}
 	
 	
 	public static Image superS(Image img) {	// raise the baseline
-		final Canvas canvas = new Canvas(img.getWidth()*0.7,
-				img.getHeight()*1.4);
+		final Canvas canvas = new Canvas(img.getWidth()*0.6,
+				img.getHeight()*1.2);
 		final GraphicsContext g = canvas.getGraphicsContext2D();
 		g.drawImage(img, 0, 0,
 				canvas.getWidth(), canvas.getHeight()/2);

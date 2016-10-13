@@ -38,7 +38,7 @@ import util.ImgUtils;
  *
  * @author jkunimune
  */
-public class Expression {
+public class Expression implements Statement {
 
 	public static final Expression NULL = new Expression(Operator.NULL);	// used when an expression is blank
 	public static final Expression ERROR = new Expression(Operator.ERROR);	// used when an expression cannot be read
@@ -67,6 +67,7 @@ public class Expression {
 	
 	
 	
+	@Override
 	public Expression simplified(HashMap<String, Expression> heap) {
 		List<Expression> simplArgs = new ArrayList<Expression>(args.size());
 		boolean allConstant = true;
@@ -84,6 +85,7 @@ public class Expression {
 	}
 	
 	
+	@Override
 	public Image toImage() {
 		switch (opr) {
 		case NULL:
@@ -208,6 +210,7 @@ public class Expression {
 	}
 	
 	
+	@Override
 	public String toString() {
 		switch (opr) {
 		case NULL:

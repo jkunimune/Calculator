@@ -131,6 +131,11 @@ public class Notation {
 							return new Expression(Operator.MODULO,
 									parse(tokens.subList(0, i)),
 									parse(tokens.subList(i+1,n)));
+						else if (i > 0 && !isOperator(tokens.get(i-1).charAt(0))
+								&& !isOperator(s.charAt(0)))
+							return new Expression(Operator.MULTIPLY,
+									parse(tokens.subList(0, i)),
+									parse(tokens.subList(i, n)));
 					}
 					if (rank == 2) {	// exponential
 						if (s.equals("^"))

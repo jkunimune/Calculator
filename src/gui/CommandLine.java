@@ -33,9 +33,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import maths.Expression;
 import maths.Notation;
-import maths.Variable;
+import maths.Statement;
 
 /**
  * The set of Nodes that manages basic user input and memory.
@@ -53,7 +52,7 @@ public class CommandLine {
 	private VBox container;
 	
 	private Workspace workspace;
-	private Expression currentMath;
+	private Statement currentMath;
 	
 	
 	
@@ -85,7 +84,7 @@ public class CommandLine {
 		container.getChildren().add(displaySpace);
 		
 		workspace = ws;
-		currentMath = Expression.NULL;
+		currentMath = null;
 	}
 	
 	
@@ -108,24 +107,13 @@ public class CommandLine {
 	
 	private void evaluate() {	// called when enter is pressed
 		final String text = cmdLine.getText();
-		Expression math = currentMath;
+		Statement math = currentMath;
 		cmdLine.clear();
 		history.appendText("\n"+text);	// write the current line to history
 		
 		if (text.isEmpty())	return;
 		
-		int i;
-		if ((i = text.indexOf("=")) >= 0) {	// if there is an = operator
-			math = Notation.parseExpression(text.substring(i+1));	// assign a new variable
-			Expression left = Notation.parseExpression(text.substring(0,i));
-			if (left instanceof Variable)
-				workspace.put(left.toString(), math);
-			else
-				history.appendText("\nERR: Left side of = must be a variable!");	// unless error TODO: this should eventually do boolean stuff
-			return;
-		}
-		
-		final Expression ans = math.simplified(workspace.getHash());	// evaluate the expression
+		final Statement ans = math.simplified(workspace.getHash());	// evaluate the expression
 		history.appendText("\n\t= "+ans.toString());	// write the answer
 		displaySpace.setImage(ans.toImage());
 	}
