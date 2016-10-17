@@ -26,32 +26,48 @@ package maths;
 import java.util.HashMap;
 
 import javafx.scene.image.Image;
+import util.ImgUtils;
 
 /**
- * A bunch of math that means and/or does something.
- *
  * @author jkunimune
  */
-public interface Statement {
+public class TrueFalse implements Statement {
 
-	/**
-	 * Carry out any actions encoded in this statement
-	 */
-	public void execute();
+	private final boolean value;
 	
-	/**
-	 * @return the result of this action
-	 */
-	public Statement simplified(HashMap<String, Expression> arg0);
 	
-	/**
-	 * @return this statement, formatted in standard notation
-	 */
-	public Image toImage();
 	
-	/**
-	 * @return a parse-able String representation of this
-	 */
-	public String toString();
+	public TrueFalse(boolean b) {
+		value = b;
+	}
+	
+	
+	
+	@Override
+	public void execute() {
+		return;
+	}
+	
+	
+	@Override
+	public Statement simplified(HashMap<String, Expression> arg0) {
+		return this;
+	}
+	
+	
+	@Override
+	public Image toImage() {
+		String out;
+		if (value)	out = "\u2713";
+		else		out = "\u2717";
+		return ImgUtils.drawString(out, false);
+	}
+	
+	
+	@Override
+	public String toString() {
+		if (value)	return "True";
+		else		return "False";
+	}
 
 }

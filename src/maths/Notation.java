@@ -34,7 +34,12 @@ import java.util.List;
  */
 public class Notation {
 
-	public static final Expression parseExpression(String input) {	// create an expression from a String
+	public static final Statement parseStatement(String input) {	// create an expression from a String
+		return parse(tokenize(input));
+	}
+	
+	
+	public static final List<String> tokenize(String input) {
 		int level = 0;
 		for (int i = 0; i < input.length(); i ++) {
 			if (isOpenP(input.charAt(i)))
@@ -71,11 +76,34 @@ public class Notation {
 				i = j-1;
 			}
 		}
-		return parse(tokens);
+		return tokens;
 	}
 	
 	
-	private static final Expression parse(List<String> tokens) {
+	private static final Statement parse(List<String> tokens) {
+		final List<Expression> exps = new ArrayList<Expression>();
+		final List<Character> oprs = new ArrayList<Character>();
+		int level = 0;
+		int lastOperator = 0;
+		for (int i = 0; i < tokens.size(); i ++) {
+			if (level == 0) {
+				final String s = tokens.get(i);
+				if (s.length() == 1 && isComparator(s.charAt(0))) {
+					exps.add(parEx(tokens.subList(lastOperator, i)));
+					oprs.add(s.charAt(0));
+					lastOperator = i+1;
+				}
+			}
+		}
+		exps.add(parEx(tokens.subList(lastOperator, tokens.size())));
+		if (oprs.isEmpty())
+			return exps.get(0);
+		else
+			return new Comparison(exps, oprs);
+	}
+	
+	
+	private static final Expression parEx(List<String> tokens) {	// parse an Expression
 		final int n = tokens.size();
 		
 		if (n == 0)
@@ -106,54 +134,54 @@ public class Notation {
 					if (rank == 0) {	// arithmetic
 						if (s.equals("+"))
 							return new Expression(Operator.ADD,
-									parse(tokens.subList(0, i)),
-									parse(tokens.subList(i+1,n)));
+									parEx(tokens.subList(0, i)),
+									parEx(tokens.subList(i+1,n)));
 						else if (s.equals("-"))
 							if (i > 0 && !isOperator(tokens.get(i-1).charAt(0)))	// beware of negation pretending to be subtraction
 								return new Expression(Operator.SUBTRACT,
-										parse(tokens.subList(0, i)),
-										parse(tokens.subList(i+1,n)));
+										parEx(tokens.subList(0, i)),
+										parEx(tokens.subList(i+1,n)));
 					}
 					if (rank == 1) {	// geometric
 						if (s.equals("*"))
 							return new Expression(Operator.MULTIPLY,
-									parse(tokens.subList(0, i)),
-									parse(tokens.subList(i+1,n)));
+									parEx(tokens.subList(0, i)),
+									parEx(tokens.subList(i+1,n)));
 						else if (s.equals("/"))
 							return new Expression(Operator.DIVIDE,
-									parse(tokens.subList(0, i)),
-									parse(tokens.subList(i+1,n)));
+									parEx(tokens.subList(0, i)),
+									parEx(tokens.subList(i+1,n)));
 						else if (s.equals("\\"))
 							return new Expression(Operator.DIVIDE,
-									parse(tokens.subList(i+1,n)),
-									parse(tokens.subList(0, i)));
+									parEx(tokens.subList(i+1,n)),
+									parEx(tokens.subList(0, i)));
 						else if (s.equals("%"))
 							return new Expression(Operator.MODULO,
-									parse(tokens.subList(0, i)),
-									parse(tokens.subList(i+1,n)));
+									parEx(tokens.subList(0, i)),
+									parEx(tokens.subList(i+1,n)));
 						else if (i > 0 && !isOperator(tokens.get(i-1).charAt(0))
 								&& !isOperator(s.charAt(0)))
 							return new Expression(Operator.MULTIPLY,
-									parse(tokens.subList(0, i)),
-									parse(tokens.subList(i, n)));
+									parEx(tokens.subList(0, i)),
+									parEx(tokens.subList(i, n)));
 					}
 					if (rank == 2) {	// exponential
 						if (s.equals("^"))
 							return new Expression(Operator.POWER,
-									parse(tokens.subList(0, i)),
-									parse(tokens.subList(i+1,n)));
+									parEx(tokens.subList(0, i)),
+									parEx(tokens.subList(i+1,n)));
 					}
 				}
 			}
 			
 			if (rank == 1 && tokens.get(0).equals("-"))	// the special negation operator
 				return new Expression(Operator.NEGATE,
-						parse(tokens.subList(1, tokens.size())));
+						parEx(tokens.subList(1, tokens.size())));
 			
 			if (inParentheses) {	// brackets
 				final String funcString = tokens.get(0).substring(0,
 						tokens.get(0).length()-1);
-				final Expression interior = parse(tokens.subList(1, n-1));
+				final Expression interior = parEx(tokens.subList(1, n-1));
 				
 				if (funcString.isEmpty())
 					return new Expression(Operator.PARENTHESES, interior);
@@ -242,7 +270,17 @@ public class Notation {
 	
 	
 	private static final boolean isSymbol(char c) {
-		return isOperator(c) || isOpenP(c) || isCloseP(c) || c == ' ';
+		return isComparator(c) || isOperator(c) || isOpenP(c) || isCloseP(c) ||
+				c == ' ';
+	}
+	
+	
+	private static final boolean isComparator(char c) {
+		final char[] comp = {'=','\u2260','<','\u2264','>','\u2265'};
+		for (char o: comp)
+			if (c == o)
+				return true;
+		return false;
 	}
 	
 	

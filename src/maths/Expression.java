@@ -68,6 +68,12 @@ public class Expression implements Statement {
 	
 	
 	@Override
+	public void execute() {
+		return;
+	}
+	
+	
+	@Override
 	public Expression simplified(HashMap<String, Expression> heap) {
 		List<Expression> simplArgs = new ArrayList<Expression>(args.size());
 		boolean allConstant = true;

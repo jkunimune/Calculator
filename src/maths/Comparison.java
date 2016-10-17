@@ -24,8 +24,10 @@
 package maths;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javafx.scene.image.Image;
+import util.ImgUtils;
 
 /**
  * An equality or inequality of Expressions.
@@ -34,16 +36,56 @@ import javafx.scene.image.Image;
  */
 public class Comparison implements Statement {
 
+	private final List<Expression> expressions;
+	private final List<Character> operators;
+	
+	
+	
+	public Comparison(List<Expression> exps, List<Character> oprs) {
+		if (oprs.size() != exps.size()-1)
+			throw new IllegalArgumentException("Invalid comparison!");
+		expressions = exps;
+		operators = oprs;
+	}
+	
+	
+	
+	@Override
+	public void execute() {
+		return;
+	}
+	
+	
 	@Override
 	public Statement simplified(HashMap<String, Expression> arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		boolean value = true;
+		for (int i = 0; i < operators.size(); i ++) {
+			//TODO: compare expressions
+		}
+		return new TrueFalse(value);
 	}
-
+	
+	
 	@Override
 	public Image toImage() {
-		// TODO Auto-generated method stub
-		return null;
+		Image img = expressions.get(0).toImage();
+		for (int i = 0; i < operators.size(); i ++) {
+			img = ImgUtils.horzCat(img,
+					ImgUtils.drawString(" "+operators.get(i)+" ", false),
+					expressions.get(i+1).toImage());
+		}
+		return img;
+	}
+	
+	
+	@Override
+	public String toString() {
+		String output = expressions.get(0).toString();
+		for (int i = 0; i < operators.size(); i ++) {
+			output += " "+operators.get(i)+" ";
+			output += expressions.get(i+1).toString();
+		}
+		return output;
 	}
 
 }

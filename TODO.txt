@@ -1,5 +1,6 @@
 Functions
 Comparison
+Smart parentheses
 Vectors
 Matrices
 2-D plots
@@ -15,10 +16,39 @@ Intersections
 Zeros
 Integral approximations
 History manipulation (up key)
-Taylor polynomial
-Combinatorics
+Better parentheses
 Help button
+Smart-variables (reading hats and dots as operators)
 Notation:
 	Absolute Value
 	Logarithms
 	Roots
+	Factorial
+	Conjugate
+	General functions:
+		div
+		grad
+		curl
+		eigenthings
+		perm
+		comb
+		taylor
+Required Unicode:
+	Greek letters
+	sqrt
+	x
+	int
+	->
+	^
+	.
+	..
+	>=
+	<=
+	!=
+	Z
+	R
+	C
+	infinity
+	del
+	L
+	F

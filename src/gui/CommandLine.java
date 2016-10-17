@@ -114,14 +114,16 @@ public class CommandLine {
 		if (text.isEmpty())	return;
 		
 		final Statement ans = math.simplified(workspace.getHash());	// evaluate the expression
-		history.appendText("\n\t= "+ans.toString());	// write the answer
-		displaySpace.setImage(ans.toImage());
+		if (ans != null) {
+			history.appendText("\n\t= "+ans.toString());	// write the answer
+			displaySpace.setImage(ans.toImage());
+		}
 	}
 	
 	
 	private void update(String input) {	// called when something is typed
 		try {
-			currentMath = Notation.parseExpression(input);
+			currentMath = Notation.parseStatement(input);
 		} catch (IllegalArgumentException e) {
 			System.err.println("Could not parse '"+input+"': "+e);
 		}
