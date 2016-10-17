@@ -25,9 +25,9 @@ package maths;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
+import gui.Workspace;
 import javafx.scene.image.Image;
 import util.ImgUtils;
 
@@ -68,13 +68,7 @@ public class Expression implements Statement {
 	
 	
 	@Override
-	public void execute() {
-		return;
-	}
-	
-	
-	@Override
-	public Expression simplified(HashMap<String, Expression> heap) {
+	public Expression simplified(Workspace heap) {
 		List<Expression> simplArgs = new ArrayList<Expression>(args.size());
 		boolean allConstant = true;
 		for (Expression e: args) {	// look at each argument
@@ -422,9 +416,8 @@ public class Expression implements Statement {
 			throw new RuntimeException("not implemented");
 		case PARENTHESES:
 			return args[0];
-		default:
-			throw new IllegalArgumentException("Undefined operator: "+opr);
 		}
+		throw new IllegalArgumentException("Undefined operator: "+opr);
 	}
 
 }

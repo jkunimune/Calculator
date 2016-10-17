@@ -23,8 +23,7 @@
  */
 package maths;
 
-import java.util.HashMap;
-
+import gui.Workspace;
 import javafx.scene.image.Image;
 import util.ImgUtils;
 
@@ -44,13 +43,7 @@ public class TrueFalse implements Statement {
 	
 	
 	@Override
-	public void execute() {
-		return;
-	}
-	
-	
-	@Override
-	public Statement simplified(HashMap<String, Expression> arg0) {
+	public Statement simplified(Workspace arg0) {
 		return this;
 	}
 	

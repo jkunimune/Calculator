@@ -23,9 +23,9 @@
  */
 package maths;
 
-import java.util.HashMap;
 import java.util.List;
 
+import gui.Workspace;
 import javafx.scene.image.Image;
 import util.ImgUtils;
 
@@ -51,13 +51,15 @@ public class Comparison implements Statement {
 	
 	
 	@Override
-	public void execute() {
-		return;
-	}
-	
-	
-	@Override
-	public Statement simplified(HashMap<String, Expression> arg0) {
+	public Statement simplified(Workspace heap) {
+		if (expressions.size() == 2) {
+			if (expressions.get(0) instanceof Variable /*||
+					expressions.get(0) instanceof Function*/) {
+				heap.put(expressions.get(0).toString(), expressions.get(1));
+				return null;
+			}
+		}
+		
 		boolean value = true;
 		for (int i = 0; i < operators.size(); i ++) {
 			//TODO: compare expressions

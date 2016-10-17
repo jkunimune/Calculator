@@ -16,7 +16,6 @@ Intersections
 Zeros
 Integral approximations
 History manipulation (up key)
-Better parentheses
 Help button
 Smart-variables (reading hats and dots as operators)
 Notation:

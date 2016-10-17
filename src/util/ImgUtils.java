@@ -182,20 +182,20 @@ public class ImgUtils {
 	
 	public static Image superS(Image img) {	// raise the baseline
 		final Canvas canvas = new Canvas(img.getWidth()*0.6,
-				img.getHeight()*1.2);
+				img.getHeight()*1.0);
 		final GraphicsContext g = canvas.getGraphicsContext2D();
 		g.drawImage(img, 0, 0,
-				canvas.getWidth(), canvas.getHeight()/2);
+				img.getWidth()*0.6, img.getHeight()*0.6);
 		return canvas.snapshot(null, null);
 	}
 	
 	
 	public static Image subS(Image img) {	// lower the baseline
-		final Canvas canvas = new Canvas(img.getWidth()*0.7,
-				img.getHeight()*1.4);
+		final Canvas canvas = new Canvas(img.getWidth()*0.6,
+				img.getHeight()*1.0);
 		final GraphicsContext g = canvas.getGraphicsContext2D();
-		g.drawImage(img, 0, canvas.getHeight()/2,
-				canvas.getWidth(), canvas.getHeight()/2);
+		g.drawImage(img, 0, img.getHeight()*0.4,
+				img.getWidth()*0.6, img.getHeight()*0.6);
 		return canvas.snapshot(null, null);
 	}
 

@@ -44,14 +44,14 @@ import maths.Expression;
  */
 public class Workspace {
 
-	HashMap<String, Expression> heap;	// the mapping from Strings to Expressions
+	HashMap<String, Expression> variables;	// the mapping from Strings to Expressions
 	ObservableList<String> varNames;	// the ordered list of Strings
 	TableView<String> table;	// the nice display of all Strings and Expressions
 	
 	
 	
 	public Workspace() {
-		heap = new HashMap<String, Expression>();
+		variables = new HashMap<String, Expression>();
 		varNames = FXCollections.observableList(new ArrayList<String>());
 		table = new TableView<String>(varNames);
 		
@@ -68,7 +68,7 @@ public class Workspace {
 		values.setCellValueFactory(
 				new Callback<CellDataFeatures<String, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<String, String> p) {
-				return new SimpleStringProperty(heap.get(p.getValue()).toString());
+				return new SimpleStringProperty(get(p.getValue()).toString());
 			}
 		});
 		values.setPrefWidth(150);
@@ -84,32 +84,32 @@ public class Workspace {
 	}
 	
 	
-	public boolean hasVariable(String s) {
-		return heap.containsKey(s);
+	public boolean containsKey(String s) {
+		return variables.containsKey(s);
 	}
 	
 	
 	public Expression get(String s) {
-		return heap.get(s);
+		return variables.get(s);
 	}
 	
 	
 	public void put(String s, Expression e) {
-		if (heap.containsKey(s))
+		if (variables.containsKey(s))
 			varNames.remove(s);
 		varNames.add(s);
-		heap.put(s, e);
+		variables.put(s, e);
 	}
 	
 	
 	public void remove(String s) {
-		heap.remove(s);
+		variables.remove(s);
 		varNames.remove(s);
 	}
 	
 	
 	public HashMap<String, Expression> getHash() {
-		return heap;
+		return variables;
 	}
 
 }

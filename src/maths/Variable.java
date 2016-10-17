@@ -23,8 +23,7 @@
  */
 package maths;
 
-import java.util.HashMap;
-
+import gui.Workspace;
 import javafx.scene.image.Image;
 import util.ImgUtils;
 
@@ -47,10 +46,9 @@ public class Variable extends Expression {
 	
 	
 	@Override
-	public Expression simplified(HashMap<String, Expression> heap) {
+	public Expression simplified(Workspace heap) {
 		if (heap.containsKey(name))
-			return new Expression(Operator.PARENTHESES,
-					heap.get(name).simplified(heap));
+			return heap.get(name).simplified(heap);
 		else
 			return this;
 	}

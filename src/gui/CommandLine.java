@@ -113,7 +113,7 @@ public class CommandLine {
 		
 		if (text.isEmpty())	return;
 		
-		final Statement ans = math.simplified(workspace.getHash());	// evaluate the expression
+		final Statement ans = math.simplified(workspace);	// evaluate the expression
 		if (ans != null) {
 			history.appendText("\n\t= "+ans.toString());	// write the answer
 			displaySpace.setImage(ans.toImage());

@@ -23,8 +23,7 @@
  */
 package maths;
 
-import java.util.HashMap;
-
+import gui.Workspace;
 import javafx.scene.image.Image;
 
 /**
@@ -36,13 +35,10 @@ public interface Statement {
 
 	/**
 	 * Carry out any actions encoded in this statement
-	 */
-	public void execute();
-	
-	/**
+	 *
 	 * @return the result of this action
 	 */
-	public Statement simplified(HashMap<String, Expression> arg0);
+	public Statement simplified(Workspace arg0);
 	
 	/**
 	 * @return this statement, formatted in standard notation

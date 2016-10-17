@@ -25,6 +25,7 @@ package maths;
 
 import java.util.HashMap;
 
+import gui.Workspace;
 import javafx.scene.image.Image;
 import util.ImgUtils;
 
@@ -79,7 +80,7 @@ public class Constant extends Expression {
 	
 	
 	@Override
-	public Expression simplified(HashMap<String, Expression> h) {
+	public Expression simplified(Workspace heap) {
 		return this;	// Constants are already simplified
 	}
 	
