@@ -23,7 +23,11 @@
  */
 package maths;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import gui.Workspace;
+import javafx.scene.image.Image;
 
 /**
  * A list of scalars. Vectors are commonly used to represent points and flows,
@@ -35,6 +39,46 @@ public class Vector extends Expression {
 
 	public Vector(List<Expression> e) {
 		super(Operator.NULL, e);
+	}
+	
+	
+	
+	public List<Expression> getComponents() {
+		return args;
+	}
+	
+	
+	@Override
+	public Expression simplified(Workspace heap) {
+		return this;	//TODO: simplify components
+	}
+	
+	
+	@Override
+	public Image toImage() {
+		return null;	//TODO: vertCat it
+	}
+	
+	
+	@Override
+	public String toString() {
+		String output = "[";
+		for (Expression arg: args)
+			output += arg.toString()+", ";
+		return output.substring(0, output.length()-2)+"]";
+	}
+	
+	
+	
+	public static Vector concat(Expression... exps) {
+		List<Expression> components = new ArrayList<Expression>();	// build a new Vector
+		for (Expression exp: exps) {
+			if (exp instanceof Vector)
+				components.addAll(exp.args);	// by concatenating the inputs
+			else
+				components.add(exp);
+		}
+		return new Vector(components);
 	}
 
 }

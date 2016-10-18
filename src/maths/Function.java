@@ -23,6 +23,7 @@
  */
 package maths;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import gui.Workspace;
@@ -30,70 +31,78 @@ import javafx.scene.image.Image;
 import util.ImgUtils;
 
 /**
- * An equality or inequality of Expressions.
- *
  * @author jkunimune
  */
-public class Comparison implements Statement {
+public class Function extends Expression {
 
-	private final List<Expression> expressions;
-	private final List<Character> operators;
+	private String name;
 	
 	
 	
-	public Comparison(List<Expression> exps, List<Character> oprs) {
-		if (oprs.size() != exps.size()-1)
-			throw new IllegalArgumentException("Invalid comparison!");
-		expressions = exps;
-		operators = oprs;
+	public Function(String nm, Expression exp) {
+		super(Operator.NULL, exp);
+		name = nm;
+	}
+	
+	
+	public Function(String nm, List<Expression> expLst) {
+		super(Operator.NULL, expLst);
+		name = nm;
 	}
 	
 	
 	
+	public boolean isStorable() {	// are all the inputs variables?
+		for (Expression arg: args)
+			if (! (arg instanceof Variable))
+				return false;
+		return true;
+	}
+	
+	
+	public String getName() {
+		return name;
+	}
+	
+	
+	public List<String> getArgs() {
+		List<String> output = new ArrayList<String>();
+		for (Expression arg: args)
+			output.add(arg.toString());
+		return output;
+	}
+	
+	
 	@Override
-	public Statement simplified(Workspace heap) {
-		if (expressions.size() == 2) {
-			if (expressions.get(0) instanceof Variable) {
-				heap.put(expressions.get(0).toString(), expressions.get(1));
-				return null;
-			}
-			else if (expressions.get(0) instanceof Function) {
-				final Function f = (Function) expressions.get(0);
-				if (f.isStorable()) {
-					heap.put(f.getName(), f.getArgs(), expressions.get(1));
-					return null;
-				}
-			}
+	public Expression simplified(Workspace heap) {
+		if (heap.containsKey(name)) {
+			if (heap.getArgs(name).size() != args.size())
+				throw new ArithmeticException(name+" takes "+heap.getArgs(name).size()+" arguments!");
+			
+			final Workspace localHeap = heap.localize(heap.getArgs(name), args);
+			return heap.get(name).simplified(localHeap);
 		}
-		
-		boolean value = true;
-		for (int i = 0; i < operators.size(); i ++) {
-			//TODO: compare expressions
+		else {
+			return this;
 		}
-		return new TrueFalse(value);
 	}
 	
 	
 	@Override
 	public Image toImage() {
-		Image img = expressions.get(0).toImage();
-		for (int i = 0; i < operators.size(); i ++) {
-			img = ImgUtils.horzCat(img,
-					ImgUtils.drawString(" "+operators.get(i)+" ", false),
-					expressions.get(i+1).toImage());
-		}
-		return img;
+		List<Image> imgs = new ArrayList<Image>();
+		for (Expression arg: args)
+			imgs.add(arg.toImage());
+		return ImgUtils.call(name, imgs, true);
 	}
 	
 	
 	@Override
 	public String toString() {
-		String output = expressions.get(0).toString();
-		for (int i = 0; i < operators.size(); i ++) {
-			output += " "+operators.get(i)+" ";
-			output += expressions.get(i+1).toString();
-		}
-		return output;
+		String output = name+"(";
+		for (Expression arg: args)
+			output += arg.toString()+", ";
+		return output.substring(0, output.length()-2)+")";
 	}
 
 }

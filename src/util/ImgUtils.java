@@ -198,8 +198,8 @@ public class ImgUtils {
 				img.getWidth()*0.6, img.getHeight()*0.6);
 		return canvas.snapshot(null, null);
 	}
-
-
+	
+	
 	public static Image overline(Image img) {	// put a line over it
 		final Canvas canvas = new Canvas(
 				img.getWidth(), img.getHeight() + 2*(SPACING+LINE_WIDTH));
@@ -208,13 +208,23 @@ public class ImgUtils {
 		g.fillRect(0, SPACING, canvas.getWidth(), LINE_WIDTH);
 		return canvas.snapshot(null, null);
 	}
-
-
+	
+	
 	public static Image call(String f, Image arg) {	// draw a function call
 		return horzCat(drawString(f), wrap("(", arg, ")"));
 	}
 	
 	
+	public static Image call(String f, List<Image> args) {	// draw a function call
+		return call(f, args, true);
+	}
+	
+	
+	public static Image call(String f, List<Image> args, boolean italics) {	// draw a function call
+		return horzCat(drawString(f, italics), wrap("(", link(args,", "), ")"));
+	}
+
+
 	public static Image callInv(String f, Image arg) {	// darw an inverse func
 		return horzCat(drawString(f), superS(drawString("-1")),
 				wrap("(", arg, ")"));

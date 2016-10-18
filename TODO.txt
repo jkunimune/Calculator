@@ -1,4 +1,3 @@
-Functions
 Comparison
 Smart parentheses
 Vectors
@@ -24,6 +23,7 @@ Notation:
 	Roots
 	Factorial
 	Conjugate
+	sin^2
 	General functions:
 		div
 		grad

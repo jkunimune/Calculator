@@ -25,6 +25,7 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -44,23 +45,25 @@ import maths.Expression;
  */
 public class Workspace {
 
-	HashMap<String, Expression> variables;	// the mapping from Strings to Expressions
-	ObservableList<String> varNames;	// the ordered list of Strings
+	HashMap<String, Expression> outputs;	// the mapping from Strings to Expressions
+	HashMap<String, List<String>> inputs;	// the inputs to each variable
+	ObservableList<String> keys;	// the ordered list of Strings
 	TableView<String> table;	// the nice display of all Strings and Expressions
 	
 	
 	
 	public Workspace() {
-		variables = new HashMap<String, Expression>();
-		varNames = FXCollections.observableList(new ArrayList<String>());
-		table = new TableView<String>(varNames);
+		outputs = new HashMap<String, Expression>();
+		inputs = new HashMap<String, List<String>>();
+		keys = FXCollections.observableList(new ArrayList<String>());
+		table = new TableView<String>(keys);
 		
 		final TableColumn<String, String> names =
 				new TableColumn<String, String>("Variable");
 		names.setCellValueFactory(
 				new Callback<CellDataFeatures<String, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<String, String> p) {
-				return new SimpleStringProperty(p.getValue());
+				return new SimpleStringProperty(getCall(p.getValue()));
 			}
 		});
 		final TableColumn<String, String> values =
@@ -78,38 +81,84 @@ public class Workspace {
 	}
 	
 	
+	public Workspace(Workspace w) {	// clone another workspace
+		outputs = new HashMap<String, Expression>();
+		inputs = new HashMap<String, List<String>>();
+		keys = FXCollections.observableList(new ArrayList<String>());
+		
+		for (String key: w.keys)	// workspaces instantiated this way have no Node
+			this.put(key, w.getArgs(key), w.get(key));
+	}
+	
+	
 	
 	public Node getNode() {
 		return table;
 	}
 	
 	
-	public boolean containsKey(String s) {
-		return variables.containsKey(s);
+	public boolean containsKey(String name) {
+		return outputs.containsKey(name);
 	}
 	
 	
-	public Expression get(String s) {
-		return variables.get(s);
+	public Expression get(String name) {
+		return outputs.get(name);
 	}
 	
 	
-	public void put(String s, Expression e) {
-		if (variables.containsKey(s))
-			varNames.remove(s);
-		varNames.add(s);
-		variables.put(s, e);
+	public List<String> getArgs(String name) {
+		return inputs.get(name);
 	}
 	
 	
-	public void remove(String s) {
-		variables.remove(s);
-		varNames.remove(s);
+	public String getCall(String name) {
+		if (inputs.get(name) != null && !inputs.get(name).isEmpty()) {
+			String res = name+"(";
+			for (String arg: inputs.get(name))
+				res += arg+", ";
+			return res.substring(0,res.length()-2)+")";
+		}
+		else
+			return name;
+	}
+	
+	
+	public void put(String name, Expression val) {	// store a variable
+		put(name, null, val);
+	}
+	
+	
+	public void put(String name, List<String> args, Expression val) {
+		if (outputs.containsKey(name))
+				keys.remove(name);// remove anything with the same name
+		outputs.put(name, val);	// store it in the hash map with the name
+		inputs.put(name, args);
+		keys.add(name);	// store it in the visible list with the full declaration
+	}
+	
+	
+	public void remove(String name) {
+		outputs.remove(name);
+		inputs.remove(name);
+		keys.remove(name);
 	}
 	
 	
 	public HashMap<String, Expression> getHash() {
-		return variables;
+		throw new IllegalArgumentException("Test");
+		//return outputs;
+	}
+	
+	
+	public Workspace localize(List<String> newVars, List<Expression> newVals) {
+		if (newVars == null || newVars.isEmpty())
+			return this;
+		
+		Workspace local = new Workspace(this);
+		for (int i = 0; i < newVars.size(); i ++)
+			local.put(newVars.get(i), null, newVals.get(i));
+		return local;
 	}
 
 }

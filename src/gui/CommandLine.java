@@ -113,10 +113,14 @@ public class CommandLine {
 		
 		if (text.isEmpty())	return;
 		
-		final Statement ans = math.simplified(workspace);	// evaluate the expression
-		if (ans != null) {
-			history.appendText("\n\t= "+ans.toString());	// write the answer
-			displaySpace.setImage(ans.toImage());
+		try {
+			final Statement ans = math.simplified(workspace);	// evaluate the expression
+			if (ans != null) {
+				history.appendText("\n\t= "+ans.toString());	// write the answer
+				displaySpace.setImage(ans.toImage());
+			}
+		} catch (ArithmeticException e) {
+			history.appendText("\n\tERROR: "+e.getMessage());	// print the error if there is one
 		}
 	}
 	

@@ -117,7 +117,7 @@ public class Notation {
 				return new Variable(tokens.get(0));
 		}
 		
-		for (byte rank = 0; rank < 3; rank ++) {	// in order of operations
+		for (byte rank = 0; rank < 4; rank ++) {	// in order of operations
 			int level = 0;
 			boolean inParentheses = true;
 			for (int i = n-1; i >= 0; i --) {
@@ -131,7 +131,14 @@ public class Notation {
 					level ++;
 				
 				if (level == 0) {
-					if (rank == 0) {	// arithmetic
+					if (rank == 0) {	// vectors
+						if (s.equals(",")) {
+							return Vector.concat(
+									parEx(tokens.subList(0, i)),
+									parEx(tokens.subList(i+1, n)));
+						}
+					}
+					if (rank == 1) {	// arithmetic
 						if (s.equals("+"))
 							return new Expression(Operator.ADD,
 									parEx(tokens.subList(0, i)),
@@ -142,7 +149,7 @@ public class Notation {
 										parEx(tokens.subList(0, i)),
 										parEx(tokens.subList(i+1,n)));
 					}
-					if (rank == 1) {	// geometric
+					if (rank == 2) {	// geometric
 						if (s.equals("*"))
 							return new Expression(Operator.MULTIPLY,
 									parEx(tokens.subList(0, i)),
@@ -165,7 +172,7 @@ public class Notation {
 									parEx(tokens.subList(0, i)),
 									parEx(tokens.subList(i, n)));
 					}
-					if (rank == 2) {	// exponential
+					if (rank == 3) {	// exponential
 						if (s.equals("^"))
 							return new Expression(Operator.POWER,
 									parEx(tokens.subList(0, i)),
@@ -254,9 +261,13 @@ public class Notation {
 				else if (funcString.equals("sqrt"))
 					return new Expression(Operator.ROOT,
 							interior, Constant.TWO);
-				else
-					return new Expression(Operator.FUNCTION,
-							new Variable(funcString), interior);
+				else {
+					if (interior instanceof Vector)
+						return new Function(funcString,
+								((Vector) interior).getComponents());
+					else
+						return new Function(funcString, interior);
+				}
 			}
 		}
 		
@@ -285,7 +296,7 @@ public class Notation {
 	
 	
 	private static final boolean isOperator(char c) {
-		final char[] ops = {'+','-','*','/','\\','%','^'};
+		final char[] ops = {'+','-','*','/','\\','%','^',','};
 		for (char o: ops)
 			if (c == o)
 				return true;

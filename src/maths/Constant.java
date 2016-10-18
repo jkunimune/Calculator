@@ -234,12 +234,12 @@ public class Constant extends Expression {
 	
 	
 	private static double atan2(double y, double x) {	// I had to manually implement this because of issues with negative zero
-		if (x >= 0)
-			return Math.tan(y/x);
-		else if (y >= 0)
-			return Math.tan(y/x) + Math.PI;
+		if (x >= 0 && y >= 0)
+			return Math.atan(y/x);
+		else if (x < 0)
+			return Math.atan(y/x) + Math.PI;
 		else
-			return Math.tan(y/x) - Math.PI;
+			return Math.atan(y/x) + 2*Math.PI;
 	}
 
 }

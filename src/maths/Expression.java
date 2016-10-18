@@ -44,8 +44,8 @@ public class Expression implements Statement {
 	public static final Expression ERROR = new Expression(Operator.ERROR);	// used when an expression cannot be read
 	
 	
-	private final Operator opr;
-	private final List<Expression> args;
+	protected final Operator opr;
+	protected final List<Expression> args;
 	
 	
 	
@@ -91,7 +91,7 @@ public class Expression implements Statement {
 		case NULL:
 			return ImgUtils.NULL;
 		case ERROR:
-			return ImgUtils.drawString("ERROR");
+			return ImgUtils.drawString("?");
 		case PARENTHESES:
 			return ImgUtils.wrap("(", args.get(0).toImage(), ")");
 		case ADD:
@@ -200,11 +200,6 @@ public class Expression implements Statement {
 			return ImgUtils.wrap("|", args.get(0).toImage(), "|");
 		case ARGUMENT:
 			return ImgUtils.call("arg", args.get(0).toImage());
-		case FUNCTION:
-			return ImgUtils.horzCat(args.get(0).toImage(),
-					ImgUtils.wrap("(", args.get(1).toImage(), ")"));
-		default:
-			break;
 		}
 		return ImgUtils.NULL;
 	}
@@ -315,11 +310,8 @@ public class Expression implements Statement {
 			return "|"+args.get(0)+"|";
 		case ARGUMENT:
 			return "arg("+args.get(0)+")";
-		case FUNCTION:
-			return args.get(0)+"("+args.get(1)+")";
-		default:
-			throw new IllegalArgumentException("Undefined operator: "+opr.toString());
 		}
+		throw new IllegalArgumentException("Undefined operator: "+opr.toString());
 	}
 	
 	
@@ -331,7 +323,7 @@ public class Expression implements Statement {
 		
 		switch (opr) {	// then call the appropriate method
 		case NULL:
-			throw new IllegalArgumentException("Null operator: "+expLst);
+			throw new ArithmeticException("Null operator: "+expLst);
 		case ERROR:
 			return new Constant(Double.NaN);
 		case ADD:
@@ -411,8 +403,6 @@ public class Expression implements Statement {
 		case TRANSVERSE:
 			throw new RuntimeException("not implemented");
 		case INVERSE:
-			throw new RuntimeException("not implemented");
-		case FUNCTION:
 			throw new RuntimeException("not implemented");
 		case PARENTHESES:
 			return args[0];
