@@ -190,8 +190,12 @@ public class Notation {
 						tokens.get(0).length()-1);
 				final Expression interior = parEx(tokens.subList(1, n-1));
 				
-				if (funcString.isEmpty())
-					return new Expression(Operator.PARENTHESES, interior);
+				if (funcString.isEmpty()) {
+					if (interior instanceof Vector)	// vectors ignore parentheses
+						return interior;
+					else
+						return new Expression(Operator.PARENTHESES, interior);
+				}
 				else if (funcString.equals("ln"))
 					return new Expression(Operator.LN, interior);
 				else if (funcString.equals("sin"))

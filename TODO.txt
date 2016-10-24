@@ -32,6 +32,7 @@ Notation:
 		perm
 		comb
 		taylor
+		trace
 Required Unicode:
 	Greek letters
 	sqrt

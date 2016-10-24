@@ -128,7 +128,12 @@ public class ImgUtils {
 	}
 	
 	
-	public static Image vertCat(Image... images) {	// concatenate vertically
+	public static Image vertCat(Image... images) {
+		return vertCat(false, images);
+	}
+	
+	
+	public static Image vertCat(boolean space, Image... images) {	// concatenate vertically
 		double maxW = 0;
 		double totH = 0;
 		for (Image img: images) {	// first, figure out how big
@@ -137,12 +142,16 @@ public class ImgUtils {
 				maxW = img.getWidth();
 		}
 		
+		if (space)
+			totH += (images.length-1)*SPACING;
+		
 		final Canvas canvas = new Canvas(maxW, totH);	// make a canvas
 		final GraphicsContext g = getGraphics(canvas);
 		double curY = 0;
 		for (Image img: images) {
 			g.drawImage(img, (maxW-img.getWidth())/2, curY);
 			curY += img.getHeight();					// and add each image
+			if (space)	curY += SPACING;
 		}
 		
 		return canvas.snapshot(null, null);
@@ -172,11 +181,29 @@ public class ImgUtils {
 	}
 	
 	
-	public static Image wrap(String s1, Image img, String s2) {
+	public static Image wrap(String s1, Image img, String s2) {	// scales s1 and s2 to contain img
 		double size = Math.max(img.getHeight(), DEF_FONT_SIZE);
 		
 		return horzCat(cropTop(stretchY(drawString(s1), 1.25*size), 1.05*size),
 				img, cropTop(stretchY(drawString(s2), 1.25*size), 1.05*size));
+	}
+	
+	
+	public static Image bind(Image img) {	// brackets the image
+		final Canvas canvas = new Canvas(img.getWidth()+2*LINE_WIDTH+2*SPACING,
+				img.getHeight()+2*LINE_WIDTH);
+		final GraphicsContext g = canvas.getGraphicsContext2D();
+		final double w = LINE_WIDTH;
+		final double l = 4*LINE_WIDTH;
+		
+		g.drawImage(img, w+SPACING, w);
+		g.fillRect(0, 0, l, w);
+		g.fillRect(0, 0, w, canvas.getHeight());
+		g.fillRect(0, canvas.getHeight()-w, l, w);
+		g.fillRect(canvas.getWidth()-l, 0, l, w);
+		g.fillRect(canvas.getWidth()-w, 0, w, canvas.getHeight());
+		g.fillRect(canvas.getWidth()-l, canvas.getHeight()-w, l, w);
+		return canvas.snapshot(null, null);
 	}
 	
 	

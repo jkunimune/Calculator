@@ -28,6 +28,7 @@ import java.util.List;
 
 import gui.Workspace;
 import javafx.scene.image.Image;
+import util.ImgUtils;
 
 /**
  * A list of scalars. Vectors are commonly used to represent points and flows,
@@ -37,8 +38,8 @@ import javafx.scene.image.Image;
  */
 public class Vector extends Expression {
 
-	public Vector(List<Expression> e) {
-		super(Operator.NULL, e);
+	public Vector(List<Expression> dims) {
+		super(Operator.NULL, dims);
 	}
 	
 	
@@ -50,13 +51,19 @@ public class Vector extends Expression {
 	
 	@Override
 	public Expression simplified(Workspace heap) {
-		return this;	//TODO: simplify components
+		List<Expression> simplDims = new ArrayList<Expression>(args.size());
+		for (Expression dim: args)
+			simplDims.add(dim.simplified(heap));
+		return new Vector(simplDims);
 	}
 	
 	
 	@Override
 	public Image toImage() {
-		return null;	//TODO: vertCat it
+		Image[] argImgs = new Image[args.size()];
+		for (int i = 0; i < args.size(); i ++)
+			argImgs[i] = args.get(i).toImage();
+		return ImgUtils.bind(ImgUtils.vertCat(true, argImgs));
 	}
 	
 	
