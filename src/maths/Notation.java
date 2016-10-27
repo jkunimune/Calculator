@@ -150,8 +150,12 @@ public class Notation {
 										parEx(tokens.subList(i+1,n)));
 					}
 					if (rank == 2) {	// geometric
-						if (s.equals("*"))
+						if (s.equals("*") || s.equals("\u2022"))
 							return new Expression(Operator.MULTIPLY,
+									parEx(tokens.subList(0, i)),
+									parEx(tokens.subList(i+1,n)));
+						else if (s.equals("\u00D7"))
+							return new Expression(Operator.CROSS,
 									parEx(tokens.subList(0, i)),
 									parEx(tokens.subList(i+1,n)));
 						else if (s.equals("/"))
@@ -300,7 +304,7 @@ public class Notation {
 	
 	
 	private static final boolean isOperator(char c) {
-		final char[] ops = {'+','-','*','/','\\','%','^',','};
+		final char[] ops = {'+','-','*','\u2022','\u00D7','/','\\','%','^',','};
 		for (char o: ops)
 			if (c == o)
 				return true;

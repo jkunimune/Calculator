@@ -6,6 +6,7 @@ Matrices
 N-D plots
 Auto-D plots
 Adjustable plots
+More error messages (e.g. for mismatched vector addition and bad function calls)
 Units
 Unit conversions
 Radices
@@ -25,6 +26,7 @@ Notation:
 	Conjugate
 	sin^2
 	General functions:
+		del
 		div
 		grad
 		curl
@@ -52,3 +54,7 @@ Required Unicode:
 	del
 	L
 	F
+
+NOTE: What if I had an interface for Matrices, with methods like get(int,int),
+so that I wouldn't have to check instanceof Vector so frequently? I guess I
+could also give those methods to Constants?

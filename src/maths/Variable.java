@@ -47,7 +47,7 @@ public class Variable extends Expression {
 	
 	@Override
 	public Expression simplified(Workspace heap) {
-		if (heap.containsKey(name))
+		if (heap != null && heap.containsKey(name))
 			return heap.get(name).simplified(heap);
 		else
 			return this;

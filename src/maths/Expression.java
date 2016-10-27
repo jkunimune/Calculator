@@ -67,21 +67,215 @@ public class Expression implements Statement {
 	
 	
 	
+	public int[] getDims() {
+		return null;	//TODO: get dimensions recursively
+	}
+	
+	
+	public Expression simplified() {
+		return this.simplified(null);
+	}
+	
+	
 	@Override
 	public Expression simplified(Workspace heap) {
-		List<Expression> simplArgs = new ArrayList<Expression>(args.size());
-		boolean allConstant = true;
-		for (Expression e: args) {	// look at each argument
-			final Expression simple = e.simplified(heap);	// simplify it
-			simplArgs.add(simple);		// and store the simpler value
-			if (!(simple instanceof Constant))	// if it still contains unknowns
-				allConstant = false;	// we lose our ability to evaluate
+		final Expression[] sargs = new Expression[args.size()];
+		for (int i = 0; i < args.size(); i ++)
+			sargs[i] = args.get(i).simplified(heap);
+		
+		switch(opr) {
+		case NULL:
+			return Expression.NULL;
+		case ERROR:
+			return this;
+		case PARENTHESES:
+			return sargs[0];
+		case ADD:
+			if (sargs[0] instanceof Constant && sargs[1] instanceof Constant)
+				return ((Constant) sargs[0]).plus(((Constant) sargs[1]));
+			if (sargs[0] instanceof Vector && sargs[1] instanceof Vector)
+				return ((Vector) sargs[0]).plus(((Vector) sargs[1]));
+			break;
+		case SUBTRACT:
+			if (sargs[0] instanceof Constant && sargs[1] instanceof Constant)
+				return ((Constant) sargs[0]).plus(((Constant) sargs[1]).negative());
+			if (sargs[0] instanceof Vector && sargs[1] instanceof Vector)
+				return ((Vector) sargs[0]).plus(((Vector) sargs[1]).negative());
+			break;
+		case NEGATE:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).negative();
+			if (sargs[0] instanceof Vector)
+				return ((Vector) sargs[0]).negative();
+			break;
+		case MULTIPLY:
+			if (sargs[0] instanceof Constant && sargs[1] instanceof Constant)
+				return ((Constant) sargs[0]).times(((Constant) sargs[1]));
+			if (sargs[0] instanceof Vector && sargs[1] instanceof Vector)
+				return ((Vector) sargs[0]).dot(((Vector) sargs[1]));
+			if (sargs[0] instanceof Vector && sargs[1] instanceof Constant)
+				return ((Vector) sargs[0]).times(((Constant) sargs[1]));
+			if (sargs[0] instanceof Constant && sargs[1] instanceof Vector)
+				return ((Vector) sargs[1]).times(((Constant) sargs[0]));
+			break;
+		case DIVIDE:
+			if (sargs[0] instanceof Constant && sargs[1] instanceof Constant)
+				return ((Constant)sargs[0]).times(((Constant)sargs[1]).recip());
+			if (sargs[0] instanceof Vector && sargs[1] instanceof Constant)
+				return ((Vector)sargs[0]).times(((Constant)sargs[1]).recip());
+			break;
+		case MODULO:
+			if (sargs[0] instanceof Constant && sargs[1] instanceof Constant)
+				return ((Constant)sargs[0]).times(((Constant)sargs[1]).recip());
+			break;
+		case CROSS:
+			if (sargs[0] instanceof Constant && sargs[1] instanceof Constant)
+				return ((Constant) sargs[0]).times(((Constant) sargs[1]));
+			if (sargs[0] instanceof Vector && sargs[1] instanceof Vector)
+				return ((Vector) sargs[0]).cross(((Vector) sargs[1]));
+			if (sargs[0] instanceof Vector && sargs[1] instanceof Constant)
+				return ((Vector) sargs[0]).times(((Constant) sargs[1]));
+			if (sargs[0] instanceof Constant && sargs[1] instanceof Vector)
+				return ((Vector) sargs[1]).times(((Constant) sargs[0]));
+			break;
+		case POWER:
+			if (sargs[0] instanceof Constant && sargs[1] instanceof Constant) {
+				final Constant base = (Constant) sargs[0];
+				final Constant power = (Constant) sargs[1];
+				return base.ln().times(power).exp();
+			}
+			break;
+		case TRANSVERSE:
+			break;
+		case INVERSE:
+			break;
+		case ROOT:
+			if (sargs[0] instanceof Constant && sargs[1] instanceof Constant) {
+				final Constant base = (Constant) sargs[0];
+				final Constant power = (Constant) sargs[1];
+				return base.ln().times(power.recip()).exp();
+			}
+			break;
+		case LN:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).ln();
+			break;
+		case LOGBASE:
+			if (sargs[0] instanceof Constant && sargs[1] instanceof Constant) {
+				final Constant base = (Constant) sargs[0];
+				final Constant argument = (Constant) sargs[1];
+				return argument.ln().times(base.ln().recip());
+			}
+			break;
+		case SIN:	//XXX: This is ridiculous. THere are just too many of these. I need to make a comprehensive operator so I can Cast to constant and write their names more easily.
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).sin();
+			break;
+		case COS:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).cos();
+			break;
+		case TAN:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).tan();
+			break;
+		case CSC:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).sin().recip();
+			break;
+		case SEC:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).sin().recip();
+			break;
+		case COT:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).tan().recip();
+			break;
+		case ASIN:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).asin();
+			break;
+		case ACOS:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).acos();
+			break;
+		case ATAN:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).atan();
+			break;
+		case ACSC:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).recip().asin();
+			break;
+		case ASEC:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).recip().acos();
+			break;
+		case ACOT:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).recip().atan();
+			break;
+		case SINH:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).sinh();
+			break;
+		case COSH:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).cosh();
+			break;
+		case TANH:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).tanh();
+			break;
+		case CSCH:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).sinh().recip();
+			break;
+		case SECH:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).cosh().recip();
+			break;
+		case COTH:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).tanh().recip();
+			break;
+		case ASINH:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).asinh();
+			break;
+		case ACOSH:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).acosh();
+			break;
+		case ATANH:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).atanh();
+			break;
+		case ACSCH:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).recip().asinh();
+			break;
+		case ASECH:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).recip().acosh();
+			break;
+		case ACOTH:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).recip().atanh();
+			break;
+		case ABSOLUTE:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).abs();
+			if (sargs[0] instanceof Vector)
+				return ((Vector) sargs[0]).abs();
+			break;
+		case ARGUMENT:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).arg();
+			break;
 		}
 		
-		if (opr != Operator.NULL && allConstant)	// if possible,
-			return evaluate(opr, simplArgs);	// evaluate this expression
-		else
-			return new Expression(opr, simplArgs);
+		return new Expression(opr, sargs);
 	}
 	
 	
@@ -106,16 +300,10 @@ public class Expression implements Statement {
 			return ImgUtils.horzCat(ImgUtils.drawString("-"),
 					args.get(0).toImage());
 		case MULTIPLY:
-			Image out1 = args.get(0).toImage();
-			for (int i = 1; i < args.size(); i ++) {
-				if (args.get(i) instanceof Constant &&	// if there are two consecutive constants
-						args.get(i-1) instanceof Constant)
-					out1 = ImgUtils.horzCat(out1, ImgUtils.drawString("*"));	// use asterisk
-				else									// for everything else
-					out1 = ImgUtils.horzCat(out1, ImgUtils.drawString(" "));	// use space
-				out1 = ImgUtils.horzCat(out1, args.get(i).toImage());
-			}
-			return out1;
+			final List<Image> imgArgs = new ArrayList<Image>();
+			for (Expression arg: args)
+				imgArgs.add(arg.toImage());
+			return ImgUtils.link(imgArgs, "\u2022");
 		case DIVIDE:
 			return ImgUtils.split(args.get(0).toImage(), args.get(1).toImage());
 		case MODULO:
@@ -226,12 +414,7 @@ public class Expression implements Statement {
 		case MULTIPLY:
 			String out2 = args.get(0).toString();
 			for (int i = 1; i < args.size(); i ++) {
-				if (args.get(i) instanceof Constant &&	// if there are two consecutive constants
-						args.get(i-1) instanceof Constant)
-					out2 += "*";						// use asterisk
-				else									// for everything else
-					out2 += " ";						// use space
-				out2 += args.get(i);
+				out2 += "\u2022"+args.get(i);
 			}
 			return out2;
 		case DIVIDE:
@@ -312,102 +495,6 @@ public class Expression implements Statement {
 			return "arg("+args.get(0)+")";
 		}
 		throw new IllegalArgumentException("Undefined operator: "+opr.toString());
-	}
-	
-	
-	
-	private static Constant evaluate(Operator opr, List<Expression> expLst) {
-		Constant[] args = new Constant[expLst.size()];	// start by converting
-		for (int i = 0; i < expLst.size(); i ++)		// the arguments to
-			args[i] = (Constant) expLst.get(i);			// constants
-		
-		switch (opr) {	// then call the appropriate method
-		case NULL:
-			throw new ArithmeticException("Null operator: "+expLst);
-		case ERROR:
-			return new Constant(Double.NaN);
-		case ADD:
-			return args[0].plus(args[1]);
-		case SUBTRACT:
-			return args[0].plus(args[1].negative());
-		case NEGATE:
-			return args[0].negative();
-		case MULTIPLY:
-			return args[0].times(args[1]);
-		case DIVIDE:
-			return args[0].times(args[1].recip());
-		case MODULO:
-			return args[0].mod(args[1]);
-		case POWER:
-			return args[0].ln().times(args[1]).exp();
-		case ROOT:
-			return args[0].ln().times(args[1].recip()).exp();
-		case LN:
-			return args[0].ln();
-		case LOGBASE:
-			return args[1].ln().times(args[0].ln().recip());
-		case SIN:
-			return args[0].sin();
-		case COS:
-			return args[0].cos();
-		case TAN:
-			return args[0].tan();
-		case CSC:
-			return args[0].sin().recip();
-		case SEC:
-			return args[0].sin().recip();
-		case COT:
-			return args[0].tan().recip();
-		case ASIN:
-			return args[0].asin();
-		case ACOS:
-			return args[0].acos();
-		case ATAN:
-			return args[0].atan();
-		case ACSC:
-			return args[0].recip().asin();
-		case ASEC:
-			return args[0].recip().acos();
-		case ACOT:
-			return args[0].recip().atan();
-		case SINH:
-			return args[0].sinh();
-		case COSH:
-			return args[0].cosh();
-		case TANH:
-			return args[0].tanh();
-		case CSCH:
-			return args[0].sinh().recip();
-		case SECH:
-			return args[0].cosh().recip();
-		case COTH:
-			return args[0].tanh().recip();
-		case ASINH:
-			return args[0].asinh();
-		case ACOSH:
-			return args[0].acosh();
-		case ATANH:
-			return args[0].atanh();
-		case ACSCH:
-			return args[0].recip().asinh();
-		case ASECH:
-			return args[0].recip().acosh();
-		case ACOTH:
-			return args[0].recip().atanh();
-		case CROSS:
-			throw new RuntimeException("not implemented");
-		case ABSOLUTE:
-			return args[0].abs();
-		case ARGUMENT:
-			return args[0].arg();
-		case TRANSVERSE:
-			throw new RuntimeException("not implemented");
-		case INVERSE:
-			throw new RuntimeException("not implemented");
-		case PARENTHESES:
-			return args[0];
-		}
-		throw new IllegalArgumentException("Undefined operator: "+opr);
 	}
 
 }

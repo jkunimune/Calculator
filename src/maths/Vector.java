@@ -38,8 +38,13 @@ import util.ImgUtils;
  */
 public class Vector extends Expression {
 
-	public Vector(List<Expression> dims) {
-		super(Operator.NULL, dims);
+	public Vector(List<Expression> comps) {
+		super(Operator.NULL, comps);
+	}
+	
+	
+	public Vector(Expression... comps) {
+		super(Operator.NULL, comps);
 	}
 	
 	
@@ -49,8 +54,26 @@ public class Vector extends Expression {
 	}
 	
 	
+	public Expression get(int index) {
+		return args.get(index);
+	}
+	
+	
 	@Override
-	public Expression simplified(Workspace heap) {
+	public int[] getDims() {
+		final int[] output = {args.size(), 1};
+		return output;
+	}
+	
+	
+	@Override
+	public Vector simplified() {
+		return this.simplified(null);
+	}
+	
+	
+	@Override
+	public Vector simplified(Workspace heap) {
 		List<Expression> simplDims = new ArrayList<Expression>(args.size());
 		for (Expression dim: args)
 			simplDims.add(dim.simplified(heap));
@@ -86,6 +109,89 @@ public class Vector extends Expression {
 				components.add(exp);
 		}
 		return new Vector(components);
+	}
+	
+	
+	public Vector plus(Vector that) {
+		if (this.getDims()[0] != that.getDims()[0])
+			throw new ArithmeticException("Cannot sum a vector in "
+					+this.getDims()[0]+"-space with a vector in "
+					+that.getDims()[0]+"-space.");
+		
+		List<Expression> newComps = new ArrayList<Expression>(getDims()[0]);
+		for (int i = 0; i < getDims()[0]; i ++)
+			newComps.add(new Expression(Operator.ADD,this.get(i),that.get(i)));
+		return new Vector(newComps).simplified();
+	}
+	
+	
+	public Vector negative() {
+		List<Expression> newComps = new ArrayList<Expression>(getDims()[0]);
+		for (Expression comp: args)
+			newComps.add(new Expression(Operator.NEGATE, comp));
+		return new Vector(newComps).simplified();
+	}
+	
+	
+	public Expression dot(Vector that) {
+		Expression sum = null;
+		for (int i = 0; i < getDims()[0]; i ++) {
+			final Expression prod = new Expression(Operator.MULTIPLY,
+					this.get(i), that.get(i));
+			if (sum == null)
+				sum = prod;
+			else
+				sum = new Expression(Operator.ADD, sum, prod);
+		}
+		return sum.simplified();
+	}
+	
+	
+	public Vector cross(Vector that) {
+		if (this.getDims()[0] == 3 && that.getDims()[0] == 3) {
+			List<Expression> newComps = new ArrayList<Expression>(getDims()[0]);
+			for (int i = 0; i < 3; i ++) {
+				final Expression vxuy = new Expression(Operator.MULTIPLY,
+						this.get((i+1)%3), that.get((i+2)%3));
+				final Expression vyux = new Expression(Operator.MULTIPLY,
+						this.get((i+2)%3), that.get((i+1)%3));
+				newComps.add(new Expression(Operator.SUBTRACT, vxuy, vyux));
+			}
+			return new Vector(newComps).simplified();
+		}
+		else if (this.getDims()[0] == 7 && that.getDims()[0] == 7) {
+			throw new ArithmeticException("GAHH! The seven dimensional cross-"
+					+ "product! Who the heck is trying to take a seven "
+					+ "dimensional cross product?! I never implemented that! "
+					+ "You! Stop trying to take seven dimensional cross "
+					+ "products and reevaluate your life choices!");
+		}
+		else {
+			throw new ArithmeticException("Cross-products are only "
+					+ "defined for vectors of length 3 and 7.");
+		}
+	}
+	
+	
+	public Vector times(Constant c) {
+		List<Expression> newComps = new ArrayList<Expression>(getDims()[0]);
+		for (Expression comp: args)
+			newComps.add(new Expression(Operator.MULTIPLY, comp, c));
+		return new Vector(newComps).simplified();
+	}
+	
+	
+	public Expression abs() {	// calculate the magnitude
+		Expression sum = null;
+		for (Expression comp: args) {
+			final Expression v_i2 = new Expression(Operator.POWER,
+					comp, Constant.TWO);
+			if (sum == null)
+				sum = v_i2;
+			else
+				sum = new Expression(Operator.ADD, sum, v_i2);
+		}
+		return new Expression(Operator.ROOT, sum, Constant.TWO).simplified();
 	}
 
 }
