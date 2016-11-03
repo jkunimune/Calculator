@@ -49,6 +49,9 @@ public class Constant extends Expression {
 	public static final Constant TEN = new Constant(10);
 	
 	
+	private static final double JDT = Math.pow(2,-51);	// the Java double tolerance
+	
+	
 	
 	double real;
 	double imag;
@@ -68,6 +71,15 @@ public class Constant extends Expression {
 		super(Operator.ADD);
 		real = r;
 		imag = i;
+		dimensions = new HashMap<Dimension, Integer>();
+		radix = 10;
+	}
+	
+	
+	public Constant(double r, double i, double tol) {	// this will be rounded to the nearest tol
+		super(Operator.ADD);
+		real = Math.round(r/tol)*tol;
+		imag = Math.round(i/tol)*tol;
 		dimensions = new HashMap<Dimension, Integer>();
 		radix = 10;
 	}
@@ -93,16 +105,12 @@ public class Constant extends Expression {
 	
 	@Override
 	public String toString() {
-		final double roundReal = Math.round(real*1000000000)/1000000000.0;	// cut the precision to one billionth
-		final double roundImag = Math.round(imag*1000000000)/1000000000.0;
-		
-		if (roundImag == 0)	// real numbers need no i component
-			return format(roundReal, radix);
-		else if (roundReal == 0)	// imaginary numbers need no real component
-				return format(roundImag, radix)+"i";	// integers need no decimals
+		if (imag == 0)	// real numbers need no i component
+			return format(real, radix);
+		else if (real == 0)	// imaginary numbers need no real component
+				return format(imag, radix)+"i";	// integers need no decimals
 		else
-			return "("+format(roundReal, radix)+"+"+
-					format(roundImag, radix)+"i)";
+			return "("+format(real, radix)+" + "+format(imag, radix)+"i)";
 	}
 	
 	
@@ -115,7 +123,8 @@ public class Constant extends Expression {
 	
 	
 	public Constant plus(Constant that) {
-		return new Constant(this.real+that.real, this.imag+that.imag);
+		return new Constant(this.real+that.real, this.imag+that.imag,
+				Math.max(this.tolerance(), that.tolerance()));	// check the error, because sig figs
 	}
 	
 	public Constant negative() {
@@ -229,6 +238,11 @@ public class Constant extends Expression {
 		default:
 			return null;
 		}
+	}
+	
+	
+	private double tolerance() {
+		return this.abs().real*JDT;
 	}
 	
 	

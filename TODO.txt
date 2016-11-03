@@ -25,6 +25,8 @@ Notation:
 	Factorial
 	Conjugate
 	sin^2
+	inf
+	oo
 	General functions:
 		del
 		div
@@ -35,6 +37,8 @@ Notation:
 		comb
 		taylor
 		trace
+		erf
+		erfi
 Required Unicode:
 	Greek letters
 	sqrt

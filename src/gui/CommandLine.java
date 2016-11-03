@@ -33,6 +33,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import maths.Expression;
 import maths.Notation;
 import maths.Statement;
 
@@ -116,7 +117,10 @@ public class CommandLine {
 		try {
 			final Statement ans = math.simplified(workspace);	// evaluate the expression
 			if (ans != null) {
-				history.appendText("\n\t= "+ans.toString());	// write the answer
+				if (ans instanceof Expression)
+					history.appendText("\n\t= "+ans.toString());	// write the answer
+				else
+					history.appendText("\n\t"+ans.toString());
 				displaySpace.setImage(ans.toImage());
 			}
 		} catch (ArithmeticException e) {

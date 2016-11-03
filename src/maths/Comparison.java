@@ -52,16 +52,18 @@ public class Comparison implements Statement {
 	
 	@Override
 	public Statement simplified(Workspace heap) {
-		if (expressions.size() == 2) {
-			if (expressions.get(0) instanceof Variable) {
-				heap.put(expressions.get(0).toString(), expressions.get(1));
-				return null;
+		if (expressions.size() == 2 && operators.get(0) == '=') {	// if this is an assignment
+			if (expressions.get(0) instanceof Variable) {	// assign a variable in the heap
+				final Expression simp = expressions.get(1).simplified();
+				heap.put(expressions.get(0).toString(), simp);
+				return simp;
 			}
-			else if (expressions.get(0) instanceof Function) {
+			else if (expressions.get(0) instanceof Function) {	// or declare a function
 				final Function f = (Function) expressions.get(0);
 				if (f.isStorable()) {
-					heap.put(f.getName(), f.getArgs(), expressions.get(1));
-					return null;
+					final Expression simp = expressions.get(1).simplified();
+					heap.put(f.getName(), f.getArgs(), simp);
+					return simp;
 				}
 			}
 		}

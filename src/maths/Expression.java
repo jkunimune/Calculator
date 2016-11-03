@@ -414,7 +414,7 @@ public class Expression implements Statement {
 		case MULTIPLY:
 			String out2 = args.get(0).toString();
 			for (int i = 1; i < args.size(); i ++) {
-				out2 += "\u2022"+args.get(i);
+				out2 += "*"+args.get(i);
 			}
 			return out2;
 		case DIVIDE:
