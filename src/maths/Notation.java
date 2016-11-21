@@ -202,73 +202,11 @@ public class Notation {
 				}
 				else if (funcString.equals("ln"))
 					return new Expression(Operator.LN, interior);
-				else if (funcString.equals("sin"))
-					return new Expression(Operator.SIN, interior);
-				else if (funcString.equals("cos"))
-					return new Expression(Operator.COS, interior);
-				else if (funcString.equals("tan"))
-					return new Expression(Operator.TAN, interior);
-				else if (funcString.equals("csc"))
-					return new Expression(Operator.CSC, interior);
-				else if (funcString.equals("sec"))
-					return new Expression(Operator.SEC, interior);
-				else if (funcString.equals("cot"))
-					return new Expression(Operator.COT, interior);
-				else if (funcString.equals("asin") ||
-						funcString.equals("arcsin"))
-					return new Expression(Operator.ASIN, interior);
-				else if (funcString.equals("acos") ||
-						funcString.equals("arccos"))
-					return new Expression(Operator.ACOS, interior);
-				else if (funcString.equals("atan") ||
-						funcString.equals("arctan"))
-					return new Expression(Operator.ATAN, interior);
-				else if (funcString.equals("acsc") ||
-						funcString.equals("arccsc"))
-					return new Expression(Operator.ACSC, interior);
-				else if (funcString.equals("asec") ||
-						funcString.equals("arcsec"))
-					return new Expression(Operator.ASEC, interior);
-				else if (funcString.equals("acot") ||
-						funcString.equals("arccot"))
-					return new Expression(Operator.ACOT, interior);
-				else if (funcString.equals("sinh"))
-					return new Expression(Operator.SINH, interior);
-				else if (funcString.equals("cosh"))
-					return new Expression(Operator.COSH, interior);
-				else if (funcString.equals("tanh"))
-					return new Expression(Operator.TANH, interior);
-				else if (funcString.equals("csch"))
-					return new Expression(Operator.CSCH, interior);
-				else if (funcString.equals("sech"))
-					return new Expression(Operator.SECH, interior);
-				else if (funcString.equals("coth"))
-					return new Expression(Operator.COTH, interior);
-				else if (funcString.equals("asinh") ||
-						funcString.equals("arcsinh"))
-					return new Expression(Operator.ASINH, interior);
-				else if (funcString.equals("acosh") ||
-						funcString.equals("arccosh"))
-					return new Expression(Operator.ACOSH, interior);
-				else if (funcString.equals("atanh") ||
-						funcString.equals("arctanh"))
-					return new Expression(Operator.ATANH, interior);
-				else if (funcString.equals("acsch") ||
-						funcString.equals("arccsch"))
-					return new Expression(Operator.ACSCH, interior);
-				else if (funcString.equals("asech") ||
-						funcString.equals("arcsech"))
-					return new Expression(Operator.ASECH, interior);
-				else if (funcString.equals("acoth") ||
-						funcString.equals("arccoth"))
-					return new Expression(Operator.ACOTH, interior);
-				else if (funcString.equals("abs") || funcString.equals("norm"))
-					return new Expression(Operator.ABSOLUTE, interior);
-				else if (funcString.equals("arg"))
-					return new Expression(Operator.ARGUMENT, interior);
 				else if (funcString.equals("sqrt"))
 					return new Expression(Operator.ROOT,
 							interior, Constant.TWO);
+				else if (BuiltInFunction.recognizes(funcString))
+					return new BuiltInFunction(funcString, interior);
 				else {
 					if (interior instanceof Vector)
 						return new Function(funcString,

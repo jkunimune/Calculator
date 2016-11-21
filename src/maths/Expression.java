@@ -133,7 +133,7 @@ public class Expression implements Statement {
 				return ((Constant) sargs[0]).times(((Constant) sargs[1]));
 			if (sargs[0] instanceof Vector && sargs[1] instanceof Vector)
 				return ((Vector) sargs[0]).cross(((Vector) sargs[1]));
-			if (sargs[0] instanceof Vector && sargs[1] instanceof Constant)
+			if (sargs[0] instanceof Vector && sargs[1] instanceof Constant)	//TODO: This should work for all scalars - not just Constants
 				return ((Vector) sargs[0]).times(((Constant) sargs[1]));
 			if (sargs[0] instanceof Constant && sargs[1] instanceof Vector)
 				return ((Vector) sargs[1]).times(((Constant) sargs[0]));
@@ -166,112 +166,6 @@ public class Expression implements Statement {
 				final Constant argument = (Constant) sargs[1];
 				return argument.ln().times(base.ln().recip());
 			}
-			break;
-		case SIN:	//XXX: This is ridiculous. THere are just too many of these. I need to make a comprehensive operator so I can Cast to constant and write their names more easily.
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).sin();
-			break;
-		case COS:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).cos();
-			break;
-		case TAN:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).tan();
-			break;
-		case CSC:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).sin().recip();
-			break;
-		case SEC:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).sin().recip();
-			break;
-		case COT:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).tan().recip();
-			break;
-		case ASIN:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).asin();
-			break;
-		case ACOS:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).acos();
-			break;
-		case ATAN:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).atan();
-			break;
-		case ACSC:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).recip().asin();
-			break;
-		case ASEC:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).recip().acos();
-			break;
-		case ACOT:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).recip().atan();
-			break;
-		case SINH:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).sinh();
-			break;
-		case COSH:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).cosh();
-			break;
-		case TANH:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).tanh();
-			break;
-		case CSCH:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).sinh().recip();
-			break;
-		case SECH:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).cosh().recip();
-			break;
-		case COTH:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).tanh().recip();
-			break;
-		case ASINH:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).asinh();
-			break;
-		case ACOSH:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).acosh();
-			break;
-		case ATANH:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).atanh();
-			break;
-		case ACSCH:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).recip().asinh();
-			break;
-		case ASECH:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).recip().acosh();
-			break;
-		case ACOTH:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).recip().atanh();
-			break;
-		case ABSOLUTE:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).abs();
-			if (sargs[0] instanceof Vector)
-				return ((Vector) sargs[0]).abs();
-			break;
-		case ARGUMENT:
-			if (sargs[0] instanceof Constant)
-				return ((Constant) sargs[0]).arg();
 			break;
 		}
 		
@@ -336,58 +230,6 @@ public class Expression implements Statement {
 				return ImgUtils.horzCat(ImgUtils.drawString("log"),
 						ImgUtils.subS(args.get(0).toImage()),
 						ImgUtils.wrap("(", args.get(0).toImage(), ")"));
-		case SIN:
-			return ImgUtils.call("sin", args.get(0).toImage());
-		case COS:
-			return ImgUtils.call("cos", args.get(0).toImage());
-		case TAN:
-			return ImgUtils.call("tan", args.get(0).toImage());
-		case CSC:
-			return ImgUtils.call("csc", args.get(0).toImage());
-		case SEC:
-			return ImgUtils.call("sec", args.get(0).toImage());
-		case COT:
-			return ImgUtils.call("cot", args.get(0).toImage());
-		case ASIN:
-			return ImgUtils.callInv("sin", args.get(0).toImage());
-		case ACOS:
-			return ImgUtils.callInv("cos", args.get(0).toImage());
-		case ATAN:
-			return ImgUtils.callInv("tan", args.get(0).toImage());
-		case ACSC:
-			return ImgUtils.callInv("csc", args.get(0).toImage());
-		case ASEC:
-			return ImgUtils.callInv("sec", args.get(0).toImage());
-		case ACOT:
-			return ImgUtils.callInv("cot", args.get(0).toImage());
-		case SINH:
-			return ImgUtils.call("sinh", args.get(0).toImage());
-		case COSH:
-			return ImgUtils.call("cosh", args.get(0).toImage());
-		case TANH:
-			return ImgUtils.call("tanh", args.get(0).toImage());
-		case CSCH:
-			return ImgUtils.call("csch", args.get(0).toImage());
-		case SECH:
-			return ImgUtils.call("sech", args.get(0).toImage());
-		case COTH:
-			return ImgUtils.call("coth", args.get(0).toImage());
-		case ASINH:
-			return ImgUtils.callInv("sinh", args.get(0).toImage());
-		case ACOSH:
-			return ImgUtils.callInv("cosh", args.get(0).toImage());
-		case ATANH:
-			return ImgUtils.callInv("tanh", args.get(0).toImage());
-		case ACSCH:
-			return ImgUtils.callInv("csch", args.get(0).toImage());
-		case ASECH:
-			return ImgUtils.callInv("sech", args.get(0).toImage());
-		case ACOTH:
-			return ImgUtils.callInv("coth", args.get(0).toImage());
-		case ABSOLUTE:
-			return ImgUtils.wrap("|", args.get(0).toImage(), "|");
-		case ARGUMENT:
-			return ImgUtils.call("arg", args.get(0).toImage());
 		}
 		return ImgUtils.NULL;
 	}
@@ -441,58 +283,6 @@ public class Expression implements Statement {
 				return "log("+args.get(1)+")";
 			else
 				return "log_"+args.get(0)+"("+args.get(1)+")";
-		case SIN:
-			return "sin("+args.get(0)+")";
-		case COS:
-			return "cos("+args.get(0)+")";
-		case TAN:
-			return "tan("+args.get(0)+")";
-		case CSC:
-			return "csc("+args.get(0)+")";
-		case SEC:
-			return "sec("+args.get(0)+")";
-		case COT:
-			return "cot("+args.get(0)+")";
-		case ASIN:
-			return "arcsin("+args.get(0)+")";
-		case ACOS:
-			return "arccos("+args.get(0)+")";
-		case ATAN:
-			return "arctan("+args.get(0)+")";
-		case ACSC:
-			return "arccsc("+args.get(0)+")";
-		case ASEC:
-			return "arcsec("+args.get(0)+")";
-		case ACOT:
-			return "arccot("+args.get(0)+")";
-		case SINH:
-			return "sinh("+args.get(0)+")";
-		case COSH:
-			return "cosh("+args.get(0)+")";
-		case TANH:
-			return "tanh("+args.get(0)+")";
-		case CSCH:
-			return "csch("+args.get(0)+")";
-		case SECH:
-			return "sech("+args.get(0)+")";
-		case COTH:
-			return "coth("+args.get(0)+")";
-		case ASINH:
-			return "arcsinh("+args.get(0)+")";
-		case ACOSH:
-			return "arccosh("+args.get(0)+")";
-		case ATANH:
-			return "arctanh("+args.get(0)+")";
-		case ACSCH:
-			return "arccsch("+args.get(0)+")";
-		case ASECH:
-			return "arcsech("+args.get(0)+")";
-		case ACOTH:
-			return "arccoth("+args.get(0)+")";
-		case ABSOLUTE:
-			return "|"+args.get(0)+"|";
-		case ARGUMENT:
-			return "arg("+args.get(0)+")";
 		}
 		throw new IllegalArgumentException("Undefined operator: "+opr.toString());
 	}

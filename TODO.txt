@@ -1,12 +1,14 @@
-Comparison
-Smart parentheses
-Vectors
-Matrices
+Finish that getDims method
 2-D plots
 N-D plots
 Auto-D plots
 Adjustable plots
+Comparison
+Smart parentheses
+Matrices
+Sets
 More error messages (e.g. for mismatched vector addition and bad function calls)
+Built-in multi-argument functions
 Units
 Unit conversions
 Radices

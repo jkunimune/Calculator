@@ -31,6 +31,8 @@ import javafx.scene.image.Image;
 import util.ImgUtils;
 
 /**
+ * A call to a user-defined function in the heap.
+ *
  * @author jkunimune
  */
 public class Function extends Expression {

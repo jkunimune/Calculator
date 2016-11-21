@@ -173,10 +173,6 @@ public class Constant extends Expression {
 		return this.rot90(1).cosh();
 	}
 	
-	public Constant tan() {
-		return this.rot90(1).tanh().rot90(-1);
-	}
-	
 	public Constant asin() {
 		return this.rot90(1).asinh().rot90(-1);
 	}
@@ -197,10 +193,6 @@ public class Constant extends Expression {
 	public Constant cosh() {
 		return this.exp().plus(this.negative().exp())
 				.times(new Constant(0.5));
-	}
-	
-	public Constant tanh() {
-		return sinh().times(cosh().recip());
 	}
 	
 	public Constant asinh() {
