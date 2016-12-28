@@ -37,6 +37,7 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
 import maths.Expression;
+import maths.Variable;
 
 /**
  * A mapping of Strings to Expressions that remembers all stored data.
@@ -45,10 +46,15 @@ import maths.Expression;
  */
 public class Workspace {
 
-	HashMap<String, Expression> outputs;	// the mapping from Strings to Expressions
-	HashMap<String, List<String>> inputs;	// the inputs to each variable
-	ObservableList<String> keys;	// the ordered list of Strings
-	TableView<String> table;	// the nice display of all Strings and Expressions
+	public static final int PREF_WIDTH1 = 80;
+	public static final int PREF_WIDTH2 = 220;
+	public static final int PREF_HEIGHT = 200;
+	
+	
+	private HashMap<String, Expression> outputs;	// the mapping from Strings to Expressions
+	private HashMap<String, List<String>> inputs;	// the inputs to each variable
+	private ObservableList<String> keys;	// the ordered list of Strings
+	private TableView<String> table;	// the nice display of all Strings and Expressions
 	
 	
 	
@@ -66,6 +72,7 @@ public class Workspace {
 				return new SimpleStringProperty(getCall(p.getValue()));
 			}
 		});
+		names.setPrefWidth(PREF_WIDTH1);
 		final TableColumn<String, String> values =
 				new TableColumn<String, String>("Value");
 		values.setCellValueFactory(
@@ -74,14 +81,15 @@ public class Workspace {
 				return new SimpleStringProperty(get(p.getValue()).toString());
 			}
 		});
-		values.setPrefWidth(150);
+		values.setPrefWidth(PREF_WIDTH2);
 		
 		table.getColumns().add(names);
 		table.getColumns().add(values);
+		table.setPrefHeight(PREF_HEIGHT);
 	}
 	
 	
-	public Workspace(Workspace w) {	// clone another workspace
+	private Workspace(Workspace w) {	// clone another workspace
 		outputs = new HashMap<String, Expression>();
 		inputs = new HashMap<String, List<String>>();
 		keys = FXCollections.observableList(new ArrayList<String>());
@@ -130,8 +138,11 @@ public class Workspace {
 	
 	
 	public void put(String name, List<String> args, Expression val) {
+		if (val instanceof Variable && ((Variable) val).toString().equals(name))
+			return; // this is a tricky exception where a variables becomes itself
+		
 		if (outputs.containsKey(name))
-				keys.remove(name);// remove anything with the same name
+			keys.remove(name);// remove anything with the same name
 		outputs.put(name, val);	// store it in the hash map with the name
 		inputs.put(name, args);
 		keys.add(name);	// store it in the visible list with the full declaration
@@ -145,13 +156,7 @@ public class Workspace {
 	}
 	
 	
-	public HashMap<String, Expression> getHash() {
-		throw new IllegalArgumentException("Test");
-		//return outputs;
-	}
-	
-	
-	public Workspace localize(List<String> newVars, List<Expression> newVals) {
+	public Workspace localize(List<String> newVars, List<Expression> newVals) { // clone this and add some new variables
 		if (newVars == null || newVars.isEmpty())
 			return this;
 		
@@ -159,6 +164,21 @@ public class Workspace {
 		for (int i = 0; i < newVars.size(); i ++)
 			local.put(newVars.get(i), null, newVals.get(i));
 		return local;
+	}
+	
+	
+	public Workspace clone() {
+		return new Workspace(this);
+	}
+	
+	
+	@Override
+	public String toString() {
+		if (keys.isEmpty())	return "{}";
+		String str = "{";
+		for (String key: keys)
+			str += getCall(key)+":"+get(key)+"; ";
+		return str.substring(0, str.length()-2)+"}";
 	}
 
 }

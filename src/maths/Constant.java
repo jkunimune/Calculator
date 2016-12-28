@@ -24,6 +24,8 @@
 package maths;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import gui.Workspace;
 import javafx.scene.image.Image;
@@ -88,6 +90,29 @@ public class Constant extends Expression {
 	
 	public boolean matches(Constant that) {
 		return this.dimensions.equals(that.dimensions);
+	}
+	
+	
+	public double getReal() {
+		return real;
+	}
+	
+	
+	public double getImag() {
+		return imag;
+	}
+	
+	
+	@Override
+	public int[] getDims() {
+		final int[] out = {1,1};
+		return out;
+	}
+	
+	
+	@Override
+	public List<String> getInputs(Workspace heap) {
+		return new LinkedList<String>();
 	}
 	
 	

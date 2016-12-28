@@ -23,57 +23,53 @@
  */
 package gui;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import maths.Expression;
+import plots.Line2Plot;
+import plots.Plot;
 
 /**
- * The main class, which starts the application and assembles the GUI.
- *
+ * 
+ * 
  * @author jkunimune
  */
-public class Main extends Application {
+public class Graph {
 
-	public static final void main(String[] args) {
-		launch(args);
-	}
+	public static final int PREF_WIDTH = 300;
+	public static final int PREF_HEIGHT = 300;
+	public static final double DEF_MIN_AXIS = -4;
+	public static final double DEF_MAX_AXIS = 4;
 	
 	
+	private StackPane pane;
+	private Plot plot;
 	
-	private OperationBar toolbar;
-	private CommandLine cmdLine;
-	private Graph miniGraph;
 	private Workspace workspace;
 	
 	
 	
-	@Override
-	public void start(Stage primaryStage) {
-		Pane root = new StackPane();
-		Scene scene = new Scene(root);
-		
-		HBox layout = new HBox();
-		root.getChildren().add(layout);
-		
-		workspace = new Workspace();
-		miniGraph = new Graph(workspace);
-		cmdLine = new CommandLine(miniGraph, workspace);
-		toolbar = new OperationBar(cmdLine);
-		layout.getChildren().add(toolbar.getNode());
-		layout.getChildren().add(cmdLine.getNode());
-		layout.getChildren().add(new VBox(
-				miniGraph.getNode(),
-				workspace.getNode()));
-		
-		cmdLine.requestFocus();
-		
-		primaryStage.setTitle("Math-Assist");
-		primaryStage.setScene(scene);
-		primaryStage.show();
+	public Graph(Workspace ws) {
+		plot = new Line2Plot(PREF_WIDTH, PREF_HEIGHT);
+		pane = new StackPane(plot.getNode());
+		workspace = ws;
+	}
+	
+	
+	
+	public void setPlot(Expression exp) {
+		plot.plot(exp, workspace);
+		pane.getChildren().set(0, plot.getNode());
+	}
+	
+	
+	public void addPlot(Expression exp) {
+		//TODO: Implement later
+	}
+	
+	
+	public Node getNode() {
+		return pane;
 	}
 
 }

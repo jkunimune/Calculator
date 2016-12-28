@@ -21,72 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package maths;
-
-import java.util.ArrayList;
-import java.util.List;
+package plots;
 
 import gui.Workspace;
-import javafx.scene.image.Image;
-import util.ImgUtils;
+import javafx.scene.Node;
+import maths.Expression;
 
 /**
- * An expression whose value is unknown, but may be found in the heap.
- *
+ * A wrapper for one of JavaFX's Charts
+ * 
  * @author jkunimune
  */
-public class Variable extends Expression {
+public interface Plot {
 
-	String name;
+	public Node getNode();
 	
-	
-	
-	public Variable(String s) {
-		super(Operator.NULL);
-		name = s;
-	}
-	
-	
-	
-	@Override
-	public int[] getDims() {
-		final int[] out = {1,1};
-		return out;
-	}
-	
-	
-	@Override
-	public List<String> getInputs(Workspace heap) {
-		if (heap.containsKey(name)){
-			return heap.get(name).getInputs(heap);
-		}
-		else {
-			List<String> list = new ArrayList<String>();
-			list.add(name);
-			return list;
-		}
-	}
-	
-	
-	@Override
-	public Expression simplified(Workspace heap) {
-		if (heap != null && heap.containsKey(name))
-			return heap.get(name).simplified(heap);
-		else
-			return this;
-	}
-	
-	
-	@Override
-	public Image toImage() {
-		return ImgUtils.horzCat(ImgUtils.drawString(name.substring(0, 1), true),
-				ImgUtils.subS(ImgUtils.drawString(name.substring(1))));
-	}
-	
-	
-	@Override
-	public String toString() {
-		return name;
-	}
+	public void setSize(int w, int h);
+
+	public void plot(Expression f, Workspace heap);
 
 }

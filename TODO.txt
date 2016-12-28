@@ -3,10 +3,15 @@ Finish that getDims method
 N-D plots
 Auto-D plots
 Adjustable plots
+Sets
+Scatter plots
+Quiver plots
+Raster plots
+Contour plots
+Interactive plots (pan, zoom, etc.)
 Comparison
 Smart parentheses
 Matrices
-Sets
 More error messages (e.g. for mismatched vector addition and bad function calls)
 Built-in multi-argument functions
 Units
@@ -53,6 +58,7 @@ Required Unicode:
 	>=
 	<=
 	!=
+	+-
 	Z
 	R
 	C

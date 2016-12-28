@@ -45,6 +45,7 @@ import maths.Statement;
 public class CommandLine {
 
 	public static final int PREF_WIDTH = 400;
+	public static final int PREF_HEIGHT = 400;
 	
 	private TextArea history;
 	private TextField cmdLine;
@@ -52,17 +53,19 @@ public class CommandLine {
 	
 	private VBox container;
 	
+	private Graph graph;
 	private Workspace workspace;
 	private Statement currentMath;
 	
 	
 	
-	public CommandLine(Workspace ws) {
+	public CommandLine(Graph gr, Workspace ws) {
 		container = new VBox();
 		container.setPrefWidth(PREF_WIDTH);
 		
 		history = new TextArea();
 		history.setEditable(false);
+		history.setPrefHeight(PREF_HEIGHT);
 		container.getChildren().add(history);
 		
 		cmdLine = new TextField();
@@ -84,6 +87,7 @@ public class CommandLine {
 		displaySpace = new ImageView();
 		container.getChildren().add(displaySpace);
 		
+		graph = gr;
 		workspace = ws;
 		currentMath = null;
 	}
@@ -117,8 +121,10 @@ public class CommandLine {
 		try {
 			final Statement ans = math.simplified(workspace);	// evaluate the expression
 			if (ans != null) {
-				if (ans instanceof Expression)
+				if (ans instanceof Expression) {
 					history.appendText("\n\t= "+ans.toString());	// write the answer
+					graph.setPlot((Expression) ans);
+				}
 				else
 					history.appendText("\n\t"+ans.toString());
 				displaySpace.setImage(ans.toImage());

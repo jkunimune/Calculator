@@ -77,7 +77,7 @@ public class Function extends Expression {
 	
 	@Override
 	public Expression simplified(Workspace heap) {
-		if (heap.containsKey(name)) {
+		if (heap != null && heap.containsKey(name)) {
 			if (heap.getArgs(name).size() != args.size())
 				throw new ArithmeticException(name+" takes "+heap.getArgs(name).size()+" arguments!");
 			

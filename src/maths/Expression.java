@@ -67,8 +67,21 @@ public class Expression implements Statement {
 	
 	
 	
-	public int[] getDims() {
-		return null;	//TODO: get dimensions recursively
+	public int[] getDims() { // returns the length of the vector or the size of the array
+		if (args.size() >= 1)
+			return args.get(0).getDims();
+		else
+			return null;
+	}
+	
+	
+	public List<String> getInputs(Workspace heap) { // returns all the variables on which this expression depends
+		List<String> inputs = new ArrayList<String>();
+		for (Expression arg: args)
+			for (String newInput: arg.getInputs(heap))
+				if (!inputs.contains(newInput))
+					inputs.add(newInput);
+		return inputs;
 	}
 	
 	
