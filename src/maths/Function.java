@@ -38,18 +38,20 @@ import util.ImgUtils;
 public class Function extends Expression {
 
 	private String name;
+	private List<Expression> args;
 	
 	
 	
 	public Function(String nm, Expression exp) {
-		super(Operator.NULL, exp);
 		name = nm;
+		args = new ArrayList<Expression>(1);
+		args.add(exp);
 	}
 	
 	
 	public Function(String nm, List<Expression> expLst) {
-		super(Operator.NULL, expLst);
 		name = nm;
+		args = expLst;
 	}
 	
 	
@@ -75,6 +77,29 @@ public class Function extends Expression {
 	}
 	
 	
+	@Override
+	public int[] shape() {
+		return null; // there's no way to know without simplifying
+	}
+	
+	
+	@Override
+	protected Expression getComponent(int i, int j) {
+		return null;
+	}
+
+
+	@Override
+	public List<String> getInputs(Workspace heap) {
+		List<String> inputs = new ArrayList<String>(); //TODO this could be a Collection
+		for (Expression arg: args)
+			for (String newInput: arg.getInputs(heap))
+				if (!inputs.contains(newInput))
+					inputs.add(newInput);
+		return inputs;
+	}
+
+
 	@Override
 	public Expression simplified(Workspace heap) {
 		if (heap != null && heap.containsKey(name)) {

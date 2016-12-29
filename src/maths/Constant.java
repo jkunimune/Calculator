@@ -70,7 +70,6 @@ public class Constant extends Expression {
 	
 	
 	public Constant(double r, double i) {
-		super(Operator.ADD);
 		real = r;
 		imag = i;
 		dimensions = new HashMap<Dimension, Integer>();
@@ -79,7 +78,6 @@ public class Constant extends Expression {
 	
 	
 	public Constant(double r, double i, double tol) {	// this will be rounded to the nearest tol
-		super(Operator.ADD);
 		real = Math.round(r/tol)*tol;
 		imag = Math.round(i/tol)*tol;
 		dimensions = new HashMap<Dimension, Integer>();

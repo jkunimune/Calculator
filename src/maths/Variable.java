@@ -42,7 +42,6 @@ public class Variable extends Expression {
 	
 	
 	public Variable(String s) {
-		super(Operator.NULL);
 		name = s;
 	}
 	

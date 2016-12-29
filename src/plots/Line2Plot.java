@@ -50,6 +50,7 @@ public class Line2Plot implements Plot {
 		xAxis = new NumberAxis(-4, 4, 1);
 		yAxis = new NumberAxis(-4, 4, 1);
 		chart = new LineChart<Number, Number>(xAxis, yAxis);
+		chart.setAxisSortingPolicy(LineChart.SortingPolicy.NONE);
 		chart.setCreateSymbols(false);
 		chart.setLegendVisible(false);
 		setSize(w, h);

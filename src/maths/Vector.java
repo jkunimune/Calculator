@@ -24,6 +24,7 @@
 package maths;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import gui.Workspace;
@@ -38,40 +39,55 @@ import util.ImgUtils;
  */
 public class Vector extends Expression {
 
+	private List<Expression> rows;
+	
+	
+	
 	public Vector(List<Expression> comps) {
-		super(Operator.NULL, comps);
+		rows = comps;
 	}
 	
 	
 	public Vector(Expression... comps) {
-		super(Operator.NULL, comps);
+		rows = Arrays.asList(comps);
 	}
 	
 	
 	
 	public List<Expression> getComponents() {
-		return args;
+		return rows;
 	}
 	
 	
 	public Expression get(int index) {
-		return args.get(index);
+		return rows.get(index);
 	}
 	
 	
 	@Override
 	public int[] shape() {
-		final int[] output = {args.size(), 1};
+		final int[] output = {rows.size(), 1};
 		return output;
 	}
 	
 	
 	@Override
 	protected Expression getComponent(int i, int j) {
-		return args.get(i);
+		return rows.get(i);
 	}
 	
 	
+	@Override
+	public List<String> getInputs(Workspace heap) {
+		List<String> inputs = new ArrayList<String>(); //TODO this could be a Collection
+		for (Expression row: rows)
+			for (String newInput: row.getInputs(heap))
+				if (!inputs.contains(newInput))
+					inputs.add(newInput);
+		return inputs;
+	}
+
+
 	@Override
 	public Vector simplified() {
 		return this.simplified(null);
@@ -80,8 +96,8 @@ public class Vector extends Expression {
 	
 	@Override
 	public Vector simplified(Workspace heap) {
-		List<Expression> simplDims = new ArrayList<Expression>(args.size());
-		for (Expression dim: args)
+		List<Expression> simplDims = new ArrayList<Expression>(rows.size());
+		for (Expression dim: rows)
 			simplDims.add(dim.simplified(heap));
 		return new Vector(simplDims);
 	}
@@ -89,9 +105,9 @@ public class Vector extends Expression {
 	
 	@Override
 	public Image toImage() {
-		Image[] argImgs = new Image[args.size()];
-		for (int i = 0; i < args.size(); i ++)
-			argImgs[i] = args.get(i).toImage();
+		Image[] argImgs = new Image[rows.size()];
+		for (int i = 0; i < rows.size(); i ++)
+			argImgs[i] = rows.get(i).toImage();
 		return ImgUtils.bind(ImgUtils.vertCat(true, argImgs));
 	}
 	
@@ -99,7 +115,7 @@ public class Vector extends Expression {
 	@Override
 	public String toString() {
 		String output = "[";
-		for (Expression arg: args)
+		for (Expression arg: rows)
 			output += arg.toString()+", ";
 		return output.substring(0, output.length()-2)+"]";
 	}
@@ -110,7 +126,7 @@ public class Vector extends Expression {
 		List<Expression> components = new ArrayList<Expression>();	// build a new Vector
 		for (Expression exp: exps) {
 			if (exp instanceof Vector)
-				components.addAll(exp.args);	// by concatenating the inputs
+				components.addAll(((Vector) exp).rows);	// by concatenating the inputs
 			else
 				components.add(exp);
 		}
@@ -126,15 +142,15 @@ public class Vector extends Expression {
 		
 		List<Expression> newComps = new ArrayList<Expression>(shape()[0]);
 		for (int i = 0; i < shape()[0]; i ++)
-			newComps.add(new Expression(Operator.ADD,this.get(i),that.get(i)));
+			newComps.add(new Operation(Operator.ADD,this.get(i),that.get(i)));
 		return new Vector(newComps).simplified();
 	}
 	
 	
 	public Vector negative() {
 		List<Expression> newComps = new ArrayList<Expression>(shape()[0]);
-		for (Expression comp: args)
-			newComps.add(new Expression(Operator.NEGATE, comp));
+		for (Expression comp: rows)
+			newComps.add(new Operation(Operator.NEGATE, comp));
 		return new Vector(newComps).simplified();
 	}
 	
@@ -142,12 +158,12 @@ public class Vector extends Expression {
 	public Expression dot(Vector that) {
 		Expression sum = null;
 		for (int i = 0; i < shape()[0]; i ++) {
-			final Expression prod = new Expression(Operator.MULTIPLY,
+			final Expression prod = new Operation(Operator.MULTIPLY,
 					this.get(i), that.get(i));
 			if (sum == null)
 				sum = prod;
 			else
-				sum = new Expression(Operator.ADD, sum, prod);
+				sum = new Operation(Operator.ADD, sum, prod);
 		}
 		return sum.simplified();
 	}
@@ -157,11 +173,11 @@ public class Vector extends Expression {
 		if (this.shape()[0] == 3 && that.shape()[0] == 3) {
 			List<Expression> newComps = new ArrayList<Expression>(shape()[0]);
 			for (int i = 0; i < 3; i ++) {
-				final Expression vxuy = new Expression(Operator.MULTIPLY,
+				final Expression vxuy = new Operation(Operator.MULTIPLY,
 						this.get((i+1)%3), that.get((i+2)%3));
-				final Expression vyux = new Expression(Operator.MULTIPLY,
+				final Expression vyux = new Operation(Operator.MULTIPLY,
 						this.get((i+2)%3), that.get((i+1)%3));
-				newComps.add(new Expression(Operator.SUBTRACT, vxuy, vyux));
+				newComps.add(new Operation(Operator.SUBTRACT, vxuy, vyux));
 			}
 			return new Vector(newComps).simplified();
 		}
@@ -181,23 +197,23 @@ public class Vector extends Expression {
 	
 	public Vector times(Constant c) {
 		List<Expression> newComps = new ArrayList<Expression>(shape()[0]);
-		for (Expression comp: args)
-			newComps.add(new Expression(Operator.MULTIPLY, comp, c));
+		for (Expression comp: rows)
+			newComps.add(new Operation(Operator.MULTIPLY, comp, c));
 		return new Vector(newComps).simplified();
 	}
 	
 	
 	public Expression abs() {	// calculate the magnitude
 		Expression sum = null;
-		for (Expression comp: args) {
-			final Expression v_i2 = new Expression(Operator.POWER,
+		for (Expression comp: rows) {
+			final Expression v_i2 = new Operation(Operator.POWER,
 					comp, Constant.TWO);
 			if (sum == null)
 				sum = v_i2;
 			else
-				sum = new Expression(Operator.ADD, sum, v_i2);
+				sum = new Operation(Operator.ADD, sum, v_i2);
 		}
-		return new Expression(Operator.ROOT, sum, Constant.TWO).simplified();
+		return new Operation(Operator.ROOT, sum, Constant.TWO).simplified();
 	}
 
 }

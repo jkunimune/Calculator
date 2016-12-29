@@ -110,7 +110,7 @@ public class Notation {
 			return Expression.NULL;
 		if (n == 1) {
 			if (isSymbol(tokens.get(0).charAt(0)))
-				return new Expression(Operator.ERROR);
+				return new Operation(Operator.ERROR);
 			else if (isDigit(tokens.get(0).charAt(0)))
 				return new Constant(Double.parseDouble(tokens.get(0)));
 			else
@@ -140,45 +140,45 @@ public class Notation {
 					}
 					if (rank == 1) {	// arithmetic
 						if (s.equals("+"))
-							return new Expression(Operator.ADD,
+							return new Operation(Operator.ADD,
 									parEx(tokens.subList(0, i)),
 									parEx(tokens.subList(i+1,n)));
 						else if (s.equals("-"))
 							if (i > 0 && !isOperator(tokens.get(i-1).charAt(0)))	// beware of negation pretending to be subtraction
-								return new Expression(Operator.SUBTRACT,
+								return new Operation(Operator.SUBTRACT,
 										parEx(tokens.subList(0, i)),
 										parEx(tokens.subList(i+1,n)));
 					}
 					if (rank == 2) {	// geometric
 						if (s.equals("*") || s.equals("\u2022"))
-							return new Expression(Operator.MULTIPLY,
+							return new Operation(Operator.MULTIPLY,
 									parEx(tokens.subList(0, i)),
 									parEx(tokens.subList(i+1,n)));
 						else if (s.equals("\u00D7"))
-							return new Expression(Operator.CROSS,
+							return new Operation(Operator.CROSS,
 									parEx(tokens.subList(0, i)),
 									parEx(tokens.subList(i+1,n)));
 						else if (s.equals("/"))
-							return new Expression(Operator.DIVIDE,
+							return new Operation(Operator.DIVIDE,
 									parEx(tokens.subList(0, i)),
 									parEx(tokens.subList(i+1,n)));
 						else if (s.equals("\\"))
-							return new Expression(Operator.DIVIDE,
+							return new Operation(Operator.DIVIDE,
 									parEx(tokens.subList(i+1,n)),
 									parEx(tokens.subList(0, i)));
 						else if (s.equals("%"))
-							return new Expression(Operator.MODULO,
+							return new Operation(Operator.MODULO,
 									parEx(tokens.subList(0, i)),
 									parEx(tokens.subList(i+1,n)));
 						else if (i > 0 && !isOperator(tokens.get(i-1).charAt(0))
 								&& !isOperator(s.charAt(0)))
-							return new Expression(Operator.MULTIPLY,
+							return new Operation(Operator.MULTIPLY,
 									parEx(tokens.subList(0, i)),
 									parEx(tokens.subList(i, n)));
 					}
 					if (rank == 3) {	// exponential
 						if (s.equals("^"))
-							return new Expression(Operator.POWER,
+							return new Operation(Operator.POWER,
 									parEx(tokens.subList(0, i)),
 									parEx(tokens.subList(i+1,n)));
 					}
@@ -186,7 +186,7 @@ public class Notation {
 			}
 			
 			if (rank == 1 && tokens.get(0).equals("-"))	// the special negation operator
-				return new Expression(Operator.NEGATE,
+				return new Operation(Operator.NEGATE,
 						parEx(tokens.subList(1, tokens.size())));
 			
 			if (inParentheses) {	// brackets
@@ -198,12 +198,12 @@ public class Notation {
 					if (interior instanceof Vector)	// vectors ignore parentheses
 						return interior;
 					else
-						return new Expression(Operator.PARENTHESES, interior);
+						return new Operation(Operator.PARENTHESES, interior);
 				}
 				else if (funcString.equals("ln"))
-					return new Expression(Operator.LN, interior);
+					return new Operation(Operator.LN, interior);
 				else if (funcString.equals("sqrt"))
-					return new Expression(Operator.ROOT,
+					return new Operation(Operator.ROOT,
 							interior, Constant.TWO);
 				else if (BuiltInFunction.recognizes(funcString))
 					return new BuiltInFunction(funcString, interior);

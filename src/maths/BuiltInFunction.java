@@ -3,13 +3,16 @@
  */
 package maths;
 
+import java.util.List;
+
 import gui.Workspace;
 import javafx.scene.image.Image;
 import util.ImgUtils;
 
 /**
+ * An operation where the operator is some simple function
+ * 
  * @author jkunimune
- *
  */
 public class BuiltInFunction extends Expression {
 
@@ -22,6 +25,7 @@ public class BuiltInFunction extends Expression {
 	
 	
 	private String name;
+	private Expression arg;
 	
 	
 	
@@ -34,9 +38,9 @@ public class BuiltInFunction extends Expression {
 	
 	
 	
-	public BuiltInFunction(String n, Expression arg) {
-		super(Operator.NULL, arg);
+	public BuiltInFunction(String n, Expression x) {
 		name = n;
+		arg = x;
 	}
 	
 	
@@ -51,19 +55,25 @@ public class BuiltInFunction extends Expression {
 	
 	@Override
 	public int[] shape() {
-		return args.get(0).shape();
+		return arg.get(0).shape();
 	}
 	
 	
 	@Override
 	protected Expression getComponent(int i, int j) {
-		return new BuiltInFunction(name, args.get(0).getComponent(i, j));
+		return new BuiltInFunction(name, arg.getComponent(i, j));
+	}
+	
+	
+	@Override
+	public List<String> getInputs(Workspace heap) {
+		return arg.getInputs(heap);
 	}
 	
 	
 	@Override
 	public Expression simplified(Workspace heap) {
-		final Expression simp = args.get(0).simplified(heap);
+		final Expression simp = arg.simplified(heap);
 		if (!(simp instanceof Constant))
 			return new BuiltInFunction(name, simp);
 		
@@ -128,13 +138,13 @@ public class BuiltInFunction extends Expression {
 	
 	@Override
 	public Image toImage() {
-		return ImgUtils.call(name, args.get(0).toImage());
+		return ImgUtils.call(name, arg.toImage());
 	}
 	
 	
 	@Override
 	public String toString() {
-		return name+"("+args.get(0)+")";
+		return name+"("+arg+")";
 	}
 
 }
