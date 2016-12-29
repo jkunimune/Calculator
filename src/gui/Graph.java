@@ -23,9 +23,12 @@
  */
 package gui;
 
+import java.util.List;
+
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import maths.Expression;
+import maths.Variable;
 import plots.Line2Plot;
 import plots.Plot;
 
@@ -58,8 +61,64 @@ public class Graph {
 	
 	
 	public void setPlot(Expression exp) {
-		plot.plot(exp, workspace);
-		pane.getChildren().set(0, plot.getNode());
+		List<String> independents = exp.getInputs(workspace); // count the inputs
+		int dims = exp.shape()[0]*exp.shape()[1]; // and outputs
+		
+		Expression[] functions = null;
+		if (independents.size() == 0) { // and determine what kind of graph to use
+			if (dims == 1) {
+				System.err.println("Number Line not implemented yet");
+			}
+			else if (dims == 2) {
+				System.err.println("Single plot2 not implemented yet");
+			}
+			else if (dims == 3) {
+				System.err.println("Single plot3 not implemented yet");
+			}
+		}
+		else if (independents.size() == 1) {
+			if (dims == 1) {
+				plot = new Line2Plot(PREF_WIDTH, PREF_HEIGHT);
+				functions = new Expression[2];
+				functions[0] = new Variable(independents.get(0));
+				functions[1] = exp;
+			}
+			else if (dims == 2) {
+				plot = new Line2Plot(PREF_WIDTH, PREF_HEIGHT);
+				functions = new Expression[2];
+				functions[0] = exp.get(0);
+				functions[1] = exp.get(1);
+			}
+			else if (dims == 3) {
+				System.err.println("Path in 3space not implemented yet");
+			}
+		}
+		else if (independents.size() == 2) {
+			if (dims == 1) {
+				System.err.println("Surface not implemented yet");
+			}
+			else if (dims == 2) {
+				System.err.println("Quiver in 2space not implemented yet");
+			}
+			else if (dims == 3) {
+				System.err.println("Parametric Surface not implemented yet");
+			}
+		}
+		else if (independents.size() == 3) {
+			if (dims == 1) {
+				System.err.println("Bubble3 not implemented yet");
+			}
+			else if (dims == 2) {
+				System.err.println("Colorful bubble3 not implemented yet");
+			}
+			else if (dims == 3) {
+				System.err.println("Quiver in 3space not implemented yet");
+			}
+		}
+		if (functions != null) {
+			pane.getChildren().set(0, plot.getNode());
+			plot.plot(functions, independents, workspace);
+		}
 	}
 	
 	

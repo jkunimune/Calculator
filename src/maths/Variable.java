@@ -49,9 +49,15 @@ public class Variable extends Expression {
 	
 	
 	@Override
-	public int[] getDims() {
+	public int[] shape() {
 		final int[] out = {1,1};
 		return out;
+	}
+	
+	
+	@Override
+	protected Expression getComponent(int i, int j) {
+		return this; //TODO: variables can be vectors, too, right?
 	}
 	
 	

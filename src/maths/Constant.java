@@ -55,8 +55,8 @@ public class Constant extends Expression {
 	
 	
 	
-	double real;
-	double imag;
+	private double real;
+	private double imag;
 	
 	private HashMap<Dimension, Integer> dimensions;
 	
@@ -104,9 +104,15 @@ public class Constant extends Expression {
 	
 	
 	@Override
-	public int[] getDims() {
+	public int[] shape() {
 		final int[] out = {1,1};
 		return out;
+	}
+	
+	
+	@Override
+	protected Expression getComponent(int i, int j) {
+		return this;
 	}
 	
 	

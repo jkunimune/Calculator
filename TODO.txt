@@ -1,4 +1,3 @@
-Finish that getDims method
 2-D plots
 N-D plots
 Auto-D plots
@@ -8,6 +7,7 @@ Scatter plots
 Quiver plots
 Raster plots
 Contour plots
+Non-Cartesian plots
 Interactive plots (pan, zoom, etc.)
 Comparison
 Smart parentheses

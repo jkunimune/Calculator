@@ -50,9 +50,14 @@ public class BuiltInFunction extends Expression {
 	
 	
 	@Override
-	public int[] getDims() {
-		final int[] output = {1,1};
-		return output;
+	public int[] shape() {
+		return args.get(0).shape();
+	}
+	
+	
+	@Override
+	protected Expression getComponent(int i, int j) {
+		return new BuiltInFunction(name, args.get(0).getComponent(i, j));
 	}
 	
 	

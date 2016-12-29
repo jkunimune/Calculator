@@ -23,6 +23,8 @@
  */
 package plots;
 
+import java.util.List;
+
 import gui.Workspace;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
@@ -56,20 +58,25 @@ public class Line2Plot implements Plot {
 	
 	
 	@Override
-	public void plot(Expression f, Workspace heap) {
-		assert f.getInputs(heap).size() == 1;
-		f = f.simplified(heap);
-		String independent = f.getInputs(heap).get(0);
+	public void plot(Expression[] f, List<String> params,
+			Workspace heap) {
+		assert f.length == 2 : "Illegal number of dimensions";
+		Expression fx = f[0];
+		Expression fy = f[1];
+		
+		assert params.size() == 1 : "I haven't implemented meshes yet";
+		//fx = fx.simplified(heap);
+		//fy = fy.simplified(heap);
 		
 		Workspace locHeap = heap.clone();
 		XYChart.Series<Number, Number> data = new XYChart.Series<Number, Number>();
-		for (double x = xAxis.getLowerBound(); x <= xAxis.getUpperBound(); x += (xAxis.getUpperBound()-xAxis.getLowerBound())/80.) { //XXX Set should be iterable, and there should be an iterable for R
-			Constant z = new Constant(x);
-			locHeap.put(independent, z);
-			Constant u = (Constant) f.simplified(locHeap);
+		for (double t = xAxis.getLowerBound(); t <= xAxis.getUpperBound(); t += (xAxis.getUpperBound()-xAxis.getLowerBound())/80.) { //XXX Set should be iterable, and there should be an iterable for R
+			Constant input = new Constant(t);
+			locHeap.put(params.get(0), input);
+			Constant x = (Constant) fx.simplified(locHeap);
+			Constant y = (Constant) fy.simplified(locHeap);
 			//if (u.getImag() != 0)	continue; // skip numbers with imaginary components
-			double y = u.getReal();
-			data.getData().add(new XYChart.Data<Number, Number>(x,y));
+			data.getData().add(new XYChart.Data<Number, Number>(x.getReal(),y.getReal()));
 		}
 		
 		chart.getData().clear();

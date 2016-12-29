@@ -23,6 +23,8 @@
  */
 package plots;
 
+import java.util.List;
+
 import gui.Workspace;
 import javafx.scene.Node;
 import maths.Expression;
@@ -38,6 +40,6 @@ public interface Plot {
 	
 	public void setSize(int w, int h);
 
-	public void plot(Expression f, Workspace heap);
+	public void plot(Expression[] f, List<String> independent, Workspace heap);
 
 }

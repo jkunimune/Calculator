@@ -38,7 +38,7 @@ import util.ImgUtils;
  *
  * @author jkunimune
  */
-public class Expression implements Statement {
+public class Expression implements Statement {//FIXME This really needs to be an abstract class
 
 	public static final Expression NULL = new Expression(Operator.NULL);	// used when an expression is blank
 	public static final Expression ERROR = new Expression(Operator.ERROR);	// used when an expression cannot be read
@@ -67,16 +67,37 @@ public class Expression implements Statement {
 	
 	
 	
-	public int[] getDims() { // returns the length of the vector or the size of the array
+	public int[] shape() { // returns the length of the vector or the size of the array
 		if (args.size() >= 1)
-			return args.get(0).getDims();
+			return args.get(0).shape();
 		else
 			return null;
 	}
 	
 	
+	public Expression get(int i) {
+		int[] shape = this.shape();
+		if (i < 0 || i >= shape[0]*shape[1])
+			throw new ArithmeticException(this+" doesn't have a "+i+"th component");
+		return this.getComponent(i/shape[0], i%shape[1]);
+	}
+	
+	
+	public Expression get(int i, int j) {
+		int[] shape = this.shape();
+		if (i < 0 || i >= shape[0] || j < 0 || j >= shape[1])
+			throw new ArithmeticException(this+" doesn't have a "+i+" "+j+" element");
+		return this.getComponent(i, j);
+	}
+	
+	
+	protected Expression getComponent(int i, int j) {
+		return this; //TODO later I'm going to come back and make this work for not-simplified vectors
+	}
+	
+	
 	public List<String> getInputs(Workspace heap) { // returns all the variables on which this expression depends
-		List<String> inputs = new ArrayList<String>();
+		List<String> inputs = new ArrayList<String>(); //TODO this could be a Collection
 		for (Expression arg: args)
 			for (String newInput: arg.getInputs(heap))
 				if (!inputs.contains(newInput))

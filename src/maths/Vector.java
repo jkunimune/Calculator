@@ -60,9 +60,15 @@ public class Vector extends Expression {
 	
 	
 	@Override
-	public int[] getDims() {
+	public int[] shape() {
 		final int[] output = {args.size(), 1};
 		return output;
+	}
+	
+	
+	@Override
+	protected Expression getComponent(int i, int j) {
+		return args.get(i);
 	}
 	
 	
@@ -113,20 +119,20 @@ public class Vector extends Expression {
 	
 	
 	public Vector plus(Vector that) {
-		if (this.getDims()[0] != that.getDims()[0])
+		if (this.shape()[0] != that.shape()[0])
 			throw new ArithmeticException("Cannot sum a vector in "
-					+this.getDims()[0]+"-space with a vector in "
-					+that.getDims()[0]+"-space.");
+					+this.shape()[0]+"-space with a vector in "
+					+that.shape()[0]+"-space.");
 		
-		List<Expression> newComps = new ArrayList<Expression>(getDims()[0]);
-		for (int i = 0; i < getDims()[0]; i ++)
+		List<Expression> newComps = new ArrayList<Expression>(shape()[0]);
+		for (int i = 0; i < shape()[0]; i ++)
 			newComps.add(new Expression(Operator.ADD,this.get(i),that.get(i)));
 		return new Vector(newComps).simplified();
 	}
 	
 	
 	public Vector negative() {
-		List<Expression> newComps = new ArrayList<Expression>(getDims()[0]);
+		List<Expression> newComps = new ArrayList<Expression>(shape()[0]);
 		for (Expression comp: args)
 			newComps.add(new Expression(Operator.NEGATE, comp));
 		return new Vector(newComps).simplified();
@@ -135,7 +141,7 @@ public class Vector extends Expression {
 	
 	public Expression dot(Vector that) {
 		Expression sum = null;
-		for (int i = 0; i < getDims()[0]; i ++) {
+		for (int i = 0; i < shape()[0]; i ++) {
 			final Expression prod = new Expression(Operator.MULTIPLY,
 					this.get(i), that.get(i));
 			if (sum == null)
@@ -148,8 +154,8 @@ public class Vector extends Expression {
 	
 	
 	public Vector cross(Vector that) {
-		if (this.getDims()[0] == 3 && that.getDims()[0] == 3) {
-			List<Expression> newComps = new ArrayList<Expression>(getDims()[0]);
+		if (this.shape()[0] == 3 && that.shape()[0] == 3) {
+			List<Expression> newComps = new ArrayList<Expression>(shape()[0]);
 			for (int i = 0; i < 3; i ++) {
 				final Expression vxuy = new Expression(Operator.MULTIPLY,
 						this.get((i+1)%3), that.get((i+2)%3));
@@ -159,7 +165,7 @@ public class Vector extends Expression {
 			}
 			return new Vector(newComps).simplified();
 		}
-		else if (this.getDims()[0] == 7 && that.getDims()[0] == 7) {
+		else if (this.shape()[0] == 7 && that.shape()[0] == 7) {
 			throw new ArithmeticException("GAHH! The seven dimensional cross-"
 					+ "product! Who the heck is trying to take a seven "
 					+ "dimensional cross product?! I never implemented that! "
@@ -174,7 +180,7 @@ public class Vector extends Expression {
 	
 	
 	public Vector times(Constant c) {
-		List<Expression> newComps = new ArrayList<Expression>(getDims()[0]);
+		List<Expression> newComps = new ArrayList<Expression>(shape()[0]);
 		for (Expression comp: args)
 			newComps.add(new Expression(Operator.MULTIPLY, comp, c));
 		return new Vector(newComps).simplified();
