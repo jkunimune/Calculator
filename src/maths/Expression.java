@@ -67,6 +67,9 @@ public abstract class Expression implements Statement {
 	public abstract List<String> getInputs(Workspace heap); // returns all the variables on which this expression depends
 	
 	
+	public abstract Expression replaced(List<String> oldStrs, List<String> newStrs); // replace all instances of oldStrs[i] with nemStrs[i]
+	
+	
 	public Expression simplified() {
 		return this.simplified(null);
 	}

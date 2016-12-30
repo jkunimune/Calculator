@@ -74,6 +74,15 @@ public class Variable extends Expression {
 	
 	
 	@Override
+	public Expression replaced(List<String> oldS, List<String> newS) {
+		for (int i = 0; i < oldS.size(); i ++)
+			if (oldS.get(i).equals(name))
+				return new Variable(newS.get(i));
+		return this;
+	}
+	
+	
+	@Override
 	public Expression simplified(Workspace heap) {
 		if (heap != null && heap.containsKey(name))
 			return heap.get(name).simplified(heap);

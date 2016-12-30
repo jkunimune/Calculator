@@ -98,16 +98,31 @@ public class Function extends Expression {
 					inputs.add(newInput);
 		return inputs;
 	}
-
-
+	
+	
+	@Override
+	public Expression replaced(List<String> oldS, List<String> newS) {
+		List<Expression> modArgs = new ArrayList<Expression>();
+		for (Expression arg: args)
+			modArgs.add(arg.replaced(oldS, newS));
+		return new Function(name, modArgs);
+	}
+	
+	
 	@Override
 	public Expression simplified(Workspace heap) {
 		if (heap != null && heap.containsKey(name)) {
 			if (heap.getArgs(name).size() != args.size())
 				throw new ArithmeticException(name+" takes "+heap.getArgs(name).size()+" arguments!");
 			
-			final Workspace localHeap = heap.localize(heap.getArgs(name), args);
-			return heap.get(name).simplified(localHeap);
+			List<String> oldArgs = heap.getArgs(name);
+			List<String> modArgs = new ArrayList<String>(args.size());
+			for (String oldArg: oldArgs)
+				modArgs.add(name+"/"+oldArg);
+			final Workspace localHeap = heap.localize(modArgs, args);
+			
+			return heap.get(name).replaced(oldArgs, modArgs)
+					.simplified(localHeap);
 		}
 		else {
 			return this;

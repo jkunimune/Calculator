@@ -86,8 +86,17 @@ public class Vector extends Expression {
 					inputs.add(newInput);
 		return inputs;
 	}
-
-
+	
+	
+	@Override
+	public Expression replaced(List<String> oldS, List<String> newS) {
+		List<Expression> modArgs = new ArrayList<Expression>();
+		for (Expression e: rows)
+			modArgs.add(e.replaced(oldS, newS));
+		return new Vector(modArgs);
+	}
+	
+	
 	@Override
 	public Vector simplified() {
 		return this.simplified(null);

@@ -27,10 +27,12 @@ import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
+import maths.Constant;
 import maths.Expression;
 import maths.Variable;
 import plots.Line2Plot;
 import plots.Plot;
+import plots.Scatter2Plot;
 
 /**
  * 
@@ -62,15 +64,23 @@ public class Graph {
 	
 	public void setPlot(Expression exp) {
 		List<String> independents = exp.getInputs(workspace); // count the inputs
+		exp = exp.simplified(workspace);
 		int dims = exp.shape()[0]*exp.shape()[1]; // and outputs
 		
 		Expression[] functions = null;
 		if (independents.size() == 0) { // and determine what kind of graph to use
 			if (dims == 1) {
-				System.err.println("Number Line not implemented yet");
+				assert exp instanceof Constant: "How does a 1d simple exp with no inputs not be constant?";
+				plot = new Scatter2Plot(PREF_WIDTH, PREF_HEIGHT);
+				functions = new Expression[2];
+				functions[0] = ((Constant) exp).re();
+				functions[1] = ((Constant) exp).im();
 			}
 			else if (dims == 2) {
-				System.err.println("Single plot2 not implemented yet");
+				plot = new Scatter2Plot(PREF_WIDTH, PREF_HEIGHT);
+				functions = new Expression[2];
+				functions[0] = exp.get(0);
+				functions[1] = exp.get(1);
 			}
 			else if (dims == 3) {
 				System.err.println("Single plot3 not implemented yet");

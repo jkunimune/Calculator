@@ -56,6 +56,14 @@ public class Matrix extends Expression {
 	
 	
 	@Override
+	public Expression replaced(List<String> oldStrs, List<String> newStrs) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
 	public Expression simplified(Workspace heap) {
 		// TODO Auto-generated method stub
 		return null;

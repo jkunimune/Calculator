@@ -121,6 +121,12 @@ public class Constant extends Expression {
 	
 	
 	@Override
+	public Expression replaced(List<String> oldStrs, List<String> newStrs) {
+		return this;
+	}
+	
+	
+	@Override
 	public Expression simplified(Workspace heap) {
 		return this;	// Constants are already simplified
 	}
@@ -235,6 +241,14 @@ public class Constant extends Expression {
 	public Constant atanh() {
 		return ONE.plus(this).times(ONE.plus(this.negative()).recip())
 				.sqrt().ln();
+	}
+	
+	public Constant re() {
+		return new Constant(real);
+	}
+	
+	public Constant im() {
+		return new Constant(imag);
 	}
 	
 	public Constant abs() {

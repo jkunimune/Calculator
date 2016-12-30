@@ -1,9 +1,6 @@
-2-D plots
-N-D plots
-Auto-D plots
+N-D Plots
 Adjustable plots
 Sets
-Scatter plots
 Quiver plots
 Raster plots
 Contour plots

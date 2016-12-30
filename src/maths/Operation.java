@@ -88,6 +88,15 @@ public class Operation extends Expression {
 	
 	
 	@Override
+	public Expression replaced(List<String> oldS, List<String> newS) {
+		List<Expression> modArgs = new ArrayList<Expression>();
+		for (Expression arg: args)
+			modArgs.add(arg.replaced(oldS, newS));
+		return new Operation(opr, modArgs);
+	}
+	
+	
+	@Override
 	public Expression simplified(Workspace heap) {
 		final Expression[] sargs = new Expression[args.size()];
 		for (int i = 0; i < args.size(); i ++)

@@ -21,7 +21,7 @@ public class BuiltInFunction extends Expression {
 			"atan","acsc","asec","acot","asinh","acosh","atanh","acsch","asech",
 			"acoth","arcsin","arccos","arctan","arccsc","arcsec","arccot",
 			"arcsinh","arccosh","arctanh","arccsch","arcsech","arccoth",
-			"abs","arg"};
+			"re", "real", "im", "imag", "abs","arg"};
 	
 	
 	private String name;
@@ -31,7 +31,7 @@ public class BuiltInFunction extends Expression {
 	
 	public static final boolean recognizes(String s) {
 		for (String f: FUNCTIONS)
-			if (f.equals(s))
+			if (f.equalsIgnoreCase(s))
 				return true;
 		return false;
 	}
@@ -46,10 +46,13 @@ public class BuiltInFunction extends Expression {
 	
 	
 	private String getCode() {	// get a code unique to each function
-		if (name.length() == 6 && name.startsWith("arc"))
-			return "a"+name.substring(3);
+		String code = name.toLowerCase();
+		if (code.length() == 6 && code.startsWith("arc"))
+			return "a"+code.substring(3);
+		else if (code.equals("real") || code.equals("imag"))
+			return code.substring(2);
 		else
-			return name;
+			return code;
 	}
 	
 	
@@ -68,6 +71,12 @@ public class BuiltInFunction extends Expression {
 	@Override
 	public List<String> getInputs(Workspace heap) {
 		return arg.getInputs(heap);
+	}
+	
+	
+	@Override
+	public Expression replaced(List<String> oldStrs, List<String> newStrs) {
+		return new Function(name, arg.replaced(oldStrs, newStrs));
 	}
 	
 	
@@ -127,6 +136,10 @@ public class BuiltInFunction extends Expression {
 			return x.recip().acosh();
 		else if (code.equals("acoth"))
 			return x.recip().atanh();
+		else if (code.equals("re"))
+			return x.re();
+		else if (code.equals("im"))
+			return x.im();
 		else if (code.equals("abs"))
 			return x.abs();
 		else if (code.equals("arg"))
