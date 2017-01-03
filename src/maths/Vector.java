@@ -29,6 +29,7 @@ import java.util.List;
 
 import gui.Workspace;
 import javafx.scene.image.Image;
+import maths.auxiliary.Operator;
 import util.ImgUtils;
 
 /**
@@ -40,6 +41,7 @@ import util.ImgUtils;
 public class Vector extends Expression {
 
 	private List<Expression> rows;
+	private boolean parenthetic; // this flag is mostly used by notation
 	
 	
 	
@@ -54,8 +56,19 @@ public class Vector extends Expression {
 	
 	
 	
+	public Vector(List<Expression> comps, boolean flag) {
+		rows = comps;
+		parenthetic = flag;
+	}
+
+
 	public List<Expression> getComponents() {
 		return rows;
+	}
+	
+	
+	public boolean getParenthetic() {
+		return parenthetic;
 	}
 	
 	
@@ -127,19 +140,6 @@ public class Vector extends Expression {
 		for (Expression arg: rows)
 			output += arg.toString()+", ";
 		return output.substring(0, output.length()-2)+"]";
-	}
-	
-	
-	
-	public static Vector concat(Expression... exps) {
-		List<Expression> components = new ArrayList<Expression>();	// build a new Vector
-		for (Expression exp: exps) {
-			if (exp instanceof Vector)
-				components.addAll(((Vector) exp).rows);	// by concatenating the inputs
-			else
-				components.add(exp);
-		}
-		return new Vector(components);
 	}
 	
 	
@@ -223,6 +223,24 @@ public class Vector extends Expression {
 				sum = new Operation(Operator.ADD, sum, v_i2);
 		}
 		return new Operation(Operator.ROOT, sum, Constant.TWO).simplified();
+	}
+	
+	
+	
+	public static Vector concat(Expression... exps) {
+		return concat(false, exps);
+	}
+	
+	
+	public static Vector concat(boolean parenthetic, Expression... exps) {
+		List<Expression> components = new ArrayList<Expression>();	// build a new Vector
+		for (Expression exp: exps) {
+			if (exp instanceof Vector)
+				components.addAll(((Vector) exp).rows);	// by concatenating the inputs
+			else
+				components.add(exp);
+		}
+		return new Vector(components, parenthetic);
 	}
 
 }

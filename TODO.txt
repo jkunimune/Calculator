@@ -1,13 +1,14 @@
 N-D Plots
 Adjustable plots
 Sets
+implement Iterator
 Quiver plots
 Raster plots
 Contour plots
+Animated plots
 Non-Cartesian plots
 Interactive plots (pan, zoom, etc.)
 Comparison
-Smart parentheses
 Matrices
 More error messages (e.g. for mismatched vector addition and bad function calls)
 Built-in multi-argument functions
@@ -22,8 +23,8 @@ Integral approximations
 History manipulation (up key)
 Help button
 Smart-variables (reading hats and dots as operators)
+Union and intersection (should accept &, && or the upside-down u thing)
 Notation:
-	Absolute Value
 	Logarithms
 	Roots
 	Factorial

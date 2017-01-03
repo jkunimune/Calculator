@@ -83,7 +83,7 @@ public class ImgUtils {
 	}
 	
 	
-	public static Image stretchX(Image img, double s) {	// resizes widht
+	public static Image stretchX(Image img, double s) {	// resizes width
 		final Canvas canvas = new Canvas(s, img.getHeight());
 		final GraphicsContext g = getGraphics(canvas);
 		g.drawImage(img, 0, 0, canvas.getWidth(), canvas.getHeight());
@@ -261,7 +261,8 @@ public class ImgUtils {
 	
 	private static GraphicsContext getGraphics(Canvas c) {
 		final GraphicsContext g = c.getGraphicsContext2D();
-		//g.clearRect(0, 0, c.getWidth(), c.getHeight());XXX
+		//TODO: figure out why the white rectangle is there
+		//g.clearRect(0, 0, c.getWidth(), c.getHeight());
 		return g;
 	}
 

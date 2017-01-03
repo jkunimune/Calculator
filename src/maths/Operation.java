@@ -29,6 +29,7 @@ import java.util.List;
 
 import gui.Workspace;
 import javafx.scene.image.Image;
+import maths.auxiliary.Operator;
 import util.ImgUtils;
 
 /**
@@ -109,6 +110,10 @@ public class Operation extends Expression {
 			return this;
 		case PARENTHESES:
 			return sargs[0];
+		case ABSOLUTE:
+			if (sargs[0] instanceof Constant)
+				return ((Constant) sargs[0]).abs();
+			break;
 		case ADD:
 			if (sargs[0] instanceof Constant && sargs[1] instanceof Constant)
 				return ((Constant) sargs[0]).plus(((Constant) sargs[1]));
@@ -201,6 +206,8 @@ public class Operation extends Expression {
 			return ImgUtils.drawString("?");
 		case PARENTHESES:
 			return ImgUtils.wrap("(", args.get(0).toImage(), ")");
+		case ABSOLUTE:
+			return ImgUtils.wrap("|", args.get(0).toImage(), "|");
 		case ADD:
 			final List<Image> argImgs = new ArrayList<Image>();
 			for (Expression arg: args)
@@ -263,6 +270,8 @@ public class Operation extends Expression {
 			return "error";
 		case PARENTHESES:
 			return "("+args.get(0)+")";
+		case ABSOLUTE:
+			return "(|"+args.get(0)+"|)";
 		case ADD:
 			String out1 = "";
 			for (Expression e: args)

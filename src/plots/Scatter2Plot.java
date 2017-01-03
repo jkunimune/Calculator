@@ -93,7 +93,7 @@ public class Scatter2Plot implements Plot {
 				xMax = datum.getXValue().doubleValue();
 			
 			else if (datum.getXValue().doubleValue() < xMin)
-				xMin = datum.getYValue().doubleValue();
+				xMin = datum.getXValue().doubleValue();
 			
 			if (datum.getYValue().doubleValue() > yMax)
 				yMax = datum.getYValue().doubleValue();

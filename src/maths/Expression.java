@@ -27,6 +27,7 @@ import java.util.List;
 
 import gui.Workspace;
 import javafx.scene.image.Image;
+import maths.auxiliary.Operator;
 
 /**
  * A combination of mathematical symbols and notation that can evaluate to some
@@ -70,13 +71,13 @@ public abstract class Expression implements Statement {
 	public abstract Expression replaced(List<String> oldStrs, List<String> newStrs); // replace all instances of oldStrs[i] with nemStrs[i]
 	
 	
-	public Expression simplified() {
+	public Expression simplified() throws ArithmeticException {
 		return this.simplified(null);
 	}
 	
 	
 	@Override
-	public abstract Expression simplified(Workspace heap);
+	public abstract Expression simplified(Workspace heap) throws ArithmeticException;
 	
 	
 	@Override

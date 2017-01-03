@@ -21,48 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package maths;
-
-import gui.Workspace;
-import javafx.scene.image.Image;
-import util.ImgUtils;
+package maths.auxiliary;
 
 /**
- * A Statement wrapper for a boolean value.
- * 
+ * The built-in mathematical operations this program understands.
+ *
  * @author jkunimune
  */
-public class TrueFalse implements Statement {
+public enum Operator {
 
-	private final boolean value;
-	
-	
-	
-	public TrueFalse(boolean b) {
-		value = b;
-	}
-	
-	
-	
-	@Override
-	public Statement simplified(Workspace arg0) {
-		return this;
-	}
-	
-	
-	@Override
-	public Image toImage() {
-		String out;
-		if (value)	out = "\u2713";
-		else		out = "\u2717";
-		return ImgUtils.drawString(out, false);
-	}
-	
-	
-	@Override
-	public String toString() {
-		if (value)	return "True";
-		else		return "False";
-	}
+	NULL, ERROR,
+	PARENTHESES, ABSOLUTE,
+	ADD, SUBTRACT,
+	NEGATE, MULTIPLY, DIVIDE, MODULO, CROSS,
+	POWER, TRANSVERSE, INVERSE, LN, ROOT, LOGBASE;
 
 }

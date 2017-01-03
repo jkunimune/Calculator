@@ -29,6 +29,7 @@ import java.util.List;
 
 import gui.Workspace;
 import javafx.scene.image.Image;
+import maths.auxiliary.Dimension;
 import util.ImgUtils;
 
 /**

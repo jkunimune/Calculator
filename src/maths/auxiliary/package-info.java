@@ -21,15 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package maths;
-
 /**
-* The six dimensions of SI, minus intensity because, come on, really?
-*
-* @author jkunimune
-*/
-public enum Dimension {
-
-	LENGTH, TIME, MASS, CURRENT, TEMPERATURE, AMOUNT;
-
-}
+ * This package contains math-related classes and enums that are not directly
+ * part of the Statement class hierarchy.
+ *
+ * @author jkunimune
+ */
+package maths.auxiliary;

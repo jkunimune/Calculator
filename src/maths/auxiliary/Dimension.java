@@ -21,18 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package maths;
+package maths.auxiliary;
 
 /**
- * The built-in mathematical operations this program understands.
- *
- * @author jkunimune
- */
-public enum Operator {
+* The six dimensions of SI, minus intensity because, come on, really?
+*
+* @author jkunimune
+*/
+public enum Dimension {
 
-	NULL, ERROR, PARENTHESES,
-	ADD, SUBTRACT,
-	NEGATE, MULTIPLY, DIVIDE, MODULO, CROSS,
-	POWER, TRANSVERSE, INVERSE, LN, ROOT, LOGBASE;
+	LENGTH, TIME, MASS, CURRENT, TEMPERATURE, AMOUNT;
 
 }

@@ -34,8 +34,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import maths.Expression;
-import maths.Notation;
 import maths.Statement;
+import maths.auxiliary.Notation;
 
 /**
  * The set of Nodes that manages basic user input and memory.
@@ -89,7 +89,7 @@ public class CommandLine {
 		
 		graph = gr;
 		workspace = ws;
-		currentMath = null;
+		currentMath = Expression.NULL;
 	}
 	
 	
@@ -139,6 +139,7 @@ public class CommandLine {
 		try {
 			currentMath = Notation.parseStatement(input);
 		} catch (IllegalArgumentException e) {
+			currentMath = Expression.ERROR;
 			System.err.println("Could not parse '"+input+"': "+e);
 		}
 		
