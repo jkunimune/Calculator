@@ -89,12 +89,12 @@ public class Locus extends Expression {
 	
 	
 	@Override
-	public Expression replaced(List<String> oldStrs, List<String> newStrs) {
+	public Expression replaced(String[] oldStrs, String[] newStrs) {
 		String[] newParams = params.clone();
 		for (int i = 0; i < newParams.length; i ++)
-			for (int j = 0; j < oldStrs.size(); j ++)
-				if (newParams[i].equals(oldStrs.get(j)))
-					newParams[i] = newStrs.get(i);
+			for (int j = 0; j < oldStrs.length; j ++)
+				if (newParams[i].equals(oldStrs[i]))
+					newParams[i] = newStrs[i];
 		return new Locus(template.replaced(oldStrs, newStrs), newParams,
 				lowBounds, uppBounds);
 	}
@@ -111,7 +111,7 @@ public class Locus extends Expression {
 	@Override
 	public Image toImage() {
 		Image output =
-				ImgUtils.horzCat(template.toImage(), ImgUtils.drawString("|"));
+				ImgUtils.horzCat(template.toImage(), ImgUtils.drawString(" | "));
 		for (int i = 0; i < params.length; i ++) {
 			Image low = lowBounds[i].toImage();
 			Image name = ImgUtils.drawString(params[i], true);

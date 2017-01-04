@@ -74,10 +74,10 @@ public class Variable extends Expression {
 	
 	
 	@Override
-	public Expression replaced(List<String> oldS, List<String> newS) {
-		for (int i = 0; i < oldS.size(); i ++)
-			if (oldS.get(i).equals(name))
-				return new Variable(newS.get(i));
+	public Expression replaced(String[] oldStrs, String[] newS) {
+		for (int i = 0; i < oldStrs.length; i ++)
+			if (oldStrs[i].equals(name))
+				return new Variable(newS[i]);
 		return this;
 	}
 	

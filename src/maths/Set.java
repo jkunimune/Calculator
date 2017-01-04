@@ -23,7 +23,6 @@
  */
 package maths;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,39 +65,25 @@ public class Set extends Expression {
 	
 	@Override
 	protected Expression getComponent(int i, int j) {
-		List<Expression> elementij = new ArrayList<Expression>(elements.length);
-		for (Expression e: elements)
-			elementij.add(e.getComponent(i, j));
-		return new Set(elementij);
+		return new Set(super.getComponentAll(elements, i,j));
 	}
 	
 	
 	@Override
 	public List<String> getInputs(Workspace heap) {
-		List<String> inputs = new ArrayList<String>(); //TODO this could be a Collection
-		for (Expression elm: elements)
-			for (String newInput: elm.getInputs(heap))
-				if (!inputs.contains(newInput))
-					inputs.add(newInput);
-		return inputs;
+		return super.getInputsAll(elements, heap);
 	}
 	
 	
 	@Override
-	public Expression replaced(List<String> oldStrs, List<String> newStrs) {
-		List<Expression> modElms = new ArrayList<Expression>();
-		for (Expression elm: elements)
-			modElms.add(elm.replaced(oldStrs, newStrs));
-		return new Set(modElms);
+	public Expression replaced(String[] oldStrs, String[] newStrs) {
+		return new Set(super.replaceAll(elements, oldStrs, newStrs));
 	}
 	
 	
 	@Override
 	public Expression simplified(Workspace heap) throws ArithmeticException { //TODO: maybe I should consider removing duplicates
-		List<Expression> smpElms = new ArrayList<Expression>();
-		for (Expression elm: elements)
-			smpElms.add(elm.simplified(heap));
-		return new Set(smpElms);
+		return new Set(super.simplifyAll(elements, heap));
 	}
 	
 	

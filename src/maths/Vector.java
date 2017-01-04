@@ -40,31 +40,31 @@ import util.ImgUtils;
  */
 public class Vector extends Expression {
 
-	private final List<Expression> rows;
+	private final Expression[] rows;
 	private final boolean parenthetic; // this flag is mostly used by notation
 	
 	
 	
-	public Vector(List<Expression> comps) {
-		rows = comps;
+	public Vector(boolean flag, List<Expression> comps) {
+		rows = comps.toArray(new Expression[0]);
 		parenthetic = false;
 	}
 	
 	
 	public Vector(Expression... comps) {
-		rows = Arrays.asList(comps);
+		rows = comps;
 		parenthetic = false;
 	}
 	
 	
 	
-	public Vector(List<Expression> comps, boolean flag) {
+	public Vector(boolean flag, Expression... comps) {
 		rows = comps;
 		parenthetic = flag;
 	}
 
 
-	public List<Expression> getComponents() {
+	public Expression[] getComponents() {
 		return rows;
 	}
 	
@@ -75,63 +75,46 @@ public class Vector extends Expression {
 	
 	
 	public Expression get(int index) {
-		return rows.get(index);
+		return rows[index];
 	}
 	
 	
 	@Override
 	public int[] shape() {
-		final int[] output = {rows.size(), 1};
+		final int[] output = {rows.length, 1};
 		return output;
 	}
 	
 	
 	@Override
 	protected Expression getComponent(int i, int j) {
-		return rows.get(i);
+		return rows[i];
 	}
 	
 	
 	@Override
 	public List<String> getInputs(Workspace heap) {
-		List<String> inputs = new ArrayList<String>(); //TODO this could be a Collection
-		for (Expression row: rows)
-			for (String newInput: row.getInputs(heap))
-				if (!inputs.contains(newInput))
-					inputs.add(newInput);
-		return inputs;
+		return super.getInputsAll(rows, heap);
 	}
 	
 	
 	@Override
-	public Expression replaced(List<String> oldS, List<String> newS) {
-		List<Expression> modArgs = new ArrayList<Expression>();
-		for (Expression e: rows)
-			modArgs.add(e.replaced(oldS, newS));
-		return new Vector(modArgs);
-	}
-	
-	
-	@Override
-	public Vector simplified() {
-		return this.simplified(null);
+	public Expression replaced(String[] oldStrs, String[] newStrs) {
+		return new Vector(super.replaceAll(rows, oldStrs, newStrs));
 	}
 	
 	
 	@Override
 	public Vector simplified(Workspace heap) {
-		List<Expression> simplDims = new ArrayList<Expression>(rows.size());
-		for (Expression dim: rows)
-			simplDims.add(dim.simplified(heap));
-		return new Vector(simplDims);
+		return new Vector(super.simplifyAll(rows, heap));
 	}
 	
 	
 	@Override
 	public Image toImage() {
-		Image[] argImgs = new Image[rows.size()];
-		for (int i = 0; i < rows.size(); i ++)
-			argImgs[i] = rows.get(i).toImage();
+		Image[] argImgs = new Image[rows.length];
+		for (int i = 0; i < rows.length; i ++)
+			argImgs[i] = rows[i].toImage();
 		return ImgUtils.bind(ImgUtils.vertCat(true, argImgs));
 	}
 	
@@ -151,18 +134,19 @@ public class Vector extends Expression {
 					+this.shape()[0]+"-space with a vector in "
 					+that.shape()[0]+"-space.");
 		
-		List<Expression> newComps = new ArrayList<Expression>(shape()[0]);
+		Expression[] newComps = new Expression[shape()[0]];
 		for (int i = 0; i < shape()[0]; i ++)
-			newComps.add(new Operation(Operator.ADD,this.get(i),that.get(i)));
-		return new Vector(newComps).simplified();
+			newComps[i] = new Operation(Operator.ADD,this.rows[i],that.rows[i])
+					.simplified();
+		return new Vector(newComps);
 	}
 	
 	
 	public Vector negative() {
-		List<Expression> newComps = new ArrayList<Expression>(shape()[0]);
-		for (Expression comp: rows)
-			newComps.add(new Operation(Operator.NEGATE, comp));
-		return new Vector(newComps).simplified();
+		Expression[] newComps = new Expression[shape()[0]];
+		for (int i = 0; i < rows.length; i ++)
+			newComps[i] = new Operation(Operator.NEGATE, rows[i]).simplified();
+		return new Vector(newComps);
 	}
 	
 	
@@ -182,15 +166,16 @@ public class Vector extends Expression {
 	
 	public Vector cross(Vector that) {
 		if (this.shape()[0] == 3 && that.shape()[0] == 3) {
-			List<Expression> newComps = new ArrayList<Expression>(shape()[0]);
+			Expression[] newComps = new Expression[shape()[0]];
 			for (int i = 0; i < 3; i ++) {
 				final Expression vxuy = new Operation(Operator.MULTIPLY,
 						this.get((i+1)%3), that.get((i+2)%3));
 				final Expression vyux = new Operation(Operator.MULTIPLY,
 						this.get((i+2)%3), that.get((i+1)%3));
-				newComps.add(new Operation(Operator.SUBTRACT, vxuy, vyux));
+				newComps[i] = new Operation(Operator.SUBTRACT, vxuy, vyux)
+						.simplified();
 			}
-			return new Vector(newComps).simplified();
+			return new Vector(newComps);
 		}
 		else if (this.shape()[0] == 7 && that.shape()[0] == 7) {
 			throw new ArithmeticException("GAHH! The seven dimensional cross-"
@@ -207,10 +192,11 @@ public class Vector extends Expression {
 	
 	
 	public Vector times(Constant c) {
-		List<Expression> newComps = new ArrayList<Expression>(shape()[0]);
-		for (Expression comp: rows)
-			newComps.add(new Operation(Operator.MULTIPLY, comp, c));
-		return new Vector(newComps).simplified();
+		Expression[] newComps = new Expression[shape()[0]];
+		for (int i = 0; i < newComps.length; i ++)
+			newComps[i] = new Operation(Operator.MULTIPLY, rows[i], c)
+					.simplified();
+		return new Vector(newComps);
 	}
 	
 	
@@ -238,11 +224,11 @@ public class Vector extends Expression {
 		List<Expression> components = new ArrayList<Expression>();	// build a new Vector
 		for (Expression exp: exps) {
 			if (exp instanceof Vector)
-				components.addAll(((Vector) exp).rows);	// by concatenating the inputs
+				components.addAll(Arrays.asList(((Vector) exp).rows));	// by concatenating the inputs
 			else
 				components.add(exp);
 		}
-		return new Vector(components, parenthetic);
+		return new Vector(parenthetic, components);
 	}
 
 }

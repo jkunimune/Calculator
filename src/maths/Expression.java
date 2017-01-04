@@ -23,6 +23,7 @@
  */
 package maths;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import gui.Workspace;
@@ -62,17 +63,53 @@ public abstract class Expression implements Statement {
 	}
 	
 	
+	protected static Expression[] getComponentAll(Expression[] args,
+			int i, int j) {
+		Expression[] output = new Expression[args.length];
+		for (int k = 0; k < args.length; k ++)
+			output[k] = args[k].getComponent(i, j);
+		return output;
+	}
+	
+	
 	protected abstract Expression getComponent(int i, int j);
+	
+	
+	protected static List<String> getInputsAll(Expression[] args, Workspace heap) {
+		List<String> output = new ArrayList<String>();
+		for (Expression arg: args)
+			for (String s: arg.getInputs(heap))
+				if (!output.contains(s))
+					output.add(s);
+		return output;
+	}
 	
 	
 	public abstract List<String> getInputs(Workspace heap); // returns all the variables on which this expression depends
 	
 	
-	public abstract Expression replaced(List<String> oldStrs, List<String> newStrs); // replace all instances of oldStrs[i] with nemStrs[i]
+	protected static Expression[] replaceAll(Expression[] args,
+			String[] oldStrs, String[] newStrs) { //XXX: I wonder if these should be arrays instead of lists
+		Expression[] output = new Expression[args.length];
+		for (int k = 0; k < args.length; k ++)
+			output[k] = args[k].replaced(oldStrs, newStrs);
+		return output;
+	}
+	
+	
+	public abstract Expression replaced(String[] oldArgs, String[] modArgs); // replace all instances of oldStrs[i] with nemStrs[i]
 	
 	
 	public Expression simplified() throws ArithmeticException {
 		return this.simplified(null);
+	}
+	
+	
+	protected static Expression[] simplifyAll(Expression[] args, Workspace heap) {
+		Expression[] output = new Expression[args.length];
+		for (int i = 0; i < args.length; i ++)
+			output[i] = args[i].simplified(heap);
+		return output;
 	}
 	
 	

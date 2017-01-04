@@ -32,7 +32,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import maths.Constant;
 import maths.Expression;
-
+import maths.auxiliary.ParameterSpace;
 
 /**
  * A two-dimension interpolated line plot
@@ -71,9 +71,8 @@ public class Line2Plot implements Plot {
 		
 		Workspace locHeap = heap.clone();
 		XYChart.Series<Number, Number> data = new XYChart.Series<Number, Number>();
-		for (double t = xAxis.getLowerBound(); t <= xAxis.getUpperBound(); t += (xAxis.getUpperBound()-xAxis.getLowerBound())/80.) { //XXX Set should be iterable, and there should be an iterable for R
-			Constant input = new Constant(t);
-			locHeap.put(params.get(0), input);
+		for (Constant t: ParameterSpace.iterate(xAxis)) {
+			locHeap.put(params.get(0), t);
 			Constant x = (Constant) fx.simplified(locHeap);
 			Constant y = (Constant) fy.simplified(locHeap);
 			//if (u.getImag() != 0)	continue; // skip numbers with imaginary components

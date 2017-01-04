@@ -122,7 +122,7 @@ public class Constant extends Expression {
 	
 	
 	@Override
-	public Expression replaced(List<String> oldStrs, List<String> newStrs) {
+	public Expression replaced(String[] oldStrs, String[] newStrs) {
 		return this;
 	}
 	

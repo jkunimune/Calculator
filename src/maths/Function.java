@@ -38,20 +38,19 @@ import util.ImgUtils;
 public class Function extends Expression {
 
 	private final String name;
-	private final List<Expression> args;
+	private final Expression[] args;
 	
 	
 	
-	public Function(String nm, Expression exp) {
+	public Function(String nm, Expression...expressions) {
 		name = nm;
-		args = new ArrayList<Expression>(1);
-		args.add(exp);
+		args = expressions;
 	}
 	
 	
 	public Function(String nm, List<Expression> expLst) {
 		name = nm;
-		args = expLst;
+		args = expLst.toArray(new Expression[0]);
 	}
 	
 	
@@ -69,10 +68,10 @@ public class Function extends Expression {
 	}
 	
 	
-	public List<String> getArgs() {
-		List<String> output = new ArrayList<String>();
-		for (Expression arg: args)
-			output.add(arg.toString());
+	public String[] getArgs() {
+		String[] output = new String[args.length];
+		for (int i = 0; i < args.length; i ++)
+			output[i] = args[i].toString();
 		return output;
 	}
 	
@@ -101,7 +100,7 @@ public class Function extends Expression {
 	
 	
 	@Override
-	public Expression replaced(List<String> oldS, List<String> newS) {
+	public Expression replaced(String[] oldS, String[] newS) {
 		List<Expression> modArgs = new ArrayList<Expression>();
 		for (Expression arg: args)
 			modArgs.add(arg.replaced(oldS, newS));
@@ -112,20 +111,20 @@ public class Function extends Expression {
 	@Override
 	public Expression simplified(Workspace heap) {
 		if (heap != null && heap.containsKey(name)) {
-			if (heap.getArgs(name).size() != args.size())
-				throw new ArithmeticException(name+" takes "+heap.getArgs(name).size()+" arguments!");
+			if (heap.getArgs(name).length != args.length)
+				throw new ArithmeticException(name+" takes "+heap.getArgs(name).length+" arguments!");
 			
-			List<String> oldArgs = heap.getArgs(name);
-			List<String> modArgs = new ArrayList<String>(args.size());
-			for (String oldArg: oldArgs)
-				modArgs.add(name+"/"+oldArg);
+			String[] oldArgs = heap.getArgs(name);
+			String[] modArgs = new String[oldArgs.length];
+			for (int i = 0; i < oldArgs.length; i ++)
+				modArgs[i] = name+"/"+oldArgs[i];
 			final Workspace localHeap = heap.localize(modArgs, args);
 			
 			return heap.get(name).replaced(oldArgs, modArgs)
 					.simplified(localHeap);
 		}
 		else {
-			return this;
+			return new Function(name, super.simplifyAll(args, heap));
 		}
 	}
 	

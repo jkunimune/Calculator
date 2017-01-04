@@ -75,7 +75,7 @@ public class BuiltInFunction extends Expression {
 	
 	
 	@Override
-	public Expression replaced(List<String> oldStrs, List<String> newStrs) {
+	public Expression replaced(String[] oldStrs, String[] newStrs) {
 		return new Function(name, arg.replaced(oldStrs, newStrs));
 	}
 	

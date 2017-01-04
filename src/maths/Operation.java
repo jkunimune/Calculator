@@ -24,7 +24,6 @@
 package maths;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import gui.Workspace;
@@ -40,7 +39,7 @@ import util.ImgUtils;
 public class Operation extends Expression {
 
 	protected final Operator opr;
-	protected final List<Expression> args;
+	protected final Expression[] args;
 	
 	
 	
@@ -51,21 +50,21 @@ public class Operation extends Expression {
 	
 	public Operation(Operator o, List<Expression> r) {
 		opr = o;
-		args = r;
+		args = r.toArray(new Expression[0]);
 	}
 	
 	
 	public Operation(Operator o, Expression... r) {
 		opr = o;
-		args = Arrays.asList(r);
+		args = r;
 	}
 	
 	
 	
 	@Override
 	public int[] shape() { // returns the length of the vector or the size of the array
-		if (args.size() >= 1)
-			return args.get(0).shape();
+		if (args.length >= 1)
+			return args[0].shape();
 		else
 			return null;
 	}
@@ -79,29 +78,21 @@ public class Operation extends Expression {
 	
 	@Override
 	public List<String> getInputs(Workspace heap) { // returns all the variables on which this expression depends
-		List<String> inputs = new ArrayList<String>(); //TODO this could be a Collection
-		for (Expression arg: args)
-			for (String newInput: arg.getInputs(heap))
-				if (!inputs.contains(newInput))
-					inputs.add(newInput);
-		return inputs;
+		return super.getInputsAll(args, heap);
 	}
 	
 	
 	@Override
-	public Expression replaced(List<String> oldS, List<String> newS) {
-		List<Expression> modArgs = new ArrayList<Expression>();
-		for (Expression arg: args)
-			modArgs.add(arg.replaced(oldS, newS));
-		return new Operation(opr, modArgs);
+	public Expression replaced(String[] oldStrs, String[] newStrs) {
+		return new Operation(opr, super.replaceAll(args, oldStrs, newStrs));
 	}
 	
 	
 	@Override
 	public Expression simplified(Workspace heap) {
-		final Expression[] sargs = new Expression[args.size()];
-		for (int i = 0; i < args.size(); i ++)
-			sargs[i] = args.get(i).simplified(heap);
+		final Expression[] sargs = new Expression[args.length];
+		for (int i = 0; i < args.length; i ++)
+			sargs[i] = args[i].simplified(heap);
 		
 		switch(opr) {
 		case NULL:
@@ -205,57 +196,57 @@ public class Operation extends Expression {
 		case ERROR:
 			return ImgUtils.drawString("?");
 		case PARENTHESES:
-			return ImgUtils.wrap("(", args.get(0).toImage(), ")");
+			return ImgUtils.wrap("(", args[0].toImage(), ")");
 		case ABSOLUTE:
-			return ImgUtils.wrap("|", args.get(0).toImage(), "|");
+			return ImgUtils.wrap("|", args[0].toImage(), "|");
 		case ADD:
 			final List<Image> argImgs = new ArrayList<Image>();
 			for (Expression arg: args)
 				argImgs.add(arg.toImage());
 			return ImgUtils.link(argImgs, " + ");
 		case SUBTRACT:
-			return ImgUtils.horzCat(args.get(0).toImage(),
-					ImgUtils.drawString(" - "), args.get(1).toImage());
+			return ImgUtils.horzCat(args[0].toImage(),
+					ImgUtils.drawString(" - "), args[1].toImage());
 		case NEGATE:
 			return ImgUtils.horzCat(ImgUtils.drawString("-"),
-					args.get(0).toImage());
+					args[0].toImage());
 		case MULTIPLY:
 			final List<Image> imgArgs = new ArrayList<Image>();
 			for (Expression arg: args)
 				imgArgs.add(arg.toImage());
-			return ImgUtils.link(imgArgs, "\u2022");
+			return ImgUtils.link(imgArgs, "\u2217");
 		case DIVIDE:
-			return ImgUtils.split(args.get(0).toImage(), args.get(1).toImage());
+			return ImgUtils.split(args[0].toImage(), args[1].toImage());
 		case MODULO:
-			return ImgUtils.horzCat(args.get(0).toImage(),
-					ImgUtils.drawString("%"), args.get(1).toImage());
+			return ImgUtils.horzCat(args[0].toImage(),
+					ImgUtils.drawString("%"), args[1].toImage());
 		case CROSS:
-			return ImgUtils.horzCat(args.get(0).toImage(),
-					ImgUtils.drawString("\u00d7"), args.get(1).toImage());
+			return ImgUtils.horzCat(args[0].toImage(),
+					ImgUtils.drawString("\u00d7"), args[1].toImage());
 		case POWER:
-			return ImgUtils.horzCat(args.get(0).toImage(),
-					ImgUtils.superS(args.get(1).toImage()));
+			return ImgUtils.horzCat(args[0].toImage(),
+					ImgUtils.superS(args[1].toImage()));
 		case TRANSVERSE:
-			return ImgUtils.horzCat(args.get(0).toImage(),
+			return ImgUtils.horzCat(args[0].toImage(),
 					ImgUtils.superS(ImgUtils.drawString("T")));
 		case INVERSE:
-			return ImgUtils.horzCat(args.get(0).toImage(),
+			return ImgUtils.horzCat(args[0].toImage(),
 					ImgUtils.superS(ImgUtils.drawString("-1")));
 		case ROOT:
 			Image out2 = ImgUtils.horzCat(ImgUtils.drawString("\u221A"),
-					ImgUtils.overline(args.get(0).toImage()));
-			if (!args.get(1).equals(Constant.TWO))
-				out2 = ImgUtils.horzCat(ImgUtils.superS(args.get(1).toImage()), out2);
+					ImgUtils.overline(args[0].toImage()));
+			if (!args[1].equals(Constant.TWO))
+				out2 = ImgUtils.horzCat(ImgUtils.superS(args[1].toImage()), out2);
 			return out2;
 		case LN:
-			return ImgUtils.call("ln", args.get(0).toImage());
+			return ImgUtils.call("ln", args[0].toImage());
 		case LOGBASE:
-			if (args.get(0).equals(Constant.TEN))
-				return ImgUtils.call("log", args.get(1).toImage());
+			if (args[0].equals(Constant.TEN))
+				return ImgUtils.call("log", args[1].toImage());
 			else
 				return ImgUtils.horzCat(ImgUtils.drawString("log"),
-						ImgUtils.subS(args.get(0).toImage()),
-						ImgUtils.wrap("(", args.get(0).toImage(), ")"));
+						ImgUtils.subS(args[0].toImage()),
+						ImgUtils.wrap("(", args[0].toImage(), ")"));
 		}
 		return ImgUtils.NULL;
 	}
@@ -269,48 +260,48 @@ public class Operation extends Expression {
 		case ERROR:
 			return "error";
 		case PARENTHESES:
-			return "("+args.get(0)+")";
+			return "("+args[0]+")";
 		case ABSOLUTE:
-			return "(|"+args.get(0)+"|)";
+			return "(|"+args[0]+"|)";
 		case ADD:
 			String out1 = "";
 			for (Expression e: args)
 				out1 += e.toString()+" + ";
 			return out1.substring(0,out1.length()-3);
 		case SUBTRACT:
-			return args.get(0)+" - "+args.get(1);
+			return args[0]+" - "+args[1];
 		case NEGATE:
-			return "-"+args.get(0);
+			return "-"+args[0];
 		case MULTIPLY:
-			String out2 = args.get(0).toString();
-			for (int i = 1; i < args.size(); i ++) {
-				out2 += "*"+args.get(i);
+			String out2 = args[0].toString();
+			for (int i = 1; i < args.length; i ++) {
+				out2 += "\u2217"+args[i];
 			}
 			return out2;
 		case DIVIDE:
-			return args.get(0)+"/"+args.get(1);
+			return args[0]+"/"+args[1];
 		case MODULO:
-			return args.get(0)+"%"+args.get(1);
+			return args[0]+"%"+args[1];
 		case CROSS:
-			return args.get(0)+" \u00d7 "+args.get(1);
+			return args[0]+" \u00d7 "+args[1];
 		case POWER:
-			return args.get(0)+"^"+args.get(1);
+			return args[0]+"^"+args[1];
 		case TRANSVERSE:
-			return args.get(0)+"T";
+			return args[0]+"T";
 		case INVERSE:
-			return args.get(0)+"^(-1)";
+			return args[0]+"^(-1)";
 		case ROOT:
-			if (args.get(1).equals(Constant.TWO))
-				return "\u221A("+args.get(0)+")";
+			if (args[1].equals(Constant.TWO))
+				return "\u221A("+args[0]+")";
 			else
-				return args.get(1)+"\u221A("+args.get(0)+")";
+				return args[1]+"\u221A("+args[0]+")";
 		case LN:
-			return "ln("+args.get(0)+")";
+			return "ln("+args[0]+")";
 		case LOGBASE:
-			if (args.get(0).equals(Constant.TEN))
-				return "log("+args.get(1)+")";
+			if (args[0].equals(Constant.TEN))
+				return "log("+args[1]+")";
 			else
-				return "log_"+args.get(0)+"("+args.get(1)+")";
+				return "log_"+args[0]+"("+args[1]+")";
 		}
 		throw new IllegalArgumentException("Undefined operator: "+opr.toString());
 	}

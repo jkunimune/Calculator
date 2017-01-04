@@ -26,6 +26,7 @@ package gui;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -51,8 +52,8 @@ public class Workspace {
 	public static final int PREF_HEIGHT = 200;
 	
 	
-	private HashMap<String, Expression> outputs;	// the mapping from Strings to Expressions
-	private HashMap<String, List<String>> inputs;	// the inputs to each variable
+	private Map<String, Expression> outputs;	// the mapping from Strings to Expressions
+	private Map<String, String[]> inputs;	// the inputs to each variable
 	private ObservableList<String> keys;	// the ordered list of Strings
 	private TableView<String> table;	// the nice display of all Strings and Expressions
 	
@@ -60,7 +61,7 @@ public class Workspace {
 	
 	public Workspace() {
 		outputs = new HashMap<String, Expression>();
-		inputs = new HashMap<String, List<String>>();
+		inputs = new HashMap<String, String[]>();
 		keys = FXCollections.observableList(new ArrayList<String>());
 		table = new TableView<String>(keys);
 		
@@ -91,7 +92,7 @@ public class Workspace {
 	
 	private Workspace(Workspace w) {	// clone another workspace
 		outputs = new HashMap<String, Expression>();
-		inputs = new HashMap<String, List<String>>();
+		inputs = new HashMap<String, String[]>();
 		keys = FXCollections.observableList(new ArrayList<String>());
 		
 		for (String key: w.keys)	// workspaces instantiated this way have no Node
@@ -115,13 +116,13 @@ public class Workspace {
 	}
 	
 	
-	public List<String> getArgs(String name) {
+	public String[] getArgs(String name) {
 		return inputs.get(name);
 	}
 	
 	
 	public String getCall(String name) {
-		if (inputs.get(name) != null && !inputs.get(name).isEmpty()) {
+		if (inputs.get(name) != null && inputs.get(name).length > 0) {
 			String res = name+"(";
 			for (String arg: inputs.get(name))
 				res += arg+", ";
@@ -137,7 +138,7 @@ public class Workspace {
 	}
 	
 	
-	public void put(String name, List<String> args, Expression val) {
+	public void put(String name, String[] args, Expression val) {
 		if (val instanceof Variable && ((Variable) val).toString().equals(name))
 			return; // this is a tricky exception where a variables becomes itself
 		
@@ -167,13 +168,13 @@ public class Workspace {
 	}
 	
 	
-	public Workspace localize(List<String> newVars, List<Expression> newVals) { // clone this and add some new variables
-		if (newVars == null || newVars.isEmpty())
+	public Workspace localize(String[] newVars, Expression[] args) { // clone this and add some new variables
+		if (newVars == null || newVars.length == 0)
 			return this;
 		
 		Workspace local = new Workspace(this);
-		for (int i = 0; i < newVars.size(); i ++)
-			local.put(newVars.get(i), null, newVals.get(i));
+		for (int i = 0; i < newVars.length; i ++)
+			local.put(newVars[i], null, args[i]);
 		return local;
 	}
 	

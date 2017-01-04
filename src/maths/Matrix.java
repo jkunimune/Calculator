@@ -56,7 +56,7 @@ public class Matrix extends Expression {
 	
 	
 	@Override
-	public Expression replaced(List<String> oldStrs, List<String> newStrs) {
+	public Expression replaced(String[] oldStrs, String[] newStrs) {
 		// TODO Auto-generated method stub
 		return null;
 	}

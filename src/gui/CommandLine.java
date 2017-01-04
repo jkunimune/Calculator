@@ -56,6 +56,7 @@ public class CommandLine {
 	private Graph graph;
 	private Workspace workspace;
 	private Statement currentMath;
+	private String errorMsg;
 	
 	
 	
@@ -90,6 +91,7 @@ public class CommandLine {
 		graph = gr;
 		workspace = ws;
 		currentMath = Expression.NULL;
+		errorMsg = "";
 	}
 	
 	
@@ -112,11 +114,17 @@ public class CommandLine {
 	
 	private void evaluate() {	// called when enter is pressed
 		final String text = cmdLine.getText();
-		Statement math = currentMath;
+		Statement math = currentMath; // save the math and the message
+		String errMsg = errorMsg;
 		cmdLine.clear();
 		history.appendText("\n"+text);	// write the current line to history
 		
 		if (text.isEmpty())	return;
+		
+		if (!errMsg.isEmpty()) {
+			history.appendText("\nSYNTAX ERROR: "+errMsg);
+			return;
+		}
 		
 		try {
 			final Statement ans = math.simplified(workspace);	// evaluate the expression
@@ -130,7 +138,7 @@ public class CommandLine {
 				displaySpace.setImage(ans.toImage());
 			}
 		} catch (ArithmeticException e) {
-			history.appendText("\n\tERROR: "+e.getMessage());	// print the error if there is one
+			history.appendText("\nERROR: "+e.getMessage());	// print the error if there is one
 		}
 	}
 	
@@ -138,9 +146,10 @@ public class CommandLine {
 	private void update(String input) {	// called when something is typed
 		try {
 			currentMath = Notation.parseStatement(input);
+			errorMsg = "";
 		} catch (IllegalArgumentException e) {
 			currentMath = Expression.ERROR;
-			System.err.println("Could not parse '"+input+"': "+e);
+			errorMsg = e.getMessage();
 		}
 		
 		displaySpace.setImage(currentMath.toImage());

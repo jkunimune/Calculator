@@ -73,13 +73,13 @@ public class Graph {
 		if (independents.size() == 0) { // and determine what kind of graph to use
 			if (dims == 1) {
 				assert exp instanceof Constant: "How does a 1d simple exp with no inputs not be constant?";
-				plot = new Scatter2Plot(PREF_WIDTH, PREF_HEIGHT);
+				setPlotType(Scatter2Plot.class);
 				functions = new Expression[2];
 				functions[0] = ((Constant) exp).re();
 				functions[1] = ((Constant) exp).im();
 			}
 			else if (dims == 2) {
-				plot = new Scatter2Plot(PREF_WIDTH, PREF_HEIGHT);
+				setPlotType(Scatter2Plot.class);
 				functions = new Expression[2];
 				functions[0] = exp.get(0);
 				functions[1] = exp.get(1);
@@ -90,13 +90,13 @@ public class Graph {
 		}
 		else if (independents.size() == 1) {
 			if (dims == 1) {
-				plot = new Line2Plot(PREF_WIDTH, PREF_HEIGHT);
+				setPlotType(Line2Plot.class);
 				functions = new Expression[2];
 				functions[0] = new Variable(independents.get(0));
 				functions[1] = exp;
 			}
 			else if (dims == 2) {
-				plot = new Line2Plot(PREF_WIDTH, PREF_HEIGHT);
+				setPlotType(Line2Plot.class);
 				functions = new Expression[2];
 				functions[0] = exp.get(0);
 				functions[1] = exp.get(1);
@@ -132,9 +132,11 @@ public class Graph {
 			plot.plot(functions, independents, workspace);
 		}
 		
-		} catch (NullPointerException e) {
+		} catch (NullPointerException e) { //FIXME: finish Graph stuff
 			System.err.println("Still got some kinks to work out: "+e);
 		} catch (AssertionError e) {
+			System.err.println("Still got some kinks to work out: "+e);
+		} catch (ClassCastException e) {
 			System.err.println("Still got some kinks to work out: "+e);
 		}
 	}
@@ -147,6 +149,18 @@ public class Graph {
 	
 	public Node getNode() {
 		return pane;
+	}
+	
+	
+	private void setPlotType(Class<? extends Plot> clazz) {
+		if (clazz.isInstance(plot))	return;
+		
+		if (clazz == Scatter2Plot.class)
+			plot = new Scatter2Plot(PREF_WIDTH, PREF_HEIGHT);
+		else if (clazz == Line2Plot.class)
+			plot = new Line2Plot(PREF_WIDTH, PREF_HEIGHT);
+		else
+			System.err.println("What is "+clazz+" doing in this method?");
 	}
 
 }

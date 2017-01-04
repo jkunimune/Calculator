@@ -179,7 +179,7 @@ public class Notation {
 										parEx(tokens.subList(i+1,n)));
 					}
 					if (rank == 2) {	// geometric
-						if (s.equals("*") || s.equals("\u2022"))
+						if (s.equals("*") || s.equals("\u2217"))
 							return new Operation(Operator.MULTIPLY,
 									parEx(tokens.subList(0, i)),
 									parEx(tokens.subList(i+1,n)));
@@ -238,7 +238,7 @@ public class Notation {
 					if (interior instanceof Vector &&
 							!((Vector)interior).getParenthetic())	// vectors ignore parentheses
 						return new Vector(
-								((Vector)interior).getComponents(),true);
+								true, ((Vector)interior).getComponents());
 					else
 						return new Operation(Operator.PARENTHESES, interior);
 				}
@@ -327,7 +327,7 @@ public class Notation {
 				for (j = 0; j < ineq.size(); j ++)
 					if (ineq.get(j).equals("<") || ineq.get(j).equals("\u2264"))
 						break;
-				if (j == ineq.size())
+				if (j >= ineq.size()-3)
 					throw new IllegalArgumentException("In set-builder notation, each comma-separated condition declaration must have two '<'s");
 				else
 					lowBounds.add(parEx(ineq.subList(0, j)));
@@ -373,7 +373,7 @@ public class Notation {
 	
 	
 	private static final boolean isOperator(char c) {
-		final char[] ops = {'+','-','*','\u2022','\u00D7','/','\\','%','^',',',':'};
+		final char[] ops = {'+','-','*','\u2217','\u00D7','/','\\','%','^',',',':'};
 		for (char o: ops)
 			if (c == o)
 				return true;
