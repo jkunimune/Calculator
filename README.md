@@ -9,15 +9,16 @@ _Math-Assist_ has a simple and intuitive GUI of three main parts. In the lower l
 
 ## Features
 _Math-Assist_ comes equipped with any and all capabilities you could ever want (within reason), regardless of whether you are a mere layman or a PhD. Features include:
-  - calculating expressions
-  - plotting in up to 3 dimensions
+  - simplifying expressions
+  - storing variables
+  - plotting in up to 4 dimensions
   - solving systems of equations
-  - finding derivatives
+  - differentiation
   - unit conversions
   - and much more!
 
 ## Premise
 You may ask yourself, why make such a big fuss over a calculator app? Plenty of those already exist! What makes yours different?
-Well, hypothetical sir, the answer is, well, how can I put this lightly? Mine is not garbage.
+Well, hypothetical sir, the answer is, mine is not garbage.
 
-Okay, maybe I could have phrased it lighter, but the point stands. All calculator apps on computers and phones are emulations of old calculators that had a total of twenty buttons and a single slot of memory. The best calculator apps by far are emulations of TI-84s, with their slow processors and pixelated displays. If you want to really plot and analyze equations, you need to go to something more heavy-duty, like MatLab or Wolfram Alpha. This app seeks to fix all of these horrible calculators by combining the best featuers of all of these. _Math-Assist_ is as intuitive as a calculator, easy to use as a TI-84, and powerful as MatLab. What's more, _Math-Assist_ is FREE! Who doesn't like freedom? Kim Jung Un, that's who. Don't be a Korean dictator. Use _Math-Assist_.
+Perhaps I could have phrased that more lightly, but the point stands. All calculator apps on computers and phones are emulations of old calculators that had a total of twenty buttons and a single slot of memory. The best calculator apps by far are emulations of TI-84s, with their slow processors and pixelated displays. If you want to really plot and analyze equations, you need to go to something more heavy-duty, like MatLab or Wolfram Alpha. But those are expensive applications that take up loads of disk space. This app seeks to fix all of these horrible calculators by combining the best featuers of all of these. _Math-Assist_ is as intuitive as a calculator, easy to use as a TI-84, and powerful as MatLab. What's more, _Math-Assist_ is FREE! Who doesn't like freedom? Kim Jung Un, that's who. Don't be a Korean dictator. Use _Math-Assist_.
