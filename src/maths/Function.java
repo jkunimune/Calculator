@@ -37,8 +37,8 @@ import util.ImgUtils;
  */
 public class Function extends Expression {
 
-	private String name;
-	private List<Expression> args;
+	private final String name;
+	private final List<Expression> args;
 	
 	
 	

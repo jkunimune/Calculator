@@ -24,8 +24,8 @@ public class BuiltInFunction extends Expression {
 			"re", "real", "im", "imag", "abs","arg"};
 	
 	
-	private String name;
-	private Expression arg;
+	private final String name;
+	private final Expression arg;
 	
 	
 	

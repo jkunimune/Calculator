@@ -16,7 +16,7 @@ import javafx.scene.image.Image;
  */
 public class Matrix extends Expression {
 
-	private List<Vector> rows;
+	private final List<Vector> rows;
 	
 	
 	

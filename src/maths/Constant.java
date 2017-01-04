@@ -56,12 +56,12 @@ public class Constant extends Expression {
 	
 	
 	
-	private double real;
-	private double imag;
+	private final double real;
+	private final double imag;
 	
-	private HashMap<Dimension, Integer> dimensions;
+	private final HashMap<Dimension, Integer> dimensions;
 	
-	private int radix;
+	private final int radix;
 	
 	
 	

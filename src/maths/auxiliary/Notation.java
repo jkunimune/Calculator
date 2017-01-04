@@ -31,6 +31,7 @@ import maths.Comparison;
 import maths.Constant;
 import maths.Expression;
 import maths.Function;
+import maths.Locus;
 import maths.Operation;
 import maths.Set;
 import maths.Statement;
@@ -56,15 +57,18 @@ public class Notation {
 		for (int i = 0; i < input.length(); i ++) { // and add parentheses as necessary
 			char c = input.charAt(i);
 			if (isOpenP(c) && (nest.isEmpty() || c != nest.charAt(0))) { // if it is an openP (and not the closeP we were waiting for)
+				if (c == '|' && !nest.isEmpty() && nest.charAt(0) == '}')
+					continue;
 				nest = correspondingP(c)+nest;
 			}
 			else if (isCloseP(c)) {
 				if (nest.isEmpty()) // if there is a close parentheses but any previous parentheses are resolved
 					newInput = correspondingP(c)+newInput; // add that openP and move on
-				else if (nest.charAt(0) != c) // if there is a standing openP that mismatches the closeP
+				else if (nest.charAt(0) != c) { // if there is a standing openP that mismatches the closeP
 					throw new IllegalArgumentException(
 							"Mismatched parentheses: "+
 							correspondingP(nest.charAt(0))+c);
+				}
 				else // if the close parentheses matches
 					nest = nest.substring(1); // resolve that and move on
 			}
@@ -101,7 +105,7 @@ public class Notation {
 	
 	private static final Statement parse(List<String> tokens) throws IllegalArgumentException {
 		final List<Expression> exps = new ArrayList<Expression>();
-		final List<Character> oprs = new ArrayList<Character>();
+		final List<String> oprs = new ArrayList<String>();
 		int level = 0;
 		int lastOperator = 0;
 		for (int i = 0; i < tokens.size(); i ++) {
@@ -115,11 +119,9 @@ public class Notation {
 			else if (s.length() == 1 && isComparator(s.charAt(0))) {
 				if (level == 0) {
 					exps.add(parEx(tokens.subList(lastOperator, i)));
-					oprs.add(s.charAt(0));
+					oprs.add(s);
 					lastOperator = i+1;
 				}
-				else
-					throw new IllegalArgumentException(s+" cannot be inside parentheses.");
 			}
 		}
 		exps.add(parEx(tokens.subList(lastOperator, tokens.size())));
@@ -217,25 +219,28 @@ public class Notation {
 						parEx(tokens.subList(1, tokens.size())));
 			
 			if (inParentheses) {	// brackets
-				final String funcString = tokens.get(0).substring(0,
-						tokens.get(0).length()-1);
+				if (tokens.get(0).equals("{")) {
+					if (tokens.size() == 2)
+						return Set.EMPTY;
+					else
+						return parSet(tokens.subList(1, n-1));
+				}
+				
 				final Expression interior = parEx(tokens.subList(1, n-1));
 				
 				if (tokens.get(0).equals("|"))
 					return new Operation(Operator.ABSOLUTE, interior);
 				
-				else if (funcString.isEmpty()) {
+				final String funcString = tokens.get(0).substring(0,
+						tokens.get(0).length()-1);
+				
+				if (funcString.isEmpty()) {
 					if (interior instanceof Vector &&
-							!((Vector)interior).getParenthetic()) {	// vectors ignore parentheses
-						if (tokens.get(0).equals("{"))
-							return new Set(((Vector)interior).getComponents());
-						else
-							return new Vector(
-									((Vector)interior).getComponents(),true);
-					}
-					else {
+							!((Vector)interior).getParenthetic())	// vectors ignore parentheses
+						return new Vector(
+								((Vector)interior).getComponents(),true);
+					else
 						return new Operation(Operator.PARENTHESES, interior);
-					}
 				}
 				
 				else if (funcString.equals("ln"))
@@ -262,6 +267,91 @@ public class Notation {
 	}
 	
 	
+	private static final Expression parSet(List<String> tokens) throws IllegalArgumentException {	// parse a set
+		int numColon = 0, numBars = 0;
+		int colonIdx = -1, barIdx = -1;
+		String nest = "";
+		for (int i = 0; i < tokens.size(); i ++) {
+			String s = tokens.get(i);
+			char p = s.charAt(s.length()-1);
+			if (isOpenP(p) && (nest.isEmpty() || p != nest.charAt(0)) && p != '|') // if it is an openP (and not the closeP we were waiting for)
+				nest = correspondingP(p)+nest;
+			else if (isCloseP(p))
+				if (p != '|') // if there is a standing openP that mismatches the closeP
+					nest = nest.substring(1); // resolve that and move on
+			
+			if (nest.isEmpty()) {
+				if (s.equals(":")) {
+					numColon ++;
+					colonIdx = i;
+				}
+				else if (s.equals("|")) {
+					numBars ++;
+					barIdx = i;
+				}
+			}
+		}
+		
+		if (numColon == 1) {
+			Expression template = parEx(tokens.subList(0, colonIdx));
+			return parLcs(template, tokens.subList(colonIdx+1, tokens.size()));
+		}
+		else if (numColon > 1) {
+			throw new IllegalArgumentException("There should only be one colon in set-builder notation.");
+		}
+		else if (numBars%2 == 1) {
+			Expression template = parEx(tokens.subList(0, barIdx));
+			return parLcs(template, tokens.subList(barIdx+1, tokens.size()));
+		}
+		else {
+			Expression interior = parEx(tokens);
+			if (interior instanceof Vector && !((Vector) interior).getParenthetic())
+				return new Set(((Vector) interior).getComponents());
+			else
+				return new Set(interior);
+		}
+	}
+	
+	
+	private static final Expression parLcs(Expression exp, List<String> tokens) throws IllegalArgumentException {	// parse a set
+		List<Expression> lowBounds = new ArrayList<Expression>();
+		List<String> names = new ArrayList<String>();
+		List<Expression> uppBounds = new ArrayList<Expression>();
+		
+		int lastCma = -1;
+		for (int i = 0; i <= tokens.size(); i ++) {
+			if (i == tokens.size() || tokens.get(i).equals(",")) {
+				List<String> ineq = tokens.subList(lastCma+1, i);
+				
+				int j;
+				for (j = 0; j < ineq.size(); j ++)
+					if (ineq.get(j).equals("<") || ineq.get(j).equals("\u2264"))
+						break;
+				if (j == ineq.size())
+					throw new IllegalArgumentException("In set-builder notation, each comma-separated condition declaration must have two '<'s");
+				else
+					lowBounds.add(parEx(ineq.subList(0, j)));
+				
+				if (!ineq.get(j+2).equals("<")&&!ineq.get(j+2).equals("\u2264"))
+					throw new IllegalArgumentException("In set-builder notation, each comma-separated condition declaration must have two '<'s");
+				if (isDigit(ineq.get(j+1).charAt(0)))
+					throw new IllegalArgumentException("The middle part of any condition declaration must be a valid variable name, not "+ineq.get(j+1));
+				for (int k = 0; k < ineq.get(j+1).length(); k ++)
+					if (isSymbol(ineq.get(j+1).charAt(k)))
+						throw new IllegalArgumentException("The middle part of any condition declaration must be a valid variable name, not "+ineq.get(j+1));
+				names.add(ineq.get(j+1));
+				
+				uppBounds.add(parEx(ineq.subList(j+3, ineq.size())));
+				
+				lastCma = i;
+			}
+		}
+		return new Locus(exp, names.toArray(new String[0]),
+				lowBounds.toArray(new Expression[0]),
+				uppBounds.toArray(new Expression[0]));
+	}
+	
+	
 	private static final boolean isDigit(char c) {
 		return c >= '.' && c <= '9' && c != '/';
 	}
@@ -283,7 +373,7 @@ public class Notation {
 	
 	
 	private static final boolean isOperator(char c) {
-		final char[] ops = {'+','-','*','\u2022','\u00D7','/','\\','%','^',','};
+		final char[] ops = {'+','-','*','\u2022','\u00D7','/','\\','%','^',',',':'};
 		for (char o: ops)
 			if (c == o)
 				return true;

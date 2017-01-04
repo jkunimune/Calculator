@@ -40,18 +40,20 @@ import util.ImgUtils;
  */
 public class Vector extends Expression {
 
-	private List<Expression> rows;
-	private boolean parenthetic; // this flag is mostly used by notation
+	private final List<Expression> rows;
+	private final boolean parenthetic; // this flag is mostly used by notation
 	
 	
 	
 	public Vector(List<Expression> comps) {
 		rows = comps;
+		parenthetic = false;
 	}
 	
 	
 	public Vector(Expression... comps) {
 		rows = Arrays.asList(comps);
+		parenthetic = false;
 	}
 	
 	

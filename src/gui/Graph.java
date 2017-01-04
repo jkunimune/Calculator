@@ -63,6 +63,8 @@ public class Graph {
 	
 	
 	public void setPlot(Expression exp) {
+		try {
+		
 		List<String> independents = exp.getInputs(workspace); // count the inputs
 		exp = exp.simplified(workspace);
 		int dims = exp.shape()[0]*exp.shape()[1]; // and outputs
@@ -128,6 +130,12 @@ public class Graph {
 		if (functions != null) {
 			pane.getChildren().set(0, plot.getNode());
 			plot.plot(functions, independents, workspace);
+		}
+		
+		} catch (NullPointerException e) {
+			System.err.println("Still got some kinks to work out: "+e);
+		} catch (AssertionError e) {
+			System.err.println("Still got some kinks to work out: "+e);
 		}
 	}
 	

@@ -40,25 +40,33 @@ public class Set extends Expression {
 
 	public static final Set EMPTY = new Set(new LinkedList<Expression>());
 	
-	private List<Expression> elements;
+	private final Expression[] elements;
 	
+	
+	
+	public Set(Expression...expressions) {
+		elements = expressions;
+	}
 	
 	
 	public Set(List<Expression> exps) {
-		elements = exps; //TODO: somewhere I should probably check to make sure the sizes match
+		elements = exps.toArray(new Expression[0]); //TODO: somewhere I should probably check to make sure the sizes match
 	}
 	
 	
 	
 	@Override
 	public int[] shape() {
-		return elements.get(0).shape();
+		if (elements.length==0)
+			return null;
+		else
+			return elements[0].shape();
 	}
 	
 	
 	@Override
 	protected Expression getComponent(int i, int j) {
-		List<Expression> elementij = new ArrayList<Expression>(elements.size());
+		List<Expression> elementij = new ArrayList<Expression>(elements.length);
 		for (Expression e: elements)
 			elementij.add(e.getComponent(i, j));
 		return new Set(elementij);
@@ -96,6 +104,8 @@ public class Set extends Expression {
 	
 	@Override
 	public Image toImage() {
+		if (elements.length==0)	return ImgUtils.drawString("{}");
+		
 		List<Image> imgs = new LinkedList<Image>();
 		for (Expression elm: elements)
 			imgs.add(elm.toImage());
@@ -105,7 +115,7 @@ public class Set extends Expression {
 	
 	@Override
 	public String toString() {
-		if (elements.isEmpty())	return "{}";
+		if (elements.length==0)	return "{}";
 		String output = "{";
 		for (Expression elm: elements)
 			output += elm+", ";

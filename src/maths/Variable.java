@@ -37,7 +37,7 @@ import util.ImgUtils;
  */
 public class Variable extends Expression {
 
-	String name;
+	private final String name;
 	
 	
 	

@@ -156,6 +156,17 @@ public class Workspace {
 	}
 	
 	
+	public Workspace localize(List<String> toRemove) { // clone this and remove some variables
+		if (toRemove == null || toRemove.isEmpty())
+			return this;
+		
+		Workspace local = new Workspace(this);
+		for (String var: toRemove)
+			local.remove(var);
+		return local;
+	}
+	
+	
 	public Workspace localize(List<String> newVars, List<Expression> newVals) { // clone this and add some new variables
 		if (newVars == null || newVars.isEmpty())
 			return this;
