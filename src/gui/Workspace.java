@@ -38,7 +38,6 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
 import maths.Expression;
-import maths.Variable;
 
 /**
  * A mapping of Strings to Expressions that remembers all stored data.
@@ -139,8 +138,8 @@ public class Workspace {
 	
 	
 	public void put(String name, String[] args, Expression val) {
-		if (val instanceof Variable && ((Variable) val).toString().equals(name))
-			return; // this is a tricky exception where a variables becomes itself
+		if (val.getInputs(this).contains(name))
+			throw new IllegalArgumentException("Cannot assign a value dependent on "+name+" to \""+name+"\"."); // this is a tricky exception where a variables becomes itself
 		
 		if (outputs.containsKey(name))
 			keys.remove(name);// remove anything with the same name
@@ -168,13 +167,13 @@ public class Workspace {
 	}
 	
 	
-	public Workspace localize(String[] newVars, Expression[] args) { // clone this and add some new variables
+	public Workspace localize(String[] newVars, Expression[] newVals) { // clone this and add some new variables
 		if (newVars == null || newVars.length == 0)
 			return this;
 		
 		Workspace local = new Workspace(this);
 		for (int i = 0; i < newVars.length; i ++)
-			local.put(newVars[i], null, args[i]);
+			local.put(newVars[i], null, newVals[i]);
 		return local;
 	}
 	

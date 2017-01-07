@@ -24,6 +24,7 @@ History manipulation (up key)
 Help button
 Smart-variables (reading hats and dots as operators)
 Union and intersection (should accept &, && or the upside-down u thing)
+css
 Notation:
 	Logarithms
 	Roots

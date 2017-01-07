@@ -63,8 +63,6 @@ public class Graph {
 	
 	
 	public void setPlot(Expression exp) {
-		try {
-		
 		List<String> independents = exp.getInputs(workspace); // count the inputs
 		exp = exp.simplified(workspace);
 		int dims = exp.shape()[0]*exp.shape()[1]; // and outputs
@@ -90,7 +88,7 @@ public class Graph {
 		}
 		else if (independents.size() == 1) {
 			if (dims == 1) {
-				setPlotType(Line2Plot.class);
+				setPlotType(Line2Plot.class); //FIXME: what?!
 				functions = new Expression[2];
 				functions[0] = new Variable(independents.get(0));
 				functions[1] = exp;
@@ -110,7 +108,11 @@ public class Graph {
 				System.err.println("Surface not implemented yet");
 			}
 			else if (dims == 2) {
-				System.err.println("Quiver in 2space not implemented yet");
+				//System.err.println("Quiver in 2space not implemented yet");
+				setPlotType(Line2Plot.class);
+				functions = new Expression[2];
+				functions[0] = exp.get(0);
+				functions[1] = exp.get(1);
 			}
 			else if (dims == 3) {
 				System.err.println("Parametric Surface not implemented yet");
@@ -121,7 +123,11 @@ public class Graph {
 				System.err.println("Bubble3 not implemented yet");
 			}
 			else if (dims == 2) {
-				System.err.println("Colorful bubble3 not implemented yet");
+				//System.err.println("Colorful bubble3 not implemented yet");
+				setPlotType(Line2Plot.class);
+				functions = new Expression[2];
+				functions[0] = exp.get(0);
+				functions[1] = exp.get(1);
 			}
 			else if (dims == 3) {
 				System.err.println("Quiver in 3space not implemented yet");
@@ -130,14 +136,6 @@ public class Graph {
 		if (functions != null) {
 			pane.getChildren().set(0, plot.getNode());
 			plot.plot(functions, independents, workspace);
-		}
-		
-		} catch (NullPointerException e) { //FIXME: finish Graph stuff
-			System.err.println("Still got some kinks to work out: "+e);
-		} catch (AssertionError e) {
-			System.err.println("Still got some kinks to work out: "+e);
-		} catch (ClassCastException e) {
-			System.err.println("Still got some kinks to work out: "+e);
 		}
 	}
 	

@@ -24,6 +24,7 @@
 package maths;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import gui.Workspace;
@@ -78,7 +79,7 @@ public class Function extends Expression {
 	
 	@Override
 	public int[] shape() {
-		return null; // there's no way to know without simplifying
+		return null; //XXX there's no way to know without simplifying
 	}
 	
 	
@@ -89,22 +90,22 @@ public class Function extends Expression {
 
 
 	@Override
-	public List<String> getInputs(Workspace heap) {
-		List<String> inputs = new ArrayList<String>(); //TODO this could be a Collection
-		for (Expression arg: args)
-			for (String newInput: arg.getInputs(heap))
-				if (!inputs.contains(newInput))
-					inputs.add(newInput);
-		return inputs;
+	public List<String> getInputs(Workspace heap) { //TODO: this could be a Collection
+		if (heap != null && heap.containsKey(name)) {
+			List<String> inputs = heap.get(name).getInputs(heap);
+			inputs.removeAll(Arrays.asList(heap.getArgs(name)));
+			inputs.addAll(super.getInputsAll(args, heap));
+			return inputs;
+		}
+		else {
+			return super.getInputsAll(args, heap);
+		}
 	}
 	
 	
 	@Override
-	public Expression replaced(String[] oldS, String[] newS) {
-		List<Expression> modArgs = new ArrayList<Expression>();
-		for (Expression arg: args)
-			modArgs.add(arg.replaced(oldS, newS));
-		return new Function(name, modArgs);
+	public Expression replaced(String[] oldStrs, String[] newStrs) {
+		return new Function(name, super.replaceAll(args, oldStrs, newStrs));
 	}
 	
 	
@@ -119,7 +120,6 @@ public class Function extends Expression {
 			for (int i = 0; i < oldArgs.length; i ++)
 				modArgs[i] = name+"/"+oldArgs[i];
 			final Workspace localHeap = heap.localize(modArgs, args);
-			
 			return heap.get(name).replaced(oldArgs, modArgs)
 					.simplified(localHeap);
 		}

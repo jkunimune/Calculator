@@ -61,6 +61,8 @@ public class Scatter2Plot implements Plot {
 			Workspace heap) {
 		assert f.length == 2 : "Illegal number of dimensions";
 		assert params.isEmpty(): "You can't scatter a curve";
+		
+		System.out.println(f[0]+", "+f[1]+" simplified with "+heap);
 		Constant fx = (Constant) f[0];
 		Constant fy = (Constant) f[1];
 		

@@ -139,6 +139,8 @@ public class CommandLine {
 			}
 		} catch (ArithmeticException e) {
 			history.appendText("\nERROR: "+e.getMessage());	// print the error if there is one
+		} catch (IllegalArgumentException e) {
+			history.appendText("\nMEMORY ERROR: "+e.getMessage());
 		}
 	}
 	

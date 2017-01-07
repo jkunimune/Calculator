@@ -62,7 +62,7 @@ public class Variable extends Expression {
 	
 	@Override
 	public List<String> getInputs(Workspace heap) {
-		if (heap.containsKey(name)){
+		if (heap != null && heap.containsKey(name)){
 			return heap.get(name).getInputs(heap);
 		}
 		else {
@@ -74,10 +74,10 @@ public class Variable extends Expression {
 	
 	
 	@Override
-	public Expression replaced(String[] oldStrs, String[] newS) {
+	public Expression replaced(String[] oldStrs, String[] newStrs) {
 		for (int i = 0; i < oldStrs.length; i ++)
 			if (oldStrs[i].equals(name))
-				return new Variable(newS[i]);
+				return new Variable(newStrs[i]);
 		return this;
 	}
 	

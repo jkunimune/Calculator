@@ -23,6 +23,8 @@
  */
 package plots;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import gui.Workspace;
@@ -61,26 +63,55 @@ public class Line2Plot implements Plot {
 	@Override
 	public void plot(Expression[] f, List<String> params,
 			Workspace heap) {
+		chart.getData().clear();
+		
 		assert f.length == 2 : "Illegal number of dimensions";
 		Expression fx = f[0];
 		Expression fy = f[1];
 		
-		assert params.size() == 1 : "I haven't implemented meshes yet";
-		//fx = fx.simplified(heap);
-		//fy = fy.simplified(heap);
-		
 		Workspace locHeap = heap.clone();
-		XYChart.Series<Number, Number> data = new XYChart.Series<Number, Number>();
-		for (Constant t: ParameterSpace.iterate(xAxis)) {
-			locHeap.put(params.get(0), t);
-			Constant x = (Constant) fx.simplified(locHeap);
-			Constant y = (Constant) fy.simplified(locHeap);
-			//if (u.getImag() != 0)	continue; // skip numbers with imaginary components
-			data.getData().add(new XYChart.Data<Number, Number>(x.getReal(),y.getReal()));
+		
+		List<Iterator<Constant>> paramChooser =
+				new ArrayList<Iterator<Constant>>(params.size());
+		ParameterSpace iteratorFactory = ParameterSpace.iterate(xAxis, 1);
+		for (int i = 0; i < params.size(); i ++) {
+			paramChooser.add(iteratorFactory.iterator());
+			locHeap.put(params.get(i), paramChooser.get(i).next());
 		}
 		
-		chart.getData().clear();
-		chart.getData().add(data);
+		for (int varying = 0; varying < params.size(); varying ++) { // for each set of lines
+			while (true) {
+				XYChart.Series<Number, Number> data = new XYChart.Series<Number, Number>();
+				for (Constant t: ParameterSpace.iterate(xAxis)) {
+					locHeap.put(params.get(varying), t);
+					Constant x = (Constant) fx.simplified(locHeap);
+					Constant y = (Constant) fy.simplified(locHeap);
+					//if (u.getImag() != 0)	continue; // skip numbers with imaginary components
+					data.getData().add(new XYChart.Data<Number, Number>(x.getReal(),y.getReal()));
+				}
+				chart.getData().add(data);
+				
+				boolean newCurve = false;
+				for (int j = 0; j < params.size(); j ++) { // hold the other parameters constant at some value
+					if (j != varying) {
+						if (paramChooser.get(j).hasNext()) { // find the first iterator that has a value and take that value
+							locHeap.put(params.get(j), paramChooser.get(j).next());
+							newCurve = true;
+							break;
+						}
+						else { // reset any before it that do not
+							paramChooser.set(j, iteratorFactory.iterator());
+							locHeap.put(params.get(j), paramChooser.get(j).next());
+						}
+					}
+				}
+				if (!newCurve) { // if we have drawn every curve, let's move on
+					paramChooser.set(varying, iteratorFactory.iterator());
+					locHeap.put(params.get(varying), paramChooser.get(varying).next());
+					break;
+				}
+			}
+		}
 	}
 	
 	

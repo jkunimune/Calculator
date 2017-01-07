@@ -54,6 +54,12 @@ public class ParameterSpace implements Iterable<Constant> {
 	}
 	
 	
+	public static ParameterSpace iterate(NumberAxis ax, double step) {
+		return iterate(
+				ax.getLowerBound(), ax.getUpperBound(), step);
+	}
+	
+	
 	public static ParameterSpace iterate(double min, double max) {
 		return iterate(min, max, (max-min)/160);
 	}
@@ -67,7 +73,8 @@ public class ParameterSpace implements Iterable<Constant> {
 	@Override
 	public Iterator<Constant> iterator() {
 		return new Iterator<Constant>() {
-			double val = min;
+			
+			double val = min-step;
 			
 			@Override
 			public boolean hasNext() {

@@ -50,7 +50,7 @@ public class BuiltInFunction extends Expression {
 		if (code.length() == 6 && code.startsWith("arc"))
 			return "a"+code.substring(3);
 		else if (code.equals("real") || code.equals("imag"))
-			return code.substring(2);
+			return code.substring(0,2);
 		else
 			return code;
 	}
@@ -76,7 +76,7 @@ public class BuiltInFunction extends Expression {
 	
 	@Override
 	public Expression replaced(String[] oldStrs, String[] newStrs) {
-		return new Function(name, arg.replaced(oldStrs, newStrs));
+		return new BuiltInFunction(name, arg.replaced(oldStrs, newStrs));
 	}
 	
 	
