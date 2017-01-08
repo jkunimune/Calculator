@@ -32,6 +32,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Series;
 import maths.Constant;
 import maths.Expression;
 import maths.auxiliary.ParameterSpace;
@@ -43,6 +44,9 @@ import maths.auxiliary.ParameterSpace;
  */
 public class Line2Plot implements Plot {
 
+	public static final String[] COLORS = {"crimson","royalblue","forestgreen"};
+	
+	
 	private LineChart<Number, Number> chart;
 	private NumberAxis xAxis, yAxis;
 	
@@ -63,7 +67,7 @@ public class Line2Plot implements Plot {
 	@Override
 	public void plot(Expression[] f, List<String> params,
 			Workspace heap) {
-		chart.getData().clear();
+		clearChart();
 		
 		assert f.length == 2 : "Illegal number of dimensions";
 		Expression fx = f[0];
@@ -80,23 +84,40 @@ public class Line2Plot implements Plot {
 		}
 		
 		for (int varying = 0; varying < params.size(); varying ++) { // for each set of lines
-			while (true) {
+			boolean firstCurve = true;
+			for (int i = 0; !(firstCurve && i!= 0); i ++) {
+				double[] deli = null, delf = null;
 				XYChart.Series<Number, Number> data = new XYChart.Series<Number, Number>();
 				for (Constant t: ParameterSpace.iterate(xAxis)) {
 					locHeap.put(params.get(varying), t);
 					Constant x = (Constant) fx.simplified(locHeap);
 					Constant y = (Constant) fy.simplified(locHeap);
-					//if (u.getImag() != 0)	continue; // skip numbers with imaginary components
-					data.getData().add(new XYChart.Data<Number, Number>(x.getReal(),y.getReal()));
+					//if (x.getImag() != 0 || y.getImag() != 0)	continue; // skip numbers with imaginary components
+					XYChart.Data<Number, Number> p =
+							new XYChart.Data<Number, Number>(x.getReal(),y.getReal());
+					if (!data.getData().isEmpty()) {
+						delf = new double[2];
+						delf[0] = p.getXValue().doubleValue()-data.getData().get(data.getData().size()-1).getXValue().doubleValue();
+						delf[1] = p.getYValue().doubleValue()-data.getData().get(data.getData().size()-1).getYValue().doubleValue();
+					}
+					if (deli != null && delf != null &&
+							(deli[0]*delf[0]+deli[1]*delf[1] < 0 ||
+							Math.hypot(delf[0],delf[1])/Math.hypot(deli[0],deli[1])>10)) { // change in direction or sudden acceleration implies discontinuity
+						addToChart(data, COLORS[varying%COLORS.length]);
+						data = new XYChart.Series<Number, Number>();
+						delf = null;
+					}
+					data.getData().add(p);
+					deli = delf;
 				}
-				chart.getData().add(data);
+				addToChart(data, COLORS[varying%COLORS.length]);
 				
-				boolean newCurve = false;
+				firstCurve = true;
 				for (int j = 0; j < params.size(); j ++) { // hold the other parameters constant at some value
 					if (j != varying) {
 						if (paramChooser.get(j).hasNext()) { // find the first iterator that has a value and take that value
 							locHeap.put(params.get(j), paramChooser.get(j).next());
-							newCurve = true;
+							firstCurve = false;
 							break;
 						}
 						else { // reset any before it that do not
@@ -105,12 +126,9 @@ public class Line2Plot implements Plot {
 						}
 					}
 				}
-				if (!newCurve) { // if we have drawn every curve, let's move on
-					paramChooser.set(varying, iteratorFactory.iterator());
-					locHeap.put(params.get(varying), paramChooser.get(varying).next());
-					break;
-				}
 			}
+			paramChooser.set(varying, iteratorFactory.iterator());
+			locHeap.put(params.get(varying), paramChooser.get(varying).next());
 		}
 	}
 	
@@ -125,6 +143,17 @@ public class Line2Plot implements Plot {
 	public void setSize(int w, int h) {
 		chart.setPrefWidth(w);
 		chart.setPrefHeight(h);
+	}
+	
+	
+	private void clearChart() {
+		chart.getData().clear();
+	}
+	
+	
+	private void addToChart(Series<Number, Number> data, String color) {
+		chart.getData().add(data);
+		data.getNode().setStyle("-fx-stroke: "+color+";");
 	}
 
 }
