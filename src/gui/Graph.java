@@ -34,6 +34,8 @@ import plots.Line2Plot;
 import plots.Line3Plot;
 import plots.Plot;
 import plots.Scatter2Plot;
+import plots.Scatter3Plot;
+import plots.SurfacePlot;
 
 /**
  * 
@@ -82,7 +84,8 @@ public class Graph {
 				functions = exp.getAll(2);
 			}
 			else if (dims == 3) {
-				System.err.println("Single plot3 not implemented yet");
+				setPlotType(Scatter3Plot.class);
+				functions = exp.getAll(3);
 			}
 		}
 		else if (independents.size() == 1) {
@@ -103,7 +106,11 @@ public class Graph {
 		}
 		else if (independents.size() == 2) {
 			if (dims == 1) {
-				System.err.println("Surface not implemented yet");
+				setPlotType(SurfacePlot.class);
+				functions = new Expression[3];
+				functions[0] = new Variable(independents.get(0));
+				functions[1] = new Variable(independents.get(1));
+				functions[2] = exp.get(0);
 			}
 			else if (dims == 2) {
 				//System.err.println("Quiver in 2space not implemented yet");
@@ -149,8 +156,12 @@ public class Graph {
 			plot = new Scatter2Plot(PREF_WIDTH, PREF_HEIGHT);
 		else if (clazz == Line2Plot.class)
 			plot = new Line2Plot(PREF_WIDTH, PREF_HEIGHT);
+		else if (clazz == Scatter3Plot.class)
+			plot = new Scatter3Plot(PREF_WIDTH, PREF_HEIGHT);
 		else if (clazz == Line3Plot.class)
 			plot = new Line3Plot(PREF_WIDTH, PREF_HEIGHT);
+		else if (clazz == SurfacePlot.class)
+			plot = new SurfacePlot(PREF_WIDTH, PREF_HEIGHT);
 		else
 			throw new IllegalArgumentException("What is "+clazz+" doing in this method?");
 	}

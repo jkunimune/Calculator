@@ -1,14 +1,16 @@
-# Math-Assist
-An easy-to-use and not-garbage program to do math.
+# math-assist
+an easy-to-use and not-garbage program to do math.
 
-## Installation
-_Math-Assist_ has no dependencies, and can be used by simply downloading MathAssist.jar from the main repository. If you have the JRE installed, you can run it by simply double-clicking.
+## installation
+_math-assist_ has no dependencies for users, and can be used by simply downloading mathassist.jar from the main repository. if you have jre 1.8 installed, you can run it by simply double-clicking.
 
-## Instructions
-_Math-Assist_ has a simple and intuitive GUI of three main parts. In the lower left-hand corner, you will find your command line. Enter any equations, commands, or assignments here. Above this terminal is your history, which shows all previous commands. To the right is the graphical display, which will graphically depict whatever is selected. Finally, in the bottom right is your heap, which shows any variables that have been defined. Built-in symbols and functions can be found in the menus at the top, as can more modes and options.
+if you want to edit the eclipse files, you will need the [jzy3d](https://github.com/jzy3d/jzy3d-api) plotting library, and you'll need to add it as a Maven dependency. I barely understand Maven myself, so if you don't know how to do that, sucks to be you.
 
-## Features
-_Math-Assist_ comes equipped with any and all capabilities you could ever want (within reason), regardless of whether you are a mere layman or a PhD. Features include:
+## instructions
+_math-assist_ has a simple and intuitive gui of three main parts. in the lower left-hand corner, you will find your command line. enter any equations, commands, or assignments here. above this terminal is your history, which shows all previous commands. to the right is the graphical display, which will graphically depict whatever is selected. finally, in the bottom right is your heap, which shows any variables that have been defined. built-in symbols and functions can be found in the menus at the top, as can more modes and options.
+
+## features
+_math-assist_ comes equipped with any and all capabilities you could ever want (within reason), regardless of whether you are a mere layman or a phd. features include:
   - simplifying expressions
   - storing variables
   - plotting in up to 4 dimensions
@@ -17,8 +19,8 @@ _Math-Assist_ comes equipped with any and all capabilities you could ever want (
   - unit conversions
   - and much more!
 
-## Premise
-You may ask yourself, why make such a big fuss over a calculator app? Plenty of those already exist! What makes yours different?
-Well, hypothetical sir, the answer is, mine is not garbage.
+## premise
+you may ask yourself, why make such a big fuss over a calculator app? plenty of those already exist! what makes yours different?
+well, hypothetical sir, the answer is, mine is not garbage.
 
-Perhaps I could have phrased that more lightly, but the point stands. All calculator apps on computers and phones are emulations of old calculators that had a total of twenty buttons and a single slot of memory. The best calculator apps by far are emulations of TI-84s, with their slow processors and pixelated displays. If you want to really plot and analyze equations, you need to go to something more heavy-duty, like MatLab or Wolfram Alpha. But those are expensive applications that take up loads of disk space. This app seeks to fix all of these horrible calculators by combining the best featuers of all of these. _Math-Assist_ is as intuitive as a calculator, easy to use as a TI-84, and powerful as MatLab. What's more, _Math-Assist_ is FREE! Who doesn't like freedom? Kim Jung Un, that's who. Don't be a Korean dictator. Use _Math-Assist_.
+perhaps i could have phrased that more lightly, but the point stands. all calculator apps on computers and phones are emulations of old calculators that had a total of twenty buttons and a single slot of memory. the best calculator apps by far are emulations of ti-84s, with their slow processors and pixelated displays. if you want to really plot and analyze equations, you need to go to something more heavy-duty, like matlab or wolfram alpha. but those are expensive applications that take up loads of disk space. this app seeks to fix all of these horrible calculators by combining the best featuers of all of these. _math-assist_ is as intuitive as a calculator, easy to use as a ti-84, and powerful as matlab. what's more, _math-assist_ is free! who doesn't like freedom? kim jung un, that's who. don't be a korean dictator. use _math-assist_.

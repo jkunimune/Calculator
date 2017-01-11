@@ -82,8 +82,7 @@ public class Scatter2Plot implements Plot {
 	
 	@Override
 	public void setSize(int w, int h) {
-		chart.setPrefWidth(w);
-		chart.setPrefHeight(h);
+		chart.setPrefSize(w, h);
 	}
 	
 	
