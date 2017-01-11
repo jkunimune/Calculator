@@ -31,6 +31,7 @@ import maths.Constant;
 import maths.Expression;
 import maths.Variable;
 import plots.Line2Plot;
+import plots.Line3Plot;
 import plots.Plot;
 import plots.Scatter2Plot;
 
@@ -78,9 +79,7 @@ public class Graph {
 			}
 			else if (dims == 2) {
 				setPlotType(Scatter2Plot.class);
-				functions = new Expression[2];
-				functions[0] = exp.get(0);
-				functions[1] = exp.get(1);
+				functions = exp.getAll(2);
 			}
 			else if (dims == 3) {
 				System.err.println("Single plot3 not implemented yet");
@@ -95,12 +94,11 @@ public class Graph {
 			}
 			else if (dims == 2) {
 				setPlotType(Line2Plot.class);
-				functions = new Expression[2];
-				functions[0] = exp.get(0);
-				functions[1] = exp.get(1);
+				functions = exp.getAll(2);
 			}
 			else if (dims == 3) {
-				System.err.println("Path in 3space not implemented yet");
+				setPlotType(Line3Plot.class);
+				functions = exp.getAll(3);
 			}
 		}
 		else if (independents.size() == 2) {
@@ -110,9 +108,7 @@ public class Graph {
 			else if (dims == 2) {
 				//System.err.println("Quiver in 2space not implemented yet");
 				setPlotType(Line2Plot.class);
-				functions = new Expression[2];
-				functions[0] = exp.get(0);
-				functions[1] = exp.get(1);
+				functions = exp.getAll(2);
 			}
 			else if (dims == 3) {
 				System.err.println("Parametric Surface not implemented yet");
@@ -123,11 +119,7 @@ public class Graph {
 				System.err.println("Bubble3 not implemented yet");
 			}
 			else if (dims == 2) {
-				//System.err.println("Colorful bubble3 not implemented yet");
-				setPlotType(Line2Plot.class);
-				functions = new Expression[2];
-				functions[0] = exp.get(0);
-				functions[1] = exp.get(1);
+				System.err.println("Colorful bubble3 not implemented yet");
 			}
 			else if (dims == 3) {
 				System.err.println("Quiver in 3space not implemented yet");
@@ -157,8 +149,10 @@ public class Graph {
 			plot = new Scatter2Plot(PREF_WIDTH, PREF_HEIGHT);
 		else if (clazz == Line2Plot.class)
 			plot = new Line2Plot(PREF_WIDTH, PREF_HEIGHT);
+		else if (clazz == Line3Plot.class)
+			plot = new Line3Plot(PREF_WIDTH, PREF_HEIGHT);
 		else
-			System.err.println("What is "+clazz+" doing in this method?");
+			throw new IllegalArgumentException("What is "+clazz+" doing in this method?");
 	}
 
 }

@@ -47,7 +47,7 @@ public class Line2Plot implements Plot {
 	public static final String[] COLORS = {"crimson","royalblue","forestgreen"};
 	
 	
-	private LineChart<Number, Number> chart;
+	private final LineChart<Number, Number> chart;
 	private NumberAxis xAxis, yAxis;
 	
 	
