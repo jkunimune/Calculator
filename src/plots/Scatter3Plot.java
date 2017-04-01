@@ -24,11 +24,10 @@
 package plots;
 
 import java.util.List;
-import java.util.Random;
-
 import org.jzy3d.chart.AWTChart;
 import org.jzy3d.colors.Color;
 import org.jzy3d.javafx.JavaFXChartFactory;
+import org.jzy3d.maths.BoundingBox3d;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.primitives.Scatter;
 import org.jzy3d.plot3d.primitives.axes.layout.IAxeLayout;
@@ -38,8 +37,8 @@ import gui.Workspace;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import maths.Constant;
 import maths.Expression;
-
 
 /**
  * A three-dimensional interpolated line plot
@@ -77,7 +76,20 @@ public class Scatter3Plot implements Plot {
 	
 	@Override
 	public void plot(Expression[] f, List<String> independent, Workspace heap) {
-		plotDemogh();
+		final double x = ((Constant) f[0].simplified(heap)).getReal();
+		final double y = ((Constant) f[1].simplified(heap)).getReal();
+		final double z = ((Constant) f[2].simplified(heap)).getReal();
+		
+		Coord3d[] points = new Coord3d[1];
+		Color[] colors = new Color[1];
+		
+		points[0] = new Coord3d(x, y, z);
+		colors[0] = Color.RED;
+		
+		Scatter scatter = new Scatter(points, colors);
+		scatter.setWidth(10);
+		chart.getScene().add(scatter);
+		chart.getView().lookToBox(new BoundingBox3d(-4, 4, -4, 4, -4, 4));
 		
 		axes = chart.getAxeLayout();
 		axes.setXAxeLabel("");
@@ -88,33 +100,6 @@ public class Scatter3Plot implements Plot {
 		viewer.setFitHeight(pane.getPrefHeight());
 		pane.getChildren().clear();
 		pane.getChildren().add(viewer);
-	}
-	
-	
-	private void plotDemogh() {
-		int size = 50;
-        float x;
-        float y;
-        float z;
-        
-        Coord3d[] points = new Coord3d[size];
-        Color[]   colors = new Color[size];
-        
-        Random r = new Random();
-        r.setSeed(0);
-        
-        for(int i=0; i<size; i++){
-            x = r.nextFloat() - 0.5f;
-            y = r.nextFloat() - 0.5f;
-            z = r.nextFloat() - 0.5f;
-            points[i] = new Coord3d(x, y, z);
-            colors[i] = Color.RED;
-        }
-        
-        Scatter scatter = new Scatter(points, colors);
-        scatter.setWidth(10);
-        //chart = (AWTChart) AWTChartComponentFactory.chart(Quality.Advanced, "newt");
-        chart.getScene().add(scatter);
 	}
 
 }

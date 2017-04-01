@@ -37,7 +37,9 @@ import gui.Workspace;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import maths.Constant;
 import maths.Expression;
+import maths.auxiliary.ParameterSpace;
 
 
 /**
@@ -52,12 +54,15 @@ public class Line3Plot implements Plot {
 	private ImageView viewer;
 	private final StackPane pane;
 	
+	private LineStrip prevCurve;
+	
 	
 	
 	public Line3Plot(int w, int h) {
 		chart = (AWTChart) new JavaFXChartFactory().newChart(Quality.Intermediate, "offscreen");
 		pane = new StackPane();
 		setSize(w, h);
+		prevCurve = null;
 	}
 	
 	
@@ -76,7 +81,20 @@ public class Line3Plot implements Plot {
 	
 	@Override
 	public void plot(Expression[] f, List<String> independent, Workspace heap) {
-		plotDemoux();
+		if (prevCurve != null)	chart.getScene().getGraph().remove(prevCurve);
+		
+		LineStrip curve = new LineStrip();
+		Workspace locHeap = heap.clone();
+		for (Constant t: ParameterSpace.iterate(-6, 6)) {
+			locHeap.put(independent.get(0), t);
+			final double x = ((Constant) f[0].simplified(locHeap)).getReal();
+			final double y = ((Constant) f[1].simplified(locHeap)).getReal();
+			final double z = ((Constant) f[2].simplified(locHeap)).getReal();
+			curve.add(new Point(new Coord3d(x, y, z), Color.RED));
+		}
+		curve.setWidth(4);
+		// let factory bind mouse and keyboard controllers to JavaFX node
+		chart.getScene().getGraph().add(curve);
 		
 		axes = chart.getAxeLayout();
 		axes.setXAxeLabel("");
@@ -87,16 +105,8 @@ public class Line3Plot implements Plot {
 		viewer.setFitHeight(pane.getPrefHeight());
 		pane.getChildren().clear();
 		pane.getChildren().add(viewer);
-	}
-	
-	
-	private void plotDemoux() {
-		LineStrip curve = new LineStrip();
-		for (int i = 0; i < 8; i ++)
-			curve.add(new Point(new Coord3d(Math.random(), Math.random(), Math.random()), Color.RED));
-		curve.setWidth(4);
-		// let factory bind mouse and keyboard controllers to JavaFX node
-		chart.getScene().getGraph().add(curve);
+		
+		prevCurve = curve;
 	}
 
 }

@@ -8,6 +8,7 @@ Contour plots
 Animated plots
 Non-Cartesian plots
 Interactive plots (pan, zoom, etc.)
+Better asymptote handling
 Comparison
 Matrices
 More error messages (e.g. for mismatched vector addition and bad function calls)
