@@ -40,27 +40,32 @@ import gui.Workspace;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import maths.Constant;
 import maths.Expression;
 
 
 /**
- * A three-dimensional parametric surface plot
+ * A three-dimensional surface plot that only plots functions
  * 
  * @author jkunimune
  */
-public class SurfacePlot implements Plot {
+public class HeightPlot implements Plot {
 
 	private IAxeLayout axes;
 	private AWTChart chart;
 	private ImageView viewer;
 	private final StackPane pane;
 	
+	private Shape prevSurface;
 	
 	
-	public SurfacePlot(int w, int h) {
+	
+	public HeightPlot(int w, int h) {
 		chart = (AWTChart) new JavaFXChartFactory().newChart(Quality.Intermediate, "offscreen");
 		pane = new StackPane();
 		setSize(w, h);
+		
+		prevSurface = null;
 	}
 	
 	
@@ -78,33 +83,21 @@ public class SurfacePlot implements Plot {
 	
 	
 	@Override
-	public void plot(Expression[] f, List<String> independent, Workspace heap) {
-		plotDemo();
+	public void plot(Expression[] fnc, List<String> independent, Workspace heap) {
+		if (prevSurface != null)	chart.getScene().getGraph().remove(prevSurface);
 		
-		axes = chart.getAxeLayout();
-		axes.setXAxeLabel("");
-		axes.setYAxeLabel("");
-		axes.setZAxeLabel("");
-		viewer = new JavaFXChartFactory().bindImageView(chart);
-		viewer.setFitWidth(pane.getPrefWidth());
-		viewer.setFitHeight(pane.getPrefHeight());
-		pane.getChildren().clear();
-		pane.getChildren().add(viewer);
-	}
-	
-	
-	private void plotDemo() {
+		Workspace locHeap = heap.clone();
 		Mapper mapper = new Mapper() {
-			
-			@Override
 			public double f(double x, double y) {
-				return x * Math.sin(x * y);
+				locHeap.put(independent.get(0), new Constant(x));
+				locHeap.put(independent.get(1), new Constant(y));
+				return ((Constant) fnc[0].simplified(locHeap)).getReal();
 			}
 		};
 		
 		// Define range and precision for the function to plot
 		Range range = new Range(-4, 4);
-		int steps = 80;
+		int steps = 40;
 		
 		// Create the object to represent the function over the given range.
 		final Shape surface = Builder.buildOrthonormal(mapper, range, steps);
@@ -115,6 +108,18 @@ public class SurfacePlot implements Plot {
 		
 		// let factory bind mouse and keyboard controllers to JavaFX node
 		chart.getScene().getGraph().add(surface);
+		
+		axes = chart.getAxeLayout();
+		axes.setXAxeLabel("");
+		axes.setYAxeLabel("");
+		axes.setZAxeLabel("");
+		viewer = new JavaFXChartFactory().bindImageView(chart);
+		viewer.setFitWidth(pane.getPrefWidth());
+		viewer.setFitHeight(pane.getPrefHeight());
+		pane.getChildren().clear();
+		pane.getChildren().add(viewer);
+		
+		prevSurface = surface;
 	}
 
 }

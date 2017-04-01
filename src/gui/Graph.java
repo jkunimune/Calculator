@@ -30,6 +30,7 @@ import javafx.scene.layout.StackPane;
 import maths.Constant;
 import maths.Expression;
 import maths.Variable;
+import plots.HeightPlot;
 import plots.Line2Plot;
 import plots.Line3Plot;
 import plots.Plot;
@@ -106,11 +107,8 @@ public class Graph {
 		}
 		else if (independents.size() == 2) {
 			if (dims == 1) {
-				setPlotType(SurfacePlot.class);
-				functions = new Expression[3];
-				functions[0] = new Variable(independents.get(0));
-				functions[1] = new Variable(independents.get(1));
-				functions[2] = exp.get(0);
+				setPlotType(HeightPlot.class);
+				functions = exp.getAll(1);
 			}
 			else if (dims == 2) {
 				//System.err.println("Quiver in 2space not implemented yet");
@@ -162,6 +160,8 @@ public class Graph {
 			plot = new Line3Plot(PREF_WIDTH, PREF_HEIGHT);
 		else if (clazz == SurfacePlot.class)
 			plot = new SurfacePlot(PREF_WIDTH, PREF_HEIGHT);
+		else if (clazz == HeightPlot.class)
+			plot = new HeightPlot(PREF_WIDTH, PREF_HEIGHT);
 		else
 			throw new IllegalArgumentException("What is "+clazz+" doing in this method?");
 	}

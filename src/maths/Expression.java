@@ -47,7 +47,7 @@ public abstract class Expression implements Statement {
 	public abstract int[] shape(); // returns the length of the vector or the size of the array
 	
 	
-	public Expression[] getAll(int n) {
+	public Expression[] getAll(int n) { // get the first n components of this
 		Expression[] output = new Expression[n];
 		for (int i = 0; i < n; i ++)
 			output[i] = this.get(i);
