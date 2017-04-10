@@ -116,7 +116,8 @@ public class Graph {
 				functions = exp.getAll(2);
 			}
 			else if (dims == 3) {
-				System.err.println("Parametric Surface not implemented yet");
+				setPlotType(SurfacePlot.class);
+				functions = exp.getAll(3);
 			}
 		}
 		else if (independents.size() == 3) {

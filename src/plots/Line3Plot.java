@@ -27,6 +27,7 @@ import java.util.List;
 import org.jzy3d.chart.AWTChart;
 import org.jzy3d.colors.Color;
 import org.jzy3d.javafx.JavaFXChartFactory;
+import org.jzy3d.maths.BoundingBox3d;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.primitives.LineStrip;
 import org.jzy3d.plot3d.primitives.Point;
@@ -50,6 +51,7 @@ import maths.auxiliary.ParameterSpace;
 public class Line3Plot implements Plot {
 
 	private IAxeLayout axes;
+	private BoundingBox3d bounds;
 	private AWTChart chart;
 	private ImageView viewer;
 	private final StackPane pane;
@@ -59,6 +61,7 @@ public class Line3Plot implements Plot {
 	
 	
 	public Line3Plot(int w, int h) {
+		bounds = new BoundingBox3d(-4,4, -4,4, -4,4);
 		chart = (AWTChart) new JavaFXChartFactory().newChart(Quality.Intermediate, "offscreen");
 		pane = new StackPane();
 		setSize(w, h);
@@ -82,6 +85,8 @@ public class Line3Plot implements Plot {
 	@Override
 	public void plot(Expression[] f, List<String> independent, Workspace heap) {
 		if (prevCurve != null)	chart.getScene().getGraph().remove(prevCurve);
+		assert independent.size() == 1 : "Illegal number of parameters";
+		assert f.length == 3 : "Illegal number of dimensions";
 		
 		LineStrip curve = new LineStrip();
 		Workspace locHeap = heap.clone();
@@ -95,6 +100,7 @@ public class Line3Plot implements Plot {
 		curve.setWidth(4);
 		// let factory bind mouse and keyboard controllers to JavaFX node
 		chart.getScene().getGraph().add(curve);
+		chart.getView().setBoundManual(bounds);
 		
 		axes = chart.getAxeLayout();
 		axes.setXAxeLabel("");

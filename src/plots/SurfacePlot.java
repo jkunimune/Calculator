@@ -23,16 +23,16 @@
  */
 package plots;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.jzy3d.chart.AWTChart;
 import org.jzy3d.colors.Color;
-import org.jzy3d.colors.ColorMapper;
-import org.jzy3d.colors.colormaps.ColorMapRainbow;
 import org.jzy3d.javafx.JavaFXChartFactory;
-import org.jzy3d.maths.Range;
-import org.jzy3d.plot3d.builder.Builder;
-import org.jzy3d.plot3d.builder.Mapper;
-import org.jzy3d.plot3d.primitives.Shape;
+import org.jzy3d.maths.BoundingBox3d;
+import org.jzy3d.maths.Coord3d;
+import org.jzy3d.plot3d.primitives.AbstractDrawable;
+import org.jzy3d.plot3d.primitives.LineStrip;
+import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.axes.layout.IAxeLayout;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 
@@ -40,7 +40,9 @@ import gui.Workspace;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import maths.Constant;
 import maths.Expression;
+import maths.auxiliary.ParameterSpace;
 
 
 /**
@@ -51,16 +53,22 @@ import maths.Expression;
 public class SurfacePlot implements Plot {
 
 	private IAxeLayout axes;
+	private BoundingBox3d bounds;
 	private AWTChart chart;
 	private ImageView viewer;
 	private final StackPane pane;
 	
+	private List<LineStrip> prevSurf;
+	
 	
 	
 	public SurfacePlot(int w, int h) {
+		bounds = new BoundingBox3d(-4,4, -4,4, -4,4);
 		chart = (AWTChart) new JavaFXChartFactory().newChart(Quality.Intermediate, "offscreen");
 		pane = new StackPane();
 		setSize(w, h);
+		
+		prevSurf = new ArrayList<LineStrip>();
 	}
 	
 	
@@ -79,7 +87,32 @@ public class SurfacePlot implements Plot {
 	
 	@Override
 	public void plot(Expression[] f, List<String> independent, Workspace heap) {
-		plotDemo();
+		for (LineStrip ls: prevSurf)
+			chart.getScene().getGraph().remove(ls);
+		prevSurf.clear();
+		
+		assert independent.size() == 2 : "Illegal number of parameters";
+		assert f.length == 3 : "Illegal number of dimensions";
+		
+		Workspace locHeap = heap.clone();
+		for (int varying = 0; varying < 2; varying ++) {
+			for (Constant t0: ParameterSpace.iterate(-5, 5, 1)) {
+				locHeap.put(independent.get(1-varying), t0);
+				LineStrip curve = new LineStrip();
+				for (Constant t1: ParameterSpace.iterate(-6, 6)) {
+					locHeap.put(independent.get(varying), t1);
+					final double x = ((Constant) f[0].simplified(locHeap)).getReal();
+					final double y = ((Constant) f[1].simplified(locHeap)).getReal();
+					final double z = ((Constant) f[2].simplified(locHeap)).getReal();
+					curve.add(new Point(new Coord3d(x, y, z), Color.RED));
+				}
+				curve.setWidth(4);
+				// let factory bind mouse and keyboard controllers to JavaFX node
+				chart.getScene().getGraph().add(curve);
+				prevSurf.add(curve);
+			}
+		}
+		chart.getView().setBoundManual(bounds);
 		
 		axes = chart.getAxeLayout();
 		axes.setXAxeLabel("");
@@ -90,31 +123,6 @@ public class SurfacePlot implements Plot {
 		viewer.setFitHeight(pane.getPrefHeight());
 		pane.getChildren().clear();
 		pane.getChildren().add(viewer);
-	}
-	
-	
-	private void plotDemo() {
-		Mapper mapper = new Mapper() {
-			
-			@Override
-			public double f(double x, double y) {
-				return x * Math.sin(x * y);
-			}
-		};
-		
-		// Define range and precision for the function to plot
-		Range range = new Range(-4, 4);
-		int steps = 80;
-		
-		// Create the object to represent the function over the given range.
-		final Shape surface = Builder.buildOrthonormal(mapper, range, steps);
-		surface.setColorMapper(new ColorMapper(new ColorMapRainbow(), surface.getBounds().getZmin(),
-				surface.getBounds().getZmax(), new Color(1, 1, 1, .5f)));
-		surface.setFaceDisplayed(true);
-		surface.setWireframeDisplayed(false);
-		
-		// let factory bind mouse and keyboard controllers to JavaFX node
-		chart.getScene().getGraph().add(surface);
 	}
 
 }

@@ -29,6 +29,7 @@ import org.jzy3d.colors.Color;
 import org.jzy3d.colors.ColorMapper;
 import org.jzy3d.colors.colormaps.ColorMapRainbow;
 import org.jzy3d.javafx.JavaFXChartFactory;
+import org.jzy3d.maths.BoundingBox3d;
 import org.jzy3d.maths.Range;
 import org.jzy3d.plot3d.builder.Builder;
 import org.jzy3d.plot3d.builder.Mapper;
@@ -52,6 +53,7 @@ import maths.Expression;
 public class HeightPlot implements Plot {
 
 	private IAxeLayout axes;
+	private BoundingBox3d bounds;
 	private AWTChart chart;
 	private ImageView viewer;
 	private final StackPane pane;
@@ -61,6 +63,7 @@ public class HeightPlot implements Plot {
 	
 	
 	public HeightPlot(int w, int h) {
+		bounds = new BoundingBox3d(-4,4, -4,4, -4,4);
 		chart = (AWTChart) new JavaFXChartFactory().newChart(Quality.Intermediate, "offscreen");
 		pane = new StackPane();
 		setSize(w, h);
@@ -85,6 +88,8 @@ public class HeightPlot implements Plot {
 	@Override
 	public void plot(Expression[] fnc, List<String> independent, Workspace heap) {
 		if (prevSurface != null)	chart.getScene().getGraph().remove(prevSurface);
+		assert independent.size() == 2 : "Illegal number of parameters";
+		assert fnc.length == 1 : "Illegal number of dimensions";
 		
 		Workspace locHeap = heap.clone();
 		Mapper mapper = new Mapper() {
@@ -101,13 +106,16 @@ public class HeightPlot implements Plot {
 		
 		// Create the object to represent the function over the given range.
 		final Shape surface = Builder.buildOrthonormal(mapper, range, steps);
-		surface.setColorMapper(new ColorMapper(new ColorMapRainbow(), surface.getBounds().getZmin(),
-				surface.getBounds().getZmax(), new Color(1, 1, 1, .5f)));
+		surface.setColorMapper(new ColorMapper(new ColorMapRainbow(),
+				Math.max(-4, surface.getBounds().getZmin()),
+				Math.min(4, surface.getBounds().getZmax()),
+				new Color(1, 1, 1, .5f)));
 		surface.setFaceDisplayed(true);
 		surface.setWireframeDisplayed(false);
 		
 		// let factory bind mouse and keyboard controllers to JavaFX node
 		chart.getScene().getGraph().add(surface);
+		chart.getView().setBoundManual(bounds);
 		
 		axes = chart.getAxeLayout();
 		axes.setXAxeLabel("");

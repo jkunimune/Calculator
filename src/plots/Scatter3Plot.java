@@ -76,6 +76,9 @@ public class Scatter3Plot implements Plot {
 	
 	@Override
 	public void plot(Expression[] f, List<String> independent, Workspace heap) {
+		assert independent.isEmpty() : "You can't scatter a curve.";
+		assert f.length == 3 : "Illegal number of dimensions";
+		
 		final double x = ((Constant) f[0].simplified(heap)).getReal();
 		final double y = ((Constant) f[1].simplified(heap)).getReal();
 		final double z = ((Constant) f[2].simplified(heap)).getReal();
