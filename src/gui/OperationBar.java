@@ -51,7 +51,7 @@ public class OperationBar {
 			{"\u03b4/\u03b4","\u222B","Tn"},
 			{},
 			{"\u2192","^","\u2022","\u2022\u2022"},
-			{"\u03B1","\u03B2","\u03B3","\u03B8","\u03BB","\u03C9"}
+			{"\u03B1","\u03B2","\u03B3","\u03B8","\u03BB","\u03D5","\u03C9"}
 	};
 	
 	
@@ -100,7 +100,7 @@ public class OperationBar {
 	
 	
 	private void buttonRespond(String button) {
-		cmd.typeText(button);
+		cmd.typeText(button, false);
 	}
 	
 	

@@ -30,7 +30,6 @@ import org.jzy3d.colors.Color;
 import org.jzy3d.javafx.JavaFXChartFactory;
 import org.jzy3d.maths.BoundingBox3d;
 import org.jzy3d.maths.Coord3d;
-import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.primitives.LineStrip;
 import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.axes.layout.IAxeLayout;

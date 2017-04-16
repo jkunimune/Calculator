@@ -23,6 +23,9 @@
  */
 package gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -32,6 +35,8 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import maths.Expression;
 import maths.Statement;
@@ -47,16 +52,19 @@ public class CommandLine {
 	public static final int PREF_WIDTH = 400;
 	public static final int PREF_HEIGHT = 400;
 	
-	private TextArea history;
-	private TextField cmdLine;
-	private ImageView displaySpace;
+	private TextArea history; //the textarea that shows all old entries and answers
+	private List<String> lines; //stores the same info as history, but easier to access
+	private TextField cmdLine; //the field that takes user input
+	private ImageView displaySpace; //the space to display formatted math
 	
-	private VBox container;
+	private VBox container; //the node that holds it all
 	
 	private Graph graph;
 	private Workspace workspace;
+	
 	private Statement currentMath;
 	private String errorMsg;
+	private int histPosition; //current index in the history, 0 being current line and 
 	
 	
 	
@@ -69,10 +77,17 @@ public class CommandLine {
 		history.setPrefHeight(PREF_HEIGHT);
 		container.getChildren().add(history);
 		
+		lines = new ArrayList<String>();
+		
 		cmdLine = new TextField();
 		cmdLine.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				evaluate();
+			}
+		});
+		cmdLine.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			public void handle(KeyEvent event) {
+				checkKey(event);
 			}
 		});
 		cmdLine.textProperty().addListener(new ChangeListener<String>() {
@@ -92,6 +107,7 @@ public class CommandLine {
 		workspace = ws;
 		currentMath = Expression.NULL;
 		errorMsg = "";
+		histPosition = 0;
 	}
 	
 	
@@ -101,8 +117,11 @@ public class CommandLine {
 	}
 	
 	
-	public void typeText(String text) {	// add text to the command line
-		cmdLine.appendText(text);
+	public void typeText(String text, boolean select) {	// add text to the command line
+		cmdLine.replaceSelection(text);
+		if (select)
+			cmdLine.selectRange(cmdLine.getCaretPosition()-text.length(),
+					cmdLine.getCaretPosition());
 	}
 	
 	
@@ -112,12 +131,50 @@ public class CommandLine {
 	}
 	
 	
+	private void checkKey(KeyEvent event) {
+		if (event.getCode() == KeyCode.UP) {
+			moveUp();
+			event.consume();
+		}
+		else if (event.getCode() == KeyCode.DOWN) {
+			moveDown();
+			event.consume();
+		}
+		else {
+			histPosition = 0; //reset the history tracking
+		}
+	}
+	
+	
+	private void moveUp() {
+		
+		histPosition ++;
+		if (histPosition > lines.size()) {
+			histPosition = lines.size();
+		}
+		
+		typeText(lines.get(lines.size()-histPosition), true);
+	}
+	
+	
+	private void moveDown() {
+		histPosition --;
+		if (histPosition <= 0) {
+			histPosition = 0;
+			typeText("", false);
+		}
+		else
+			typeText(lines.get(lines.size()-histPosition), true);
+	}
+	
+	
 	private void evaluate() {	// called when enter is pressed
 		final String text = cmdLine.getText();
 		Statement math = currentMath; // save the math and the message
 		String errMsg = errorMsg;
 		cmdLine.clear();
 		history.appendText("\n"+text);	// write the current line to history
+		lines.add(text);
 		
 		if (text.isEmpty())	return;
 		
@@ -135,6 +192,7 @@ public class CommandLine {
 				}
 				else
 					history.appendText("\n\t"+ans.toString());
+				lines.add(ans.toString());
 				displaySpace.setImage(ans.toImage());
 			}
 		} catch (ArithmeticException e) {
