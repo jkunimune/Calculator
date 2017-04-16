@@ -99,11 +99,6 @@ public class OperationBar {
 	}
 	
 	
-	private void buttonRespond(String button) {
-		cmd.typeText(button, false);
-	}
-	
-	
 	private void handleAction(ActionEvent event) {
 		if (event.getSource() instanceof MenuItem) {
 			final MenuItem source = (MenuItem) event.getSource();
@@ -114,7 +109,11 @@ public class OperationBar {
 					(SplitMenuButton) event.getSource();
 			buttonRespond(source.getText());
 		}
-		cmd.requestFocus();
+	}
+	
+	
+	private void buttonRespond(String button) {
+		cmd.typeText(button, false);
 	}
 
 }

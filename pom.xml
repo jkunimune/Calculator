@@ -23,10 +23,5 @@
   		<artifactId>jzy3d-javafx</artifactId>
   		<version>1.0.0-SNAPSHOT</version>
   	</dependency>
-  	<dependency>
-  		<groupId>com.opencsv</groupId>
-  		<artifactId>opencsv</artifactId>
-  		<version>3.8</version>
-  	</dependency>
   </dependencies>
 </project>

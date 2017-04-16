@@ -66,6 +66,9 @@ public class CommandLine {
 	private String errorMsg;
 	private int histPosition; //current index in the history, 0 being current line and 
 	
+	private int caretPosition;
+	private int anchor;
+	
 	
 	
 	public CommandLine(Graph gr, Workspace ws) {
@@ -96,6 +99,18 @@ public class CommandLine {
 				update(newValue);
 			}
 		});
+		cmdLine.caretPositionProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				if (cmdLine.isFocused())
+					caretPosition = newValue.intValue();
+			}
+		});
+		cmdLine.anchorProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				if (cmdLine.isFocused())
+					anchor = newValue.intValue();
+			}
+		});
 		container.getChildren().add(cmdLine);
 		
 		container.getChildren().add(new Separator());
@@ -108,6 +123,8 @@ public class CommandLine {
 		currentMath = Expression.NULL;
 		errorMsg = "";
 		histPosition = 0;
+		caretPosition = 0;
+		anchor = 0;
 	}
 	
 	
@@ -118,16 +135,22 @@ public class CommandLine {
 	
 	
 	public void typeText(String text, boolean select) {	// add text to the command line
+		cmdLine.selectRange(anchor, caretPosition);
 		cmdLine.replaceSelection(text);
+		
 		if (select)
 			cmdLine.selectRange(cmdLine.getCaretPosition()-text.length(),
 					cmdLine.getCaretPosition());
+		else if (!cmdLine.isFocused()) {
+			final int caretPosition0 = caretPosition;
+			cmdLine.requestFocus();
+			cmdLine.positionCaret(caretPosition0+text.length());
+		}
 	}
 	
 	
 	public void requestFocus() {
 		cmdLine.requestFocus();
-		cmdLine.positionCaret(cmdLine.getLength());
 	}
 	
 	
@@ -152,8 +175,8 @@ public class CommandLine {
 		if (histPosition > lines.size()) {
 			histPosition = lines.size();
 		}
-		
-		typeText(lines.get(lines.size()-histPosition), true);
+		if (!lines.isEmpty())
+			typeText(lines.get(lines.size()-histPosition), true);
 	}
 	
 	
@@ -163,7 +186,7 @@ public class CommandLine {
 			histPosition = 0;
 			typeText("", false);
 		}
-		else
+		else if (!lines.isEmpty())
 			typeText(lines.get(lines.size()-histPosition), true);
 	}
 	
