@@ -11,13 +11,15 @@ _Math-Assist_ has a simple and intuitive GUI of four main parts. In the lower le
 
 ## Features
 _Math-Assist_ comes equipped with any and all capabilities you could ever want (within reason), regardless of whether you are a mere layman or a PhD. Features include:
-  - simplifying expressions
-  - storing variables
-  - plotting in up to 4 dimensions
-  - solving systems of equations
-  - differentiation
-  - unit conversions
-  - and much more!
+  - simplifying expressions*
+  - storing multiple variables
+  - plotting in up to 4 dimensions*
+  - solving systems of equations*
+  - differentiation*
+  - unit conversions*
+  - and much more!*
+  
+*these features may not yet exist
 
 ## Premise
 You may ask yourself, why make such a big fuss over a calculator app? Plenty of those already exist! What makes yours different?
